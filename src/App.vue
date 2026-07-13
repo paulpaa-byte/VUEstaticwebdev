@@ -21,8 +21,8 @@
         after sign-in.
       </p>
       <p class="summary" v-else>
-        This home page loads for everyone. Sign in with Microsoft Entra ID to see your
-        account details from <code>/.auth/me</code>.
+        This home page loads for everyone. Use Sign in or Sign up to continue with Microsoft
+        Entra ID and view your details from <code>/.auth/me</code>.
       </p>
 
       <p v-if="loading" class="status">Loading signed-in user details...</p>
@@ -53,12 +53,25 @@
           </p>
         </section>
 
+        <section class="profile-links">
+          <h2>Account links</h2>
+          <a class="link-chip" :href="passwordResetUrl" target="_blank" rel="noopener noreferrer">
+            Reset password (Entra SSPR)
+          </a>
+          <a class="link-chip" :href="profilePageUrl" target="_blank" rel="noopener noreferrer">
+            Update profile (Entra My Account)
+          </a>
+        </section>
+
         <a class="button secondary" href="/logout">Sign out</a>
       </div>
 
       <div v-else class="actions">
         <p class="status">You are not signed in yet.</p>
-        <a class="button" href="/login">Sign in with Entra ID</a>
+        <div class="actions-row">
+          <a class="button" href="/login">Sign in</a>
+          <a class="button alt" href="/signup">Sign up</a>
+        </div>
       </div>
     </section>
   </main>
@@ -70,6 +83,8 @@ export default {
   data() {
     return {
       currentPath: window.location.pathname,
+      passwordResetUrl: "https://passwordreset.microsoftonline.com/",
+      profilePageUrl: "https://myaccount.microsoft.com/",
       loading: true,
       user: null,
       error: ""
@@ -248,6 +263,28 @@ dd {
   line-height: 1.5;
 }
 
+.profile-links {
+  margin: 0 0 1.5rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.profile-links h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.link-chip {
+  display: inline-flex;
+  width: fit-content;
+  text-decoration: none;
+  font-weight: 700;
+  color: #0a5fb4;
+  background: rgba(10, 95, 180, 0.12);
+  border-radius: 999px;
+  padding: 0.55rem 0.95rem;
+}
+
 dl {
   display: grid;
   gap: 1rem;
@@ -280,6 +317,17 @@ dd {
 
 .button.secondary {
   background: #10233d;
+}
+
+.button.alt {
+  background: #1d4ed8;
+}
+
+.actions-row {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 code {

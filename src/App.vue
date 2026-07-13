@@ -4,8 +4,8 @@
       <p class="eyebrow">Azure Static Web Apps</p>
       <h1>Microsoft Entra ID access</h1>
       <p class="summary">
-        This site only serves authenticated users. After Azure Static Web Apps completes
-        sign-in, the page reads the active identity from <code>/.auth/me</code>.
+        This home page loads for everyone. Sign in with Microsoft Entra ID to see your
+        account details from <code>/.auth/me</code>.
       </p>
 
       <p v-if="loading" class="status">Loading signed-in user details...</p>
@@ -30,7 +30,7 @@
       </div>
 
       <div v-else class="actions">
-        <p class="status">No active session was returned.</p>
+        <p class="status">You are not signed in yet.</p>
         <a class="button" href="/login">Sign in with Entra ID</a>
       </div>
     </section>
@@ -60,19 +60,16 @@ export default {
         });
 
         if (!response.ok) {
-          throw new Error("Azure Static Web Apps auth endpoint is not available in this environment.");
+          this.user = null;
+          return;
         }
 
         const payload = await response.json();
         const principal = payload.clientPrincipal;
 
         this.user = principal && principal.userId ? principal : null;
-
-        if (!this.user) {
-          this.error = "No authenticated principal was returned. Finish the Azure Entra setup and sign in again.";
-        }
       } catch (error) {
-        this.error = error.message;
+        this.error = "Unable to read sign-in state right now.";
       } finally {
         this.loading = false;
       }

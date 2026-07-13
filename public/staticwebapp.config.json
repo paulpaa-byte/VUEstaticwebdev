@@ -9,6 +9,18 @@
       "route": "/logout",
       "redirect": "/.auth/logout?post_logout_redirect_uri=/",
       "statusCode": 302
+    },
+    {
+      "route": "/profile*",
+      "allowedRoles": [
+        "authenticated"
+      ]
+    },
+    {
+      "route": "/admin*",
+      "allowedRoles": [
+        "administrator"
+      ]
     }
   ],
   "navigationFallback": {

@@ -1,9 +1,26 @@
 <template>
   <main class="shell">
     <section class="card">
-      <p class="eyebrow">Azure Static Web Apps</p>
-      <h1>Microsoft Entra ID access</h1>
-      <p class="summary">
+      <header class="head">
+        <div>
+          <p class="eyebrow">Azure Static Web Apps</p>
+          <h1>Microsoft Entra ID access</h1>
+        </div>
+        <span class="badge" :class="isAuthenticated ? 'ok' : 'neutral'">
+          {{ isAuthenticated ? "Signed in" : "Anonymous" }}
+        </span>
+      </header>
+
+      <nav class="nav">
+        <a href="/" :class="currentPath === '/' ? 'active' : ''">Home</a>
+        <a href="/profile" :class="currentPath.startsWith('/profile') ? 'active' : ''">Profile</a>
+      </nav>
+
+      <p class="summary" v-if="isProfileRoute">
+        The profile route is protected by Static Web Apps authorization. You can only open it
+        after sign-in.
+      </p>
+      <p class="summary" v-else>
         This home page loads for everyone. Sign in with Microsoft Entra ID to see your
         account details from <code>/.auth/me</code>.
       </p>
@@ -12,6 +29,7 @@
       <p v-else-if="error" class="status error">{{ error }}</p>
 
       <div v-else-if="user" class="profile">
+        <p class="status compact">Signed in as <strong>{{ user.userDetails }}</strong>.</p>
         <dl>
           <div>
             <dt>Name</dt>
@@ -26,6 +44,15 @@
             <dd>{{ user.userRoles.join(", ") }}</dd>
           </div>
         </dl>
+
+        <section v-if="isAdministrator" class="admin-panel">
+          <h2>Administrator panel</h2>
+          <p>
+            Your account includes the <strong>administrator</strong> role. Use this area for
+            admin-only controls.
+          </p>
+        </section>
+
         <a class="button secondary" href="/logout">Sign out</a>
       </div>
 
@@ -42,10 +69,22 @@ export default {
   name: "App",
   data() {
     return {
+      currentPath: window.location.pathname,
       loading: true,
       user: null,
       error: ""
     };
+  },
+  computed: {
+    isAuthenticated() {
+      return Boolean(this.user && this.user.userId);
+    },
+    isProfileRoute() {
+      return this.currentPath.startsWith("/profile");
+    },
+    isAdministrator() {
+      return Boolean(this.user && this.user.userRoles && this.user.userRoles.includes("administrator"));
+    }
   },
   mounted() {
     this.loadUser();
@@ -99,6 +138,55 @@ export default {
   backdrop-filter: blur(8px);
 }
 
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.badge.ok {
+  background: rgba(4, 120, 87, 0.14);
+  color: #065f46;
+}
+
+.badge.neutral {
+  background: rgba(30, 64, 175, 0.1);
+  color: #1e40af;
+}
+
+.nav {
+  margin-top: 1.25rem;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #0a5fb4;
+  font-weight: 700;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(10, 95, 180, 0.1);
+}
+
+.nav a.active {
+  background: #0a5fb4;
+  color: #fff;
+}
+
 .eyebrow {
   margin: 0 0 0.75rem;
   font-size: 0.85rem;
@@ -130,12 +218,34 @@ dd {
   margin: 1.5rem 0 0;
 }
 
+.status.compact {
+  margin-top: 1rem;
+}
+
 .error {
   color: #9f1239;
 }
 
 .profile {
   margin-top: 1.75rem;
+}
+
+.admin-panel {
+  margin: 1.25rem 0 1.75rem;
+  border: 1px solid rgba(16, 35, 61, 0.14);
+  background: rgba(10, 95, 180, 0.06);
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+.admin-panel h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.admin-panel p {
+  margin: 0.6rem 0 0;
+  line-height: 1.5;
 }
 
 dl {

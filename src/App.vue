@@ -29,21 +29,46 @@
       <p v-else-if="error" class="status error">{{ error }}</p>
 
       <div v-else-if="user" class="profile">
-        <p class="status compact">Signed in as <strong>{{ user.userDetails }}</strong>.</p>
-        <dl>
-          <div>
-            <dt>Name</dt>
-            <dd>{{ user.userDetails }}</dd>
+        <section class="account-card">
+          <div class="account-top">
+            <p class="tenant">{{ tenantName }}</p>
+            <a class="account-link" href="/logout">Sign out</a>
           </div>
-          <div>
-            <dt>Provider</dt>
-            <dd>{{ user.identityProvider }}</dd>
+
+          <div class="identity-block">
+            <img
+              class="avatar"
+              :src="avatarSrc"
+              :alt="user.userDetails + ' profile photo'"
+              @error="handleAvatarError"
+            >
+
+            <div>
+              <p class="identity-name">{{ user.userDetails }}</p>
+              <p class="identity-provider">Provider: {{ user.identityProvider }}</p>
+              <p class="identity-roles">Roles: {{ user.userRoles.join(", ") }}</p>
+
+              <div class="quick-links">
+                <a
+                  class="account-link"
+                  :href="viewAccountUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View account
+                </a>
+                <a
+                  class="account-link"
+                  :href="m365ProfileUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  My Microsoft 365 profile
+                </a>
+              </div>
+            </div>
           </div>
-          <div>
-            <dt>Roles</dt>
-            <dd>{{ user.userRoles.join(", ") }}</dd>
-          </div>
-        </dl>
+        </section>
 
         <section v-if="isAdministrator" class="admin-panel">
           <h2>Administrator panel</h2>
@@ -85,6 +110,9 @@ export default {
       currentPath: window.location.pathname,
       passwordResetUrl: "https://passwordreset.microsoftonline.com/",
       profilePageUrl: "https://myaccount.microsoft.com/",
+      viewAccountUrl: "https://myaccount.microsoft.com/",
+      m365ProfileUrl: "https://www.office.com/profile",
+      avatarSrc: "",
       loading: true,
       user: null,
       error: ""
@@ -99,6 +127,19 @@ export default {
     },
     isAdministrator() {
       return Boolean(this.user && this.user.userRoles && this.user.userRoles.includes("administrator"));
+    },
+    tenantName() {
+      if (!this.user || !this.user.userDetails) {
+        return "Your tenant";
+      }
+
+      const email = this.user.userDetails;
+      const atIndex = email.indexOf("@");
+      if (atIndex === -1) {
+        return "Your tenant";
+      }
+
+      return email.slice(atIndex + 1);
     }
   },
   mounted() {
@@ -122,10 +163,29 @@ export default {
         const principal = payload.clientPrincipal;
 
         this.user = principal && principal.userId ? principal : null;
+        if (this.user) {
+          this.avatarSrc = this.getOfficeAvatarUrl(this.user.userDetails);
+        }
       } catch (error) {
         this.error = "Unable to read sign-in state right now.";
       } finally {
         this.loading = false;
+      }
+    },
+    getOfficeAvatarUrl(userEmail) {
+      return "https://outlook.office.com/owa/service.svc/s/GetPersonaPhoto?size=HR96x96&email=" + encodeURIComponent(userEmail);
+    },
+    getInitialsAvatarUrl(userEmail) {
+      return "https://ui-avatars.com/api/?name=" + encodeURIComponent(userEmail) + "&background=1d4ed8&color=ffffff&size=128";
+    },
+    handleAvatarError() {
+      if (!this.user || !this.user.userDetails) {
+        return;
+      }
+
+      const fallback = this.getInitialsAvatarUrl(this.user.userDetails);
+      if (this.avatarSrc !== fallback) {
+        this.avatarSrc = fallback;
       }
     }
   }
@@ -245,6 +305,69 @@ dd {
   margin-top: 1.75rem;
 }
 
+.account-card {
+  margin-bottom: 1rem;
+  border: 1px solid rgba(16, 35, 61, 0.14);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.account-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid rgba(16, 35, 61, 0.1);
+}
+
+.tenant {
+  margin: 0;
+  font-weight: 700;
+}
+
+.identity-block {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(10, 95, 180, 0.25);
+}
+
+.identity-name {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.08rem;
+}
+
+.identity-provider,
+.identity-roles {
+  margin: 0.35rem 0 0;
+  color: #334155;
+  line-height: 1.5;
+}
+
+.quick-links {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.account-link {
+  color: #0a5fb4;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .admin-panel {
   margin: 1.25rem 0 1.75rem;
   border: 1px solid rgba(16, 35, 61, 0.14);
@@ -343,6 +466,10 @@ code {
 
   .card {
     padding: 1.5rem;
+  }
+
+  .identity-block {
+    grid-template-columns: 1fr;
   }
 }
 </style>

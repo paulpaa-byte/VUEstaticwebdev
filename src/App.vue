@@ -21,8 +21,8 @@
         after sign-in.
       </p>
       <p class="summary" v-else>
-        This home page loads for everyone. Use Sign in or Sign up to continue with Microsoft
-        Entra ID and view your details from <code>/.auth/me</code>.
+        This home page loads for everyone. Use Sign in with your organization account to
+        view your details from <code>/.auth/me</code>.
       </p>
 
       <p v-if="loading" class="status">Loading signed-in user details...</p>
@@ -95,8 +95,8 @@
         <p class="status">You are not signed in yet.</p>
         <div class="actions-row">
           <a class="button" href="/login">Sign in</a>
-          <a class="button alt" href="/signup">Sign up</a>
         </div>
+        <p class="hint">Need access? Ask your tenant administrator to create or invite your account.</p>
       </div>
     </section>
   </main>
@@ -442,15 +442,17 @@ dd {
   background: #10233d;
 }
 
-.button.alt {
-  background: #1d4ed8;
-}
-
 .actions-row {
   margin-top: 1rem;
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+.hint {
+  margin: 0.9rem 0 0;
+  color: #475569;
+  line-height: 1.5;
 }
 
 code {

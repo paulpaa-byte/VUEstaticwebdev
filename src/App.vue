@@ -3,8 +3,8 @@
     <section class="card">
       <header class="head">
         <div>
-          <p class="eyebrow">Azure Static Web Apps</p>
-          <h1>Microsoft Entra ID access</h1>
+          <p class="eyebrow">Microsoft Cloud Learning Hub</p>
+          <h1>{{ pageTitle }}</h1>
         </div>
         <span class="badge" :class="isAuthenticated ? 'ok' : 'neutral'">
           {{ isAuthenticated ? "Signed in" : "Anonymous" }}
@@ -12,24 +12,29 @@
       </header>
 
       <nav class="nav">
-        <a href="/" :class="currentPath === '/' ? 'active' : ''">Home</a>
-        <a href="/profile" :class="currentPath.startsWith('/profile') ? 'active' : ''">Profile</a>
+        <a href="/" :class="showHome ? 'active' : ''">Home</a>
+        <a href="/profile" :class="isProfileRoute ? 'active' : ''">Profile</a>
+        <a v-if="isAdministrator" href="/admin" :class="isAdminRoute ? 'active' : ''">Admin</a>
       </nav>
 
-      <p class="summary" v-if="isProfileRoute">
-        The profile route is protected by Static Web Apps authorization. You can only open it
-        after sign-in.
+      <p class="summary" v-if="isAdminRoute">
+        Manage the Microsoft cloud training catalog. Changes are stored in this browser for the
+        signed-in admin session.
+      </p>
+      <p class="summary" v-else-if="isProfileRoute">
+        Review your registered courses, open training materials, and manage your Microsoft Entra
+        account links.
       </p>
       <p class="summary" v-else>
-        This home page loads for everyone. Use Sign in with your organization account to
-        view your details from <code>/.auth/me</code>.
+        Browse Microsoft cloud learning paths, sign in with your organization account, and
+        register for the training courses you want to complete.
       </p>
 
-      <p v-if="loading" class="status">Loading signed-in user details...</p>
+      <p v-if="loading" class="status">Loading user and training catalog...</p>
       <p v-else-if="error" class="status error">{{ error }}</p>
 
-      <div v-else-if="user" class="profile">
-        <section class="account-card">
+      <template v-else>
+        <section v-if="isAuthenticated" class="account-card">
           <div class="account-top">
             <p class="tenant">{{ tenantName }}</p>
             <a class="account-link" href="/logout">Sign out</a>
@@ -46,23 +51,13 @@
             <div>
               <p class="identity-name">{{ user.userDetails }}</p>
               <p class="identity-provider">Provider: {{ user.identityProvider }}</p>
-              <p class="identity-roles">Roles: {{ user.userRoles.join(", ") }}</p>
+              <p class="identity-roles">Roles: {{ user.userRoles.join(', ') }}</p>
 
               <div class="quick-links">
-                <a
-                  class="account-link"
-                  :href="viewAccountUrl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <a class="account-link" :href="viewAccountUrl" target="_blank" rel="noopener noreferrer">
                   View account
                 </a>
-                <a
-                  class="account-link"
-                  :href="m365ProfileUrl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <a class="account-link" :href="m365ProfileUrl" target="_blank" rel="noopener noreferrer">
                   My Microsoft 365 profile
                 </a>
               </div>
@@ -70,39 +65,292 @@
           </div>
         </section>
 
-        <section v-if="isAdministrator" class="admin-panel">
-          <h2>Administrator panel</h2>
-          <p>
-            Your account includes the <strong>administrator</strong> role. Use this area for
-            admin-only controls.
-          </p>
+        <section v-if="showHome" class="panel-grid">
+          <article class="panel hero-panel">
+            <h2>Training catalog</h2>
+            <p>
+              Build skills across SharePoint, Exchange Online, Teams, Entra ID, Defender, Intune,
+              and other Microsoft cloud technologies.
+            </p>
+            <div class="actions-row" v-if="!isAuthenticated">
+              <a class="button" href="/login">Sign in</a>
+            </div>
+            <p v-if="!isAuthenticated" class="hint">
+              Need access? Ask your tenant administrator to create or invite your account.
+            </p>
+            <div v-else class="hero-stats">
+              <div>
+                <span>{{ courses.length }}</span>
+                <p>Available courses</p>
+              </div>
+              <div>
+                <span>{{ enrolledCourses.length }}</span>
+                <p>Registered courses</p>
+              </div>
+              <div>
+                <span>{{ downloadableCourses.length }}</span>
+                <p>Downloads ready</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <h2>Featured courses</h2>
+            <div class="course-list">
+              <article v-for="course in courses" :key="course.id" class="course-card">
+                <div class="course-head">
+                  <div>
+                    <p class="course-track">{{ course.category }}</p>
+                    <h3>{{ course.title }}</h3>
+                  </div>
+                  <span class="pill">{{ course.level }}</span>
+                </div>
+
+                <p class="course-description">{{ course.description }}</p>
+
+                <ul class="course-meta">
+                  <li>Format: {{ course.format }}</li>
+                  <li>Duration: {{ course.duration }}</li>
+                </ul>
+
+                <div class="course-actions">
+                  <a class="link-chip" :href="course.materialPath" target="_blank" rel="noopener noreferrer">
+                    View training
+                  </a>
+                  <a class="link-chip" :href="course.materialPath" :download="course.downloadName">
+                    Download
+                  </a>
+                  <button
+                    v-if="isAuthenticated"
+                    class="button small"
+                    type="button"
+                    @click="toggleEnrollment(course.id)"
+                  >
+                    {{ isEnrolled(course.id) ? 'Unregister' : 'Register course' }}
+                  </button>
+                </div>
+              </article>
+            </div>
+          </article>
         </section>
 
-        <section class="profile-links">
-          <h2>Account links</h2>
-          <a class="link-chip" :href="passwordResetUrl" target="_blank" rel="noopener noreferrer">
-            Reset password (Entra SSPR)
-          </a>
-          <a class="link-chip" :href="profilePageUrl" target="_blank" rel="noopener noreferrer">
-            Update profile (Entra My Account)
-          </a>
+        <section v-if="isProfileRoute" class="panel-grid profile-layout">
+          <article class="panel">
+            <h2>Your registered courses</h2>
+            <p v-if="!isAuthenticated" class="hint">
+              Sign in to register for courses and build your learning plan.
+            </p>
+            <div v-else-if="enrolledCourses.length" class="course-list compact-list">
+              <article v-for="course in enrolledCourses" :key="course.id" class="course-card compact-card">
+                <div class="course-head">
+                  <div>
+                    <p class="course-track">{{ course.category }}</p>
+                    <h3>{{ course.title }}</h3>
+                  </div>
+                  <span class="pill">{{ course.level }}</span>
+                </div>
+                <p class="course-description">{{ course.description }}</p>
+                <div class="course-actions">
+                  <a class="link-chip" :href="course.materialPath" target="_blank" rel="noopener noreferrer">
+                    View training
+                  </a>
+                  <a class="link-chip" :href="course.materialPath" :download="course.downloadName">
+                    Download
+                  </a>
+                  <button class="button secondary small" type="button" @click="toggleEnrollment(course.id)">
+                    Remove
+                  </button>
+                </div>
+              </article>
+            </div>
+            <p v-else class="hint">You have not registered for any courses yet.</p>
+          </article>
+
+          <article class="panel">
+            <h2>Account tools</h2>
+            <div class="profile-links">
+              <a class="link-chip" :href="passwordResetUrl" target="_blank" rel="noopener noreferrer">
+                Reset password (Entra SSPR)
+              </a>
+              <a class="link-chip" :href="profilePageUrl" target="_blank" rel="noopener noreferrer">
+                Update profile (Entra My Account)
+              </a>
+              <a class="link-chip" :href="viewAccountUrl" target="_blank" rel="noopener noreferrer">
+                View account
+              </a>
+              <a class="link-chip" :href="m365ProfileUrl" target="_blank" rel="noopener noreferrer">
+                My Microsoft 365 profile
+              </a>
+            </div>
+          </article>
         </section>
 
-        <a class="button secondary" href="/logout">Sign out</a>
-      </div>
+        <section v-if="isAdminRoute" class="panel-grid">
+          <article v-if="isAdministrator" class="panel">
+            <h2>Admin console</h2>
+            <form class="admin-form" @submit.prevent="saveCourse">
+              <label>
+                Title
+                <input v-model.trim="draftCourse.title" type="text" required>
+              </label>
+              <label>
+                Category
+                <input v-model.trim="draftCourse.category" type="text" required>
+              </label>
+              <label>
+                Level
+                <input v-model.trim="draftCourse.level" type="text" required>
+              </label>
+              <label>
+                Duration
+                <input v-model.trim="draftCourse.duration" type="text" required>
+              </label>
+              <label>
+                Format
+                <input v-model.trim="draftCourse.format" type="text" required>
+              </label>
+              <label>
+                Material path
+                <input v-model.trim="draftCourse.materialPath" type="text" required>
+              </label>
+              <label>
+                Download name
+                <input v-model.trim="draftCourse.downloadName" type="text" required>
+              </label>
+              <label class="full-width">
+                Description
+                <textarea v-model.trim="draftCourse.description" rows="4" required></textarea>
+              </label>
+              <div class="admin-actions">
+                <button class="button" type="submit">
+                  {{ draftCourse.id ? 'Update course' : 'Add course' }}
+                </button>
+                <button v-if="draftCourse.id" class="button secondary" type="button" @click="resetDraftCourse">
+                  Cancel edit
+                </button>
+              </div>
+            </form>
+          </article>
 
-      <div v-else class="actions">
-        <p class="status">You are not signed in yet.</p>
-        <div class="actions-row">
-          <a class="button" href="/login">Sign in</a>
-        </div>
-        <p class="hint">Need access? Ask your tenant administrator to create or invite your account.</p>
-      </div>
+          <article v-if="isAdministrator" class="panel">
+            <h2>Catalog management</h2>
+            <div class="course-list compact-list">
+              <article v-for="course in courses" :key="course.id" class="course-card compact-card">
+                <div class="course-head">
+                  <div>
+                    <p class="course-track">{{ course.category }}</p>
+                    <h3>{{ course.title }}</h3>
+                  </div>
+                  <span class="pill">{{ course.level }}</span>
+                </div>
+                <p class="course-description">{{ course.description }}</p>
+                <div class="course-actions">
+                  <button class="button small" type="button" @click="editCourse(course)">Edit</button>
+                  <button class="button secondary small" type="button" @click="deleteCourse(course.id)">
+                    Delete
+                  </button>
+                </div>
+              </article>
+            </div>
+          </article>
+
+          <article v-else class="panel">
+            <h2>Admin console</h2>
+            <p class="hint">Only users with the administrator role can manage courses.</p>
+          </article>
+        </section>
+      </template>
     </section>
   </main>
 </template>
 
 <script>
+const COURSE_STORAGE_KEY = "learninghub.courses.v1";
+const ENROLLMENT_STORAGE_KEY = "learninghub.enrollments.v1";
+
+const DEFAULT_COURSES = [
+  {
+    id: "sharepoint-foundations",
+    title: "SharePoint Online Foundations",
+    category: "SharePoint",
+    level: "Intermediate",
+    duration: "3 hours",
+    format: "Guide + checklist",
+    materialPath: "/course-materials/sharepoint-online-foundations.md",
+    downloadName: "sharepoint-online-foundations.md",
+    description: "Learn site architecture, document collaboration, permissions, and content lifecycle basics for SharePoint Online."
+  },
+  {
+    id: "exchange-online-operations",
+    title: "Exchange Online Operations",
+    category: "Exchange Online",
+    level: "Intermediate",
+    duration: "2.5 hours",
+    format: "Guide + lab notes",
+    materialPath: "/course-materials/exchange-online-operations.md",
+    downloadName: "exchange-online-operations.md",
+    description: "Cover mailbox administration, transport hygiene, retention, and common operational tasks in Exchange Online."
+  },
+  {
+    id: "teams-admin-essentials",
+    title: "Microsoft Teams Admin Essentials",
+    category: "Teams",
+    level: "Beginner",
+    duration: "2 hours",
+    format: "Playbook",
+    materialPath: "/course-materials/teams-admin-essentials.md",
+    downloadName: "teams-admin-essentials.md",
+    description: "Build a working foundation for Teams policies, meetings, app governance, and collaboration rollout."
+  },
+  {
+    id: "entra-id-core-identity",
+    title: "Microsoft Entra ID Core Identity",
+    category: "Entra ID",
+    level: "Advanced",
+    duration: "3.5 hours",
+    format: "Architecture guide",
+    materialPath: "/course-materials/entra-id-core-identity.md",
+    downloadName: "entra-id-core-identity.md",
+    description: "Understand tenants, authentication flows, application registrations, conditional access, and identity governance."
+  },
+  {
+    id: "defender-xdr-essentials",
+    title: "Microsoft Defender XDR Essentials",
+    category: "Defender",
+    level: "Advanced",
+    duration: "4 hours",
+    format: "Workbook",
+    materialPath: "/course-materials/defender-xdr-essentials.md",
+    downloadName: "defender-xdr-essentials.md",
+    description: "Review alert triage, endpoint and email protection, incident workflows, and defender operations baselines."
+  },
+  {
+    id: "intune-device-management",
+    title: "Intune Device Management",
+    category: "Intune",
+    level: "Intermediate",
+    duration: "2 hours",
+    format: "Starter pack",
+    materialPath: "/course-materials/intune-device-management.md",
+    downloadName: "intune-device-management.md",
+    description: "Practice enrollment, compliance, configuration profiles, app deployment, and endpoint management patterns."
+  }
+];
+
+function emptyDraftCourse() {
+  return {
+    id: "",
+    title: "",
+    category: "",
+    level: "",
+    duration: "",
+    format: "",
+    materialPath: "",
+    downloadName: "",
+    description: ""
+  };
+}
+
 export default {
   name: "App",
   data() {
@@ -115,7 +363,10 @@ export default {
       avatarSrc: "",
       loading: true,
       user: null,
-      error: ""
+      error: "",
+      courses: [],
+      enrollments: {},
+      draftCourse: emptyDraftCourse()
     };
   },
   computed: {
@@ -124,6 +375,12 @@ export default {
     },
     isProfileRoute() {
       return this.currentPath.startsWith("/profile");
+    },
+    isAdminRoute() {
+      return this.currentPath.startsWith("/admin");
+    },
+    showHome() {
+      return !this.isProfileRoute && !this.isAdminRoute;
     },
     isAdministrator() {
       return Boolean(this.user && this.user.userRoles && this.user.userRoles.includes("administrator"));
@@ -140,12 +397,40 @@ export default {
       }
 
       return email.slice(atIndex + 1);
+    },
+    pageTitle() {
+      if (this.isAdminRoute) {
+        return "Admin Console";
+      }
+
+      if (this.isProfileRoute) {
+        return "Your Learning Profile";
+      }
+
+      return "Microsoft Cloud Learning";
+    },
+    currentUserKey() {
+      return this.user && this.user.userDetails ? this.user.userDetails.toLowerCase() : "anonymous";
+    },
+    enrolledCourseIds() {
+      return this.enrollments[this.currentUserKey] || [];
+    },
+    enrolledCourses() {
+      return this.courses.filter(course => this.enrolledCourseIds.includes(course.id));
+    },
+    downloadableCourses() {
+      return this.courses.filter(course => Boolean(course.materialPath));
     }
   },
   mounted() {
-    this.loadUser();
+    this.bootstrapApp();
   },
   methods: {
+    async bootstrapApp() {
+      this.loadCourses();
+      this.loadEnrollments();
+      await this.loadUser();
+    },
     async loadUser() {
       try {
         const response = await fetch("/.auth/me", {
@@ -166,11 +451,101 @@ export default {
         if (this.user) {
           this.avatarSrc = this.getOfficeAvatarUrl(this.user.userDetails);
         }
-      } catch (error) {
+      } catch (loadError) {
         this.error = "Unable to read sign-in state right now.";
       } finally {
         this.loading = false;
       }
+    },
+    loadCourses() {
+      const stored = window.localStorage.getItem(COURSE_STORAGE_KEY);
+      if (!stored) {
+        this.courses = DEFAULT_COURSES;
+        this.persistCourses();
+        return;
+      }
+
+      try {
+        this.courses = JSON.parse(stored);
+      } catch (parseError) {
+        this.courses = DEFAULT_COURSES;
+        this.persistCourses();
+      }
+    },
+    persistCourses() {
+      window.localStorage.setItem(COURSE_STORAGE_KEY, JSON.stringify(this.courses));
+    },
+    loadEnrollments() {
+      const stored = window.localStorage.getItem(ENROLLMENT_STORAGE_KEY);
+      if (!stored) {
+        this.enrollments = {};
+        return;
+      }
+
+      try {
+        this.enrollments = JSON.parse(stored);
+      } catch (parseError) {
+        this.enrollments = {};
+      }
+    },
+    persistEnrollments() {
+      window.localStorage.setItem(ENROLLMENT_STORAGE_KEY, JSON.stringify(this.enrollments));
+    },
+    isEnrolled(courseId) {
+      return this.enrolledCourseIds.includes(courseId);
+    },
+    toggleEnrollment(courseId) {
+      if (!this.isAuthenticated) {
+        return;
+      }
+
+      const current = [...this.enrolledCourseIds];
+      const next = current.includes(courseId)
+        ? current.filter(id => id !== courseId)
+        : [...current, courseId];
+
+      this.enrollments = {
+        ...this.enrollments,
+        [this.currentUserKey]: next
+      };
+      this.persistEnrollments();
+    },
+    editCourse(course) {
+      this.draftCourse = { ...course };
+    },
+    resetDraftCourse() {
+      this.draftCourse = emptyDraftCourse();
+    },
+    saveCourse() {
+      const normalized = {
+        ...this.draftCourse,
+        id: this.draftCourse.id || this.slugify(this.draftCourse.title)
+      };
+
+      const existingIndex = this.courses.findIndex(course => course.id === normalized.id);
+      if (existingIndex >= 0) {
+        this.courses.splice(existingIndex, 1, normalized);
+      } else {
+        this.courses.unshift(normalized);
+      }
+
+      this.courses = [...this.courses];
+      this.persistCourses();
+      this.resetDraftCourse();
+    },
+    deleteCourse(courseId) {
+      this.courses = this.courses.filter(course => course.id !== courseId);
+      this.persistCourses();
+
+      const nextEnrollments = {};
+      Object.keys(this.enrollments).forEach(key => {
+        nextEnrollments[key] = (this.enrollments[key] || []).filter(id => id !== courseId);
+      });
+      this.enrollments = nextEnrollments;
+      this.persistEnrollments();
+    },
+    slugify(value) {
+      return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
     },
     getOfficeAvatarUrl(userEmail) {
       return "https://outlook.office.com/owa/service.svc/s/GetPersonaPhoto?size=HR96x96&email=" + encodeURIComponent(userEmail);
@@ -205,10 +580,10 @@ export default {
 }
 
 .card {
-  width: min(680px, 100%);
+  width: min(1120px, 100%);
   padding: 2.5rem;
   border-radius: 24px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   box-shadow: 0 24px 80px rgba(16, 35, 61, 0.14);
   backdrop-filter: blur(8px);
 }
@@ -218,6 +593,21 @@ export default {
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #0a5fb4;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.05;
 }
 
 .badge {
@@ -246,6 +636,7 @@ export default {
   margin-top: 1.25rem;
   display: flex;
   gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .nav a {
@@ -262,51 +653,178 @@ export default {
   color: #fff;
 }
 
-.eyebrow {
-  margin: 0 0 0.75rem;
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #0a5fb4;
-}
-
-h1 {
-  margin: 0;
-  font-size: clamp(2rem, 4vw, 3.25rem);
-  line-height: 1.05;
-}
-
 .summary,
 .status,
-dd {
+.course-description,
+.hint,
+.identity-provider,
+.identity-roles {
   font-size: 1rem;
   line-height: 1.6;
 }
 
 .summary {
   margin: 1rem 0 0;
-  max-width: 52ch;
+  max-width: 72ch;
 }
 
 .status {
   margin: 1.5rem 0 0;
 }
 
-.status.compact {
-  margin-top: 1rem;
-}
-
 .error {
   color: #9f1239;
 }
 
-.profile {
+.panel-grid {
   margin-top: 1.75rem;
+  display: grid;
+  grid-template-columns: 1.1fr 1.3fr;
+  gap: 1.25rem;
+}
+
+.profile-layout {
+  grid-template-columns: 1.2fr 0.8fr;
+}
+
+.panel {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(16, 35, 61, 0.1);
+  border-radius: 18px;
+  padding: 1.35rem;
+}
+
+.panel h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.2rem;
+}
+
+.hero-panel p {
+  margin-top: 0.5rem;
+}
+
+.hero-stats {
+  margin-top: 1.25rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.hero-stats div {
+  border-radius: 16px;
+  padding: 0.9rem;
+  background: rgba(10, 95, 180, 0.08);
+}
+
+.hero-stats span {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.hero-stats p {
+  margin: 0.2rem 0 0;
+  color: #475569;
+}
+
+.course-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.compact-list {
+  gap: 0.8rem;
+}
+
+.course-card {
+  border: 1px solid rgba(16, 35, 61, 0.1);
+  border-radius: 16px;
+  padding: 1rem;
+  background: rgba(244, 247, 251, 0.72);
+}
+
+.compact-card {
+  background: #fff;
+}
+
+.course-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  align-items: flex-start;
+}
+
+.course-track {
+  margin: 0 0 0.25rem;
+  color: #0a5fb4;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.course-head h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.pill {
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  background: rgba(16, 35, 61, 0.08);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.course-description {
+  margin: 0.85rem 0 0;
+}
+
+.course-meta {
+  margin: 0.85rem 0 0;
+  padding-left: 1rem;
+  color: #475569;
+}
+
+.course-actions,
+.actions-row,
+.admin-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.3rem;
+  border-radius: 999px;
+  background: #0a5fb4;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.button.secondary {
+  background: #10233d;
+}
+
+.button.small {
+  padding: 0.65rem 0.95rem;
+  font-size: 0.9rem;
+}
+
+.hint {
+  margin: 0.9rem 0 0;
+  color: #475569;
 }
 
 .account-card {
-  margin-bottom: 1rem;
+  margin-top: 1.75rem;
   border: 1px solid rgba(16, 35, 61, 0.14);
   border-radius: 16px;
   overflow: hidden;
@@ -322,7 +840,8 @@ dd {
   border-bottom: 1px solid rgba(16, 35, 61, 0.1);
 }
 
-.tenant {
+.tenant,
+.identity-name {
   margin: 0;
   font-weight: 700;
 }
@@ -343,22 +862,14 @@ dd {
 }
 
 .identity-name {
-  margin: 0;
-  font-weight: 700;
   font-size: 1.08rem;
 }
 
-.identity-provider,
-.identity-roles {
-  margin: 0.35rem 0 0;
-  color: #334155;
-  line-height: 1.5;
-}
-
-.quick-links {
+.quick-links,
+.profile-links {
   margin-top: 0.75rem;
   display: grid;
-  gap: 0.35rem;
+  gap: 0.55rem;
 }
 
 .account-link {
@@ -366,35 +877,6 @@ dd {
   font-weight: 700;
   text-decoration: underline;
   text-underline-offset: 2px;
-}
-
-.admin-panel {
-  margin: 1.25rem 0 1.75rem;
-  border: 1px solid rgba(16, 35, 61, 0.14);
-  background: rgba(10, 95, 180, 0.06);
-  border-radius: 14px;
-  padding: 1rem;
-}
-
-.admin-panel h2 {
-  margin: 0;
-  font-size: 1rem;
-}
-
-.admin-panel p {
-  margin: 0.6rem 0 0;
-  line-height: 1.5;
-}
-
-.profile-links {
-  margin: 0 0 1.5rem;
-  display: grid;
-  gap: 0.65rem;
-}
-
-.profile-links h2 {
-  margin: 0;
-  font-size: 1rem;
 }
 
 .link-chip {
@@ -408,57 +890,43 @@ dd {
   padding: 0.55rem 0.95rem;
 }
 
-dl {
+.admin-form {
   display: grid;
-  gap: 1rem;
-  margin: 0 0 1.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
 }
 
-dt {
-  font-size: 0.8rem;
+.admin-form label {
+  display: grid;
+  gap: 0.35rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #4a6583;
+  color: #334155;
 }
 
-dd {
-  margin: 0.25rem 0 0;
+.admin-form label.full-width {
+  grid-column: 1 / -1;
 }
 
-.button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.85rem 1.3rem;
-  border-radius: 999px;
-  background: #0a5fb4;
-  color: #fff;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.button.secondary {
-  background: #10233d;
-}
-
-.actions-row {
-  margin-top: 1rem;
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.hint {
-  margin: 0.9rem 0 0;
-  color: #475569;
-  line-height: 1.5;
+.admin-form input,
+.admin-form textarea {
+  border: 1px solid rgba(16, 35, 61, 0.16);
+  border-radius: 12px;
+  padding: 0.8rem 0.9rem;
+  font: inherit;
 }
 
 code {
   padding: 0.1rem 0.35rem;
   border-radius: 6px;
   background: rgba(16, 35, 61, 0.08);
+}
+
+@media (max-width: 860px) {
+  .panel-grid,
+  .profile-layout,
+  .admin-form {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 640px) {
@@ -470,7 +938,14 @@ code {
     padding: 1.5rem;
   }
 
+  .head,
+  .course-head,
   .identity-block {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .hero-stats {
     grid-template-columns: 1fr;
   }
 }

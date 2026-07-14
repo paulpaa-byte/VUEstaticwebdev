@@ -1,33 +1,6 @@
 <template>
   <main class="shell">
     <section class="card">
-      <header class="head">
-        <div>
-          <p class="eyebrow">Microsoft Cloud Learning Hub</p>
-          <h1>{{ pageTitle }}</h1>
-        </div>
-        <span class="badge" :class="isAuthenticated ? 'ok' : 'neutral'">
-          {{ isAuthenticated ? "Signed in" : "Anonymous" }}
-        </span>
-      </header>
-
-      <nav class="nav">
-        <a href="/" :class="showHome ? 'active' : ''">Home</a>
-        <a href="/profile" :class="isProfileRoute ? 'active' : ''">Profile</a>
-        <a v-if="isAdministrator" href="/admin" :class="isAdminRoute ? 'active' : ''">Admin</a>
-      </nav>
-
-      <p class="summary" v-if="isAdminRoute">
-        Manage the Microsoft cloud training catalog. Changes are stored in this browser for the
-        signed-in admin session.
-      </p>
-      <p class="summary" v-else-if="isProfileRoute">
-        Review your registered courses, open training materials, and manage your Microsoft Entra
-        account links.
-      </p>
-      <template>
-        <main class="shell">
-          <section class="card">
             <header class="head">
               <div>
                 <p class="eyebrow">Microsoft Cloud Learning Hub</p>
@@ -60,7 +33,7 @@
             <p v-if="loading" class="status">Loading user and training catalog...</p>
             <p v-else-if="error" class="status error">{{ error }}</p>
 
-            <template v-else>
+          <template v-else>
               <section v-if="isAuthenticated" class="account-card">
                 <div class="account-top">
                   <p class="tenant">{{ tenantName }}</p>
@@ -356,12 +329,12 @@
                   <p class="hint">Only users with the administrator role can manage courses.</p>
                 </article>
               </section>
-            </template>
-          </section>
-        </main>
       </template>
+    </section>
+  </main>
+</template>
 
-      <script>
+<script>
       const DEFAULT_COURSES = [
         {
           id: "sharepoint-foundations",
@@ -793,9 +766,10 @@
           }
         }
       };
-      </script>
 
-      <style scoped>
+    </script>
+
+    <style scoped>
       .shell {
         min-height: 100vh;
         display: grid;
@@ -1187,4 +1161,4 @@
           grid-template-columns: 1fr;
         }
       }
-      </style>
+    </style>

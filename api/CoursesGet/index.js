@@ -1,7 +1,6 @@
-const { getCourses } = require("../shared/blobStore");
-
 module.exports = async function (context) {
   try {
+    const { getCourses } = require("../shared/blobStore");
     const courses = await getCourses();
     context.res = {
       status: 200,
@@ -13,7 +12,10 @@ module.exports = async function (context) {
   } catch (error) {
     context.res = {
       status: 500,
-      body: { error: error.message }
+      body: {
+        error: error.message || "Courses API failed.",
+        source: "CoursesGet"
+      }
     };
   }
 };

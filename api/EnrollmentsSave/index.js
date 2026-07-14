@@ -1,8 +1,8 @@
 const { requireAuthenticated, userKeyFromPrincipal } = require("../shared/auth");
-const { saveEnrollments } = require("../shared/blobStore");
 
 module.exports = async function (context, req) {
   try {
+    const { saveEnrollments } = require("../shared/blobStore");
     const principal = requireAuthenticated(req);
     const payload = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
     const courseIds = payload && Array.isArray(payload.courseIds) ? payload.courseIds : [];

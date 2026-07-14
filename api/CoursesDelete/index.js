@@ -1,8 +1,8 @@
 const { requireRole } = require("../shared/auth");
-const { getCourses, saveCourses } = require("../shared/blobStore");
 
 module.exports = async function (context, req) {
   try {
+    const { getCourses, saveCourses } = require("../shared/blobStore");
     requireRole(req, "administrator");
     const courseId = context.bindingData.id;
     const courses = await getCourses();

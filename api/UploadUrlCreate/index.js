@@ -1,8 +1,8 @@
 const { requireRole } = require("../shared/auth");
-const { createUploadUrl } = require("../shared/blobStore");
 
 module.exports = async function (context, req) {
   try {
+    const { createUploadUrl } = require("../shared/blobStore");
     requireRole(req, "administrator");
     const payload = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
     if (!payload || !payload.courseId || !payload.resourceType || !payload.fileName) {

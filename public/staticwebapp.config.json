@@ -17,6 +17,36 @@
       ]
     },
     {
+      "route": "/api/enrollments",
+      "allowedRoles": [
+        "authenticated"
+      ]
+    },
+    {
+      "route": "/api/enrollments/save",
+      "allowedRoles": [
+        "authenticated"
+      ]
+    },
+    {
+      "route": "/api/courses/save",
+      "allowedRoles": [
+        "administrator"
+      ]
+    },
+    {
+      "route": "/api/courses/delete/*",
+      "allowedRoles": [
+        "administrator"
+      ]
+    },
+    {
+      "route": "/api/assets/upload-url",
+      "allowedRoles": [
+        "administrator"
+      ]
+    },
+    {
       "route": "/admin*",
       "allowedRoles": [
         "administrator"
@@ -25,6 +55,9 @@
   ],
   "navigationFallback": {
     "rewrite": "/index.html"
+  },
+  "platform": {
+    "apiRuntime": "node:20"
   },
   "auth": {
     "identityProviders": {

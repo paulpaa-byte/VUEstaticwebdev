@@ -49,9 +49,9 @@ function getStorageAccountName() {
 }
 
 function getTokenCredential() {
-  const tenantId = process.env.AZURE_TENANT_ID;
-  const clientId = process.env.AZURE_CLIENT_ID;
-  const clientSecret = process.env.AZURE_CLIENT_SECRET;
+  const tenantId = process.env.STORAGE_TENANT_ID || process.env.AZURE_TENANT_ID;
+  const clientId = process.env.STORAGE_CLIENT_ID || process.env.AZURE_CLIENT_ID;
+  const clientSecret = process.env.STORAGE_CLIENT_SECRET || process.env.AZURE_CLIENT_SECRET;
 
   if (tenantId && clientId && clientSecret) {
     return new ClientSecretCredential(tenantId, clientId, clientSecret);
@@ -59,7 +59,7 @@ function getTokenCredential() {
 
   if (tenantId || clientId || clientSecret) {
     throw new Error(
-      "Set AZURE_TENANT_ID, AZURE_CLIENT_ID, and AZURE_CLIENT_SECRET together for Entra auth."
+      "Set STORAGE_TENANT_ID, STORAGE_CLIENT_ID, STORAGE_CLIENT_SECRET (or AZURE_* equivalents) together for Entra auth."
     );
   }
 

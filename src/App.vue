@@ -724,14 +724,15 @@
               const uploadResponse = await fetch(payload.uploadUrl, {
                 method: "PUT",
                 headers: {
-                  "x-ms-blob-type": "BlockBlob",
-                  "x-ms-blob-content-type": file.type || "application/octet-stream"
+                  "Content-Length": String(file.size),
+                  "Content-Range": `bytes 0-${file.size - 1}/${file.size}`,
+                  "Content-Type": file.type || "application/octet-stream"
                 },
                 body: file
               });
 
               if (!uploadResponse.ok) {
-                throw new Error("Blob upload failed.");
+                throw new Error("File upload failed.");
               }
 
               this.draftCourse[fieldKey] = payload.blobUrl;

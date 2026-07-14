@@ -1,41 +1,77 @@
 const {
   BlobServiceClient,
-  StorageSharedKeyCredential,
   generateBlobSASQueryParameters,
   BlobSASPermissions
 } = require("@azure/storage-blob");
+const { ClientSecretCredential, DefaultAzureCredential } = require("@azure/identity");
 
 const defaultCourses = require("./defaultCourses");
 
 const containerName = process.env.LEARNING_CONTENT_CONTAINER || "learning-content";
 const catalogBlobName = "catalog/courses.json";
-
-function getConnectionString() {
-  const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
-  if (!connectionString) {
-    throw new Error("AZURE_STORAGE_CONNECTION_STRING setting is missing.");
-  }
-
-  return connectionString;
-}
+let blobServiceClient;
 
 function parseConnectionString() {
-  const parts = getConnectionString().split(";").reduce((map, segment) => {
-    const [key, value] = segment.split("=");
-    if (key && value) {
-      map[key] = value;
+  const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING || "";
+  return connectionString.split(";").reduce((map, segment) => {
+    const [key, ...valueParts] = segment.split("=");
+    if (key && valueParts.length) {
+      map[key] = valueParts.join("=");
     }
     return map;
   }, {});
+}
 
-  return {
-    accountName: parts.AccountName,
-    accountKey: parts.AccountKey
-  };
+function getStorageAccountUrl() {
+  if (process.env.AZURE_STORAGE_ACCOUNT_URL) {
+    return process.env.AZURE_STORAGE_ACCOUNT_URL.replace(/\/$/, "");
+  }
+
+  const parts = parseConnectionString();
+  if (parts.BlobEndpoint) {
+    return parts.BlobEndpoint.replace(/\/$/, "");
+  }
+  if (parts.AccountName) {
+    return `https://${parts.AccountName}.blob.core.windows.net`;
+  }
+
+  throw new Error("AZURE_STORAGE_ACCOUNT_URL setting is missing.");
+}
+
+function getStorageAccountName() {
+  const fromConnectionString = parseConnectionString().AccountName;
+  if (fromConnectionString) {
+    return fromConnectionString;
+  }
+
+  const accountUrl = new URL(getStorageAccountUrl());
+  return accountUrl.hostname.split(".")[0];
+}
+
+function getTokenCredential() {
+  const tenantId = process.env.AZURE_TENANT_ID;
+  const clientId = process.env.AZURE_CLIENT_ID;
+  const clientSecret = process.env.AZURE_CLIENT_SECRET;
+
+  if (tenantId && clientId && clientSecret) {
+    return new ClientSecretCredential(tenantId, clientId, clientSecret);
+  }
+
+  if (tenantId || clientId || clientSecret) {
+    throw new Error(
+      "Set AZURE_TENANT_ID, AZURE_CLIENT_ID, and AZURE_CLIENT_SECRET together for Entra auth."
+    );
+  }
+
+  // Local development fallback when az login or other default credentials are available.
+  return new DefaultAzureCredential();
 }
 
 function getBlobServiceClient() {
-  return BlobServiceClient.fromConnectionString(getConnectionString());
+  if (!blobServiceClient) {
+    blobServiceClient = new BlobServiceClient(getStorageAccountUrl(), getTokenCredential());
+  }
+  return blobServiceClient;
 }
 
 async function getContainerClient() {
@@ -96,18 +132,21 @@ async function createUploadUrl({ courseId, resourceType, fileName, contentType }
   const blobName = `uploads/${safeCourse}/${resourceType}-${Date.now()}-${safeFileName}`;
   const blobClient = containerClient.getBlockBlobClient(blobName);
 
-  const { accountName, accountKey } = parseConnectionString();
-  const credential = new StorageSharedKeyCredential(accountName, accountKey);
+  const startsOn = new Date(Date.now() - 5 * 60 * 1000);
+  const expiresOn = new Date(Date.now() + 15 * 60 * 1000);
+  const userDelegationKey = await getBlobServiceClient().getUserDelegationKey(startsOn, expiresOn);
+
   const sas = generateBlobSASQueryParameters(
     {
       containerName,
       blobName,
       permissions: BlobSASPermissions.parse("cw"),
-      startsOn: new Date(Date.now() - 5 * 60 * 1000),
-      expiresOn: new Date(Date.now() + 15 * 60 * 1000),
+      startsOn,
+      expiresOn,
       contentType: contentType || "application/octet-stream"
     },
-    credential
+    userDelegationKey,
+    getStorageAccountName()
   ).toString();
 
   return {

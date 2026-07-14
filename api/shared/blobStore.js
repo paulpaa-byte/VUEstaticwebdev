@@ -1,4 +1,5 @@
 const { ClientSecretCredential } = require("@azure/identity");
+const nodeFetch = require("node-fetch");
 
 const defaultCourses = require("./defaultCourses");
 
@@ -49,8 +50,9 @@ async function getGraphAccessToken() {
 }
 
 async function graphRequest(path, options = {}) {
+  const request = typeof fetch === "function" ? fetch : nodeFetch;
   const token = await getGraphAccessToken();
-  const response = await fetch(`https://graph.microsoft.com/v1.0${path}`, {
+  const response = await request(`https://graph.microsoft.com/v1.0${path}`, {
     method: options.method || "GET",
     headers: {
       Authorization: `Bearer ${token}`,

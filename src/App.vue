@@ -589,6 +589,10 @@
               const payload = await this.apiFetch("/api/courses");
               this.courses = (payload && payload.courses ? payload.courses : DEFAULT_COURSES).map(course => this.normalizeCourse(course));
               this.writeLocalCourses(this.courses);
+              this.offlineMode = false;
+              if (this.error && this.error.includes("browser cache mode")) {
+                this.error = "";
+              }
             } catch (fetchError) {
               const localCourses = this.readLocalCourses();
               this.courses = (localCourses || DEFAULT_COURSES).map(course => this.normalizeCourse(course));
@@ -606,7 +610,7 @@
               this.writeLocalEnrollments(this.enrollments);
             } catch (fetchError) {
               this.enrollments = this.readLocalEnrollments();
-              this.enableLocalMode("Enrollment service is unavailable. Using browser cache mode.");
+              this.error = "Enrollment service is unavailable. Using browser cache mode for enrollments.";
             }
           },
           isEnrolled(courseId) {
@@ -627,18 +631,13 @@
               [this.currentUserKey]: next
             };
 
-            if (this.offlineMode) {
-              this.writeLocalEnrollments(this.enrollments);
-              return;
-            }
-
             try {
               await this.apiFetch("/api/enrollments/save", {
                 method: "POST",
                 body: JSON.stringify({ courseIds: next })
               });
             } catch (saveError) {
-              this.enableLocalMode("Enrollment service is unavailable. Saved changes in browser cache.");
+              this.error = "Enrollment service is unavailable. Saved changes in browser cache.";
             }
 
             this.writeLocalEnrollments(this.enrollments);
@@ -669,12 +668,6 @@
             });
 
             try {
-              if (this.offlineMode) {
-                this.upsertLocalCourse(normalized);
-                this.resetDraftCourse();
-                return;
-              }
-
               const payload = await this.apiFetch("/api/courses/save", {
                 method: "POST",
                 body: JSON.stringify({ course: normalized })
@@ -682,9 +675,10 @@
 
               this.courses = (payload && payload.courses ? payload.courses : []).map(course => this.normalizeCourse(course));
               this.writeLocalCourses(this.courses);
+              this.offlineMode = false;
               this.resetDraftCourse();
             } catch (saveError) {
-              this.enableLocalMode("Course API is unavailable. Saved changes in browser cache.");
+              this.error = "Course API is unavailable. Saved changes in browser cache.";
               this.upsertLocalCourse(normalized);
               this.resetDraftCourse();
             } finally {
@@ -693,11 +687,6 @@
           },
           async deleteCourse(courseId) {
             try {
-              if (this.offlineMode) {
-                this.removeLocalCourse(courseId);
-                return;
-              }
-
               const payload = await this.apiFetch("/api/courses/delete/" + encodeURIComponent(courseId), {
                 method: "DELETE"
               });
@@ -712,7 +701,7 @@
               this.enrollments = nextEnrollments;
               this.writeLocalEnrollments(this.enrollments);
             } catch (deleteError) {
-              this.enableLocalMode("Course API is unavailable. Saved deletion in browser cache.");
+              this.error = "Course API is unavailable. Saved deletion in browser cache.";
               this.removeLocalCourse(courseId);
             }
           },
@@ -744,11 +733,6 @@
             return this.uploadingField === fieldKey ? "Uploading..." : "Upload";
           },
           async uploadSelectedFile(fieldKey, resourceType) {
-            if (this.offlineMode) {
-              this.error = "Upload is disabled in browser cache mode. Enter a SharePoint or web URL manually.";
-              return;
-            }
-
             const file = this.selectedFiles[fieldKey];
             if (!file) {
               this.error = "Choose a file before uploading.";

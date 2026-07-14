@@ -452,6 +452,7 @@
             loading: true,
             user: null,
             error: "",
+            offlineMode: false,
             courses: [],
             enrollments: {},
             savingCourse: false,
@@ -587,17 +588,26 @@
             try {
               const payload = await this.apiFetch("/api/courses");
               this.courses = (payload && payload.courses ? payload.courses : DEFAULT_COURSES).map(course => this.normalizeCourse(course));
+              this.writeLocalCourses(this.courses);
             } catch (fetchError) {
-              this.courses = DEFAULT_COURSES.map(course => this.normalizeCourse(course));
-              this.error = "Course service is temporarily unavailable. Showing fallback catalog.";
+              const localCourses = this.readLocalCourses();
+              this.courses = (localCourses || DEFAULT_COURSES).map(course => this.normalizeCourse(course));
+              this.writeLocalCourses(this.courses);
+              this.enableLocalMode("Course service is temporarily unavailable. Running in browser cache mode.");
             }
           },
           async fetchEnrollments() {
-            const payload = await this.apiFetch("/api/enrollments");
-            this.enrollments = {
-              ...this.enrollments,
-              [this.currentUserKey]: payload && payload.courseIds ? payload.courseIds : []
-            };
+            try {
+              const payload = await this.apiFetch("/api/enrollments");
+              this.enrollments = {
+                ...this.enrollments,
+                [this.currentUserKey]: payload && payload.courseIds ? payload.courseIds : []
+              };
+              this.writeLocalEnrollments(this.enrollments);
+            } catch (fetchError) {
+              this.enrollments = this.readLocalEnrollments();
+              this.enableLocalMode("Enrollment service is unavailable. Using browser cache mode.");
+            }
           },
           isEnrolled(courseId) {
             return this.enrolledCourseIds.includes(courseId);
@@ -617,10 +627,21 @@
               [this.currentUserKey]: next
             };
 
-            await this.apiFetch("/api/enrollments/save", {
-              method: "POST",
-              body: JSON.stringify({ courseIds: next })
-            });
+            if (this.offlineMode) {
+              this.writeLocalEnrollments(this.enrollments);
+              return;
+            }
+
+            try {
+              await this.apiFetch("/api/enrollments/save", {
+                method: "POST",
+                body: JSON.stringify({ courseIds: next })
+              });
+            } catch (saveError) {
+              this.enableLocalMode("Enrollment service is unavailable. Saved changes in browser cache.");
+            }
+
+            this.writeLocalEnrollments(this.enrollments);
           },
           editCourse(course) {
             this.draftCourse = { ...course };
@@ -648,29 +669,52 @@
             });
 
             try {
+              if (this.offlineMode) {
+                this.upsertLocalCourse(normalized);
+                this.resetDraftCourse();
+                return;
+              }
+
               const payload = await this.apiFetch("/api/courses/save", {
                 method: "POST",
                 body: JSON.stringify({ course: normalized })
               });
 
               this.courses = (payload && payload.courses ? payload.courses : []).map(course => this.normalizeCourse(course));
+              this.writeLocalCourses(this.courses);
+              this.resetDraftCourse();
+            } catch (saveError) {
+              this.enableLocalMode("Course API is unavailable. Saved changes in browser cache.");
+              this.upsertLocalCourse(normalized);
               this.resetDraftCourse();
             } finally {
               this.savingCourse = false;
             }
           },
           async deleteCourse(courseId) {
-            const payload = await this.apiFetch("/api/courses/delete/" + encodeURIComponent(courseId), {
-              method: "DELETE"
-            });
+            try {
+              if (this.offlineMode) {
+                this.removeLocalCourse(courseId);
+                return;
+              }
 
-            this.courses = (payload && payload.courses ? payload.courses : []).map(course => this.normalizeCourse(course));
+              const payload = await this.apiFetch("/api/courses/delete/" + encodeURIComponent(courseId), {
+                method: "DELETE"
+              });
 
-            const nextEnrollments = {};
-            Object.keys(this.enrollments).forEach(key => {
-              nextEnrollments[key] = (this.enrollments[key] || []).filter(id => id !== courseId);
-            });
-            this.enrollments = nextEnrollments;
+              this.courses = (payload && payload.courses ? payload.courses : []).map(course => this.normalizeCourse(course));
+              this.writeLocalCourses(this.courses);
+
+              const nextEnrollments = {};
+              Object.keys(this.enrollments).forEach(key => {
+                nextEnrollments[key] = (this.enrollments[key] || []).filter(id => id !== courseId);
+              });
+              this.enrollments = nextEnrollments;
+              this.writeLocalEnrollments(this.enrollments);
+            } catch (deleteError) {
+              this.enableLocalMode("Course API is unavailable. Saved deletion in browser cache.");
+              this.removeLocalCourse(courseId);
+            }
           },
           slugify(value) {
             return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -700,6 +744,11 @@
             return this.uploadingField === fieldKey ? "Uploading..." : "Upload";
           },
           async uploadSelectedFile(fieldKey, resourceType) {
+            if (this.offlineMode) {
+              this.error = "Upload is disabled in browser cache mode. Enter a SharePoint or web URL manually.";
+              return;
+            }
+
             const file = this.selectedFiles[fieldKey];
             if (!file) {
               this.error = "Choose a file before uploading.";
@@ -744,6 +793,76 @@
             } finally {
               this.uploadingField = "";
             }
+          },
+          enableLocalMode(message) {
+            this.offlineMode = true;
+            this.error = message;
+          },
+          localCoursesKey() {
+            return "learninghub:courses";
+          },
+          localEnrollmentsKey() {
+            return "learninghub:enrollments";
+          },
+          readLocalCourses() {
+            try {
+              const payload = localStorage.getItem(this.localCoursesKey());
+              if (!payload) {
+                return null;
+              }
+              const parsed = JSON.parse(payload);
+              return Array.isArray(parsed) ? parsed : null;
+            } catch (readError) {
+              return null;
+            }
+          },
+          writeLocalCourses(courses) {
+            try {
+              localStorage.setItem(this.localCoursesKey(), JSON.stringify(courses || []));
+            } catch (writeError) {
+              // Ignore local storage write failures to avoid blocking UX.
+            }
+          },
+          readLocalEnrollments() {
+            try {
+              const payload = localStorage.getItem(this.localEnrollmentsKey());
+              if (!payload) {
+                return {};
+              }
+              const parsed = JSON.parse(payload);
+              return parsed && typeof parsed === "object" ? parsed : {};
+            } catch (readError) {
+              return {};
+            }
+          },
+          writeLocalEnrollments(enrollments) {
+            try {
+              localStorage.setItem(this.localEnrollmentsKey(), JSON.stringify(enrollments || {}));
+            } catch (writeError) {
+              // Ignore local storage write failures to avoid blocking UX.
+            }
+          },
+          upsertLocalCourse(course) {
+            const existingIndex = this.courses.findIndex(item => item.id === course.id);
+            if (existingIndex === -1) {
+              this.courses = [...this.courses, course];
+            } else {
+              const next = [...this.courses];
+              next.splice(existingIndex, 1, course);
+              this.courses = next;
+            }
+            this.writeLocalCourses(this.courses);
+          },
+          removeLocalCourse(courseId) {
+            this.courses = this.courses.filter(course => course.id !== courseId);
+            this.writeLocalCourses(this.courses);
+
+            const nextEnrollments = {};
+            Object.keys(this.enrollments).forEach(key => {
+              nextEnrollments[key] = (this.enrollments[key] || []).filter(id => id !== courseId);
+            });
+            this.enrollments = nextEnrollments;
+            this.writeLocalEnrollments(this.enrollments);
           },
           downloadTarget(course) {
             return course.pdfUrl || course.documentUrl || course.detailPath || "";

@@ -170,7 +170,15 @@ async function readJson(blobName, fallbackValue) {
 
   try {
     const content = await graphRequest(`/sites/${siteId}/drives/${driveId}/root:/${toDrivePath(blobName)}:/content`);
-    return JSON.parse(content);
+    if (typeof content === "string") {
+      return JSON.parse(content);
+    }
+
+    if (content && typeof content === "object") {
+      return content;
+    }
+
+    return fallbackValue;
   } catch (error) {
     if (error.statusCode === 404) {
       return fallbackValue;

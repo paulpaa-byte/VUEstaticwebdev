@@ -31,9 +31,9 @@
             </p>
 
             <p v-if="loading" class="status">Loading user and training catalog...</p>
-            <p v-else-if="error" class="status error">{{ error }}</p>
+            <p v-if="!loading && error" class="status error">{{ error }}</p>
 
-          <template v-else>
+            <template v-if="!loading">
               <section v-if="isAuthenticated" class="account-card">
                 <div class="account-top">
                   <p class="tenant">{{ tenantName }}</p>
@@ -529,10 +529,9 @@
                 await this.fetchEnrollments();
               }
             } catch (bootstrapError) {
-              if (!this.courses.length) {
-                this.courses = DEFAULT_COURSES.map(course => this.normalizeCourse(course));
+              if (!this.error) {
+                this.error = bootstrapError.message || "Unable to load the learning portal right now.";
               }
-              this.error = bootstrapError.message || "Unable to load the learning portal right now.";
             } finally {
               this.loading = false;
             }
@@ -590,7 +589,7 @@
               this.courses = (payload && payload.courses ? payload.courses : DEFAULT_COURSES).map(course => this.normalizeCourse(course));
             } catch (fetchError) {
               this.courses = DEFAULT_COURSES.map(course => this.normalizeCourse(course));
-              throw fetchError;
+              this.error = "Course service is temporarily unavailable. Showing fallback catalog.";
             }
           },
           async fetchEnrollments() {

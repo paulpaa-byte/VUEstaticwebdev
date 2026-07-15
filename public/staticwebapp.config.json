@@ -29,6 +29,12 @@
       ]
     },
     {
+      "route": "/api/profile-photo",
+      "allowedRoles": [
+        "authenticated"
+      ]
+    },
+    {
       "route": "/api/courses/save",
       "allowedRoles": [
         "administrator"

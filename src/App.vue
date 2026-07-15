@@ -217,11 +217,17 @@
                     </label>
                     <label>
                       Category
-                      <input v-model.trim="draftCourse.category" type="text" required>
+                      <select v-model="draftCourse.category" required>
+                        <option value="" disabled>Select category</option>
+                        <option v-for="category in categoryOptions" :key="category" :value="category">{{ category }}</option>
+                      </select>
                     </label>
                     <label>
                       Level
-                      <input v-model.trim="draftCourse.level" type="text" required>
+                      <select v-model="draftCourse.level" required>
+                        <option value="" disabled>Select level</option>
+                        <option v-for="level in levelOptions" :key="level" :value="level">{{ level }}</option>
+                      </select>
                     </label>
                     <label>
                       Duration
@@ -229,7 +235,10 @@
                     </label>
                     <label>
                       Format
-                      <input v-model.trim="draftCourse.format" type="text" required>
+                      <select v-model="draftCourse.format" required>
+                        <option value="" disabled>Select format</option>
+                        <option v-for="format in formatOptions" :key="format" :value="format">{{ format }}</option>
+                      </select>
                     </label>
                     <div class="asset-field full-width">
                       <label>
@@ -464,7 +473,6 @@
             viewAccountUrl: "https://myaccount.microsoft.com/",
             m365ProfileUrl: "https://www.office.com/profile",
             avatarSrc: "",
-            graphAvatarObjectUrl: "",
             loading: true,
             user: null,
             error: "",
@@ -479,6 +487,31 @@
               documentUrl: null,
               pdfUrl: null
             },
+            categoryOptions: [
+              "Cloud Infrastructure",
+              "Identity & Access",
+              "Security & Compliance",
+              "Collaboration & Productivity",
+              "Data & Analytics",
+              "DevOps & Automation",
+              "AI & Copilot",
+              "Endpoint Management"
+            ],
+            levelOptions: [
+              "Beginner",
+              "Intermediate",
+              "Advanced",
+              "Expert"
+            ],
+            formatOptions: [
+              "Self-paced eLearning",
+              "Instructor-led Virtual",
+              "Instructor-led In-person",
+              "Hands-on Lab",
+              "Workshop",
+              "Certification Prep",
+              "Webinar"
+            ],
             draftCourse: emptyDraftCourse()
           };
         },
@@ -538,12 +571,6 @@
         mounted() {
           this.bootstrapApp();
         },
-        beforeDestroy() {
-          if (this.graphAvatarObjectUrl) {
-            URL.revokeObjectURL(this.graphAvatarObjectUrl);
-            this.graphAvatarObjectUrl = "";
-          }
-        },
         methods: {
           async bootstrapApp() {
             try {
@@ -575,45 +602,13 @@
               const payload = await response.json();
               const authPayload = Array.isArray(payload) ? payload[0] : payload;
               const principal = authPayload ? authPayload.clientPrincipal : null;
-              const graphAccessToken = authPayload
-                ? (authPayload.accessToken || authPayload.access_token || "")
-                : "";
 
               this.user = principal && principal.userId ? principal : null;
               if (this.user) {
-                this.avatarSrc = this.getInitialsAvatarUrl(this.user.userDetails);
-                await this.loadGraphProfilePhoto(graphAccessToken);
+                this.avatarSrc = "/api/profile-photo";
               }
             } catch (loadError) {
               this.user = null;
-            }
-          },
-          async loadGraphProfilePhoto(accessToken) {
-            if (!accessToken || !this.user || !this.user.userDetails) {
-              this.avatarSrc = this.getOfficeAvatarUrl(this.user ? this.user.userDetails : "");
-              return;
-            }
-
-            try {
-              const response = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", {
-                headers: {
-                  Authorization: "Bearer " + accessToken
-                }
-              });
-
-              if (!response.ok) {
-                this.avatarSrc = this.getOfficeAvatarUrl(this.user.userDetails);
-                return;
-              }
-
-              const imageBlob = await response.blob();
-              if (this.graphAvatarObjectUrl) {
-                URL.revokeObjectURL(this.graphAvatarObjectUrl);
-              }
-              this.graphAvatarObjectUrl = URL.createObjectURL(imageBlob);
-              this.avatarSrc = this.graphAvatarObjectUrl;
-            } catch (graphPhotoError) {
-              this.avatarSrc = this.getOfficeAvatarUrl(this.user.userDetails);
             }
           },
           async apiFetch(url, options = {}) {
@@ -1322,11 +1317,13 @@
       }
 
       .admin-form input,
+      .admin-form select,
       .admin-form textarea {
         border: 1px solid rgba(16, 35, 61, 0.16);
         border-radius: 12px;
         padding: 0.8rem 0.9rem;
         font: inherit;
+        background: #fff;
       }
 
       code {

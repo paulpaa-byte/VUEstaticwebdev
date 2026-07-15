@@ -80,6 +80,29 @@ async function graphRequest(path, options = {}) {
   return response.text();
 }
 
+async function graphBinaryRequest(path, token) {
+  const request = typeof fetch === "function" ? fetch : nodeFetch;
+  const response = await request(`https://graph.microsoft.com/v1.0${path}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    const error = new Error(body || response.statusText);
+    error.statusCode = response.status;
+    throw error;
+  }
+
+  const arrayBuffer = await response.arrayBuffer();
+  return {
+    contentType: response.headers.get("content-type") || "image/jpeg",
+    content: Buffer.from(arrayBuffer)
+  };
+}
+
 function parseSiteUrl() {
   const url = new URL(getSiteUrl());
   return {
@@ -258,10 +281,32 @@ async function createUploadUrl({ courseId, resourceType, fileName, contentType }
   };
 }
 
+async function getUserPhoto({ userEmail, delegatedToken }) {
+  if (delegatedToken) {
+    try {
+      return await graphBinaryRequest("/me/photo/$value", delegatedToken);
+    } catch (delegatedError) {
+      if (![401, 403, 404].includes(delegatedError.statusCode)) {
+        throw delegatedError;
+      }
+    }
+  }
+
+  if (!userEmail) {
+    const missingUserError = new Error("No user email available for profile photo lookup.");
+    missingUserError.statusCode = 404;
+    throw missingUserError;
+  }
+
+  const appToken = await getGraphAccessToken();
+  return graphBinaryRequest(`/users/${encodeURIComponent(userEmail)}/photo/$value`, appToken);
+}
+
 module.exports = {
   createUploadUrl,
   getCourses,
   saveCourses,
   getEnrollments,
-  saveEnrollments
+  saveEnrollments,
+  getUserPhoto
 };

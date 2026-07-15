@@ -227,7 +227,8 @@ async function createUploadUrl({ courseId, resourceType, fileName, contentType }
   const driveId = await getDriveId();
   const safeCourse = (courseId || "course").replace(/[^a-zA-Z0-9-]/g, "-");
   const safeFileName = (fileName || "asset.bin").replace(/[^a-zA-Z0-9._-]/g, "-");
-  const filePath = `${sharePointRootFolder}/uploads/${safeCourse}/${resourceType}-${Date.now()}-${safeFileName}`;
+  const finalFileName = `${resourceType}-${Date.now()}-${safeFileName}`;
+  const filePath = `${sharePointRootFolder}/uploads/${safeCourse}/${finalFileName}`;
   const folderPath = filePath.slice(0, filePath.lastIndexOf("/"));
   await ensureFolder(folderPath);
 
@@ -238,7 +239,7 @@ async function createUploadUrl({ courseId, resourceType, fileName, contentType }
       body: JSON.stringify({
         item: {
           "@microsoft.graph.conflictBehavior": "replace",
-          name: safeFileName,
+          name: finalFileName,
           file: {}
         },
         deferCommit: false

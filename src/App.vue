@@ -18,7 +18,7 @@
             </nav>
 
             <p class="summary" v-if="isAdminRoute">
-              Manage the Microsoft cloud training catalog. Files are uploaded to Azure Blob Storage and
+              Manage the Microsoft cloud training catalog. Files are uploaded to SharePoint and
               course metadata is stored server-side through Azure Functions.
             </p>
             <p class="summary" v-else-if="isProfileRoute">

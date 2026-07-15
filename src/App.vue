@@ -754,21 +754,43 @@
                 })
               });
 
-              const uploadResponse = await fetch(payload.uploadUrl, {
-                method: "PUT",
-                headers: {
-                  "Content-Length": String(file.size),
-                  "Content-Range": `bytes 0-${file.size - 1}/${file.size}`,
-                  "Content-Type": file.type || "application/octet-stream"
-                },
-                body: file
-              });
+              const chunkSize = payload.maxChunkSize || 60 * 1024 * 1024;
+              const total = file.size;
+              let start = 0;
+              let uploadedFileUrl = payload.blobUrl;
 
-              if (!uploadResponse.ok) {
-                throw new Error("File upload failed.");
+              while (start < total) {
+                const end = Math.min(start + chunkSize, total);
+                const chunk = file.slice(start, end);
+                const uploadResponse = await fetch(payload.uploadUrl, {
+                  method: "PUT",
+                  headers: {
+                    "Content-Range": `bytes ${start}-${end - 1}/${total}`,
+                    "Content-Type": file.type || "application/octet-stream"
+                  },
+                  body: chunk
+                });
+
+                if (![200, 201, 202].includes(uploadResponse.status)) {
+                  const uploadErrorBody = await uploadResponse.text();
+                  throw new Error(uploadErrorBody || "File upload failed.");
+                }
+
+                if (uploadResponse.status === 200 || uploadResponse.status === 201) {
+                  try {
+                    const completedItem = await uploadResponse.json();
+                    if (completedItem && completedItem.webUrl) {
+                      uploadedFileUrl = completedItem.webUrl;
+                    }
+                  } catch (parseError) {
+                    // Final response can be empty; keep fallback URL.
+                  }
+                }
+
+                start = end;
               }
 
-              this.draftCourse[fieldKey] = payload.blobUrl;
+              this.draftCourse[fieldKey] = uploadedFileUrl;
               if (!this.draftCourse.downloadName) {
                 this.draftCourse.downloadName = file.name;
               }

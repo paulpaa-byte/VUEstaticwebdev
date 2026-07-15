@@ -207,8 +207,8 @@
                 <article v-if="isAdministrator" class="panel">
                   <h2>Admin console</h2>
                   <p class="hint compact-hint">
-                    Add course metadata and upload files to Azure Blob Storage. Relative paths are set
-                    automatically when an upload completes.
+                    Add course metadata and upload files to SharePoint. Upload a file to auto-fill each
+                    course resource URL.
                   </p>
                   <form class="admin-form" @submit.prevent="saveCourse">
                     <label>
@@ -231,57 +231,72 @@
                       Format
                       <input v-model.trim="draftCourse.format" type="text" required>
                     </label>
-                    <label>
-                      Course detail path or URL
-                      <input v-model.trim="draftCourse.detailPath" type="text" required>
-                    </label>
-                    <div class="upload-field">
+                    <div class="asset-field full-width">
                       <label>
-                        Detail file upload
-                        <input type="file" @change="setSelectedFile('detailPath', $event)">
+                        Course detail path or URL
+                        <input v-model.trim="draftCourse.detailPath" type="text" required placeholder="https://...">
                       </label>
-                      <button class="button small" type="button" @click="uploadSelectedFile('detailPath', 'details')">
-                        {{ uploadLabel('detailPath') }}
-                      </button>
+                      <div class="upload-inline">
+                        <label class="file-select">
+                          Detail file upload
+                          <input type="file" @change="setSelectedFile('detailPath', $event)">
+                        </label>
+                        <button class="button small" type="button" @click="uploadSelectedFile('detailPath', 'details')">
+                          {{ uploadLabel('detailPath') }}
+                        </button>
+                      </div>
+                      <p v-if="selectedFiles.detailPath" class="selected-file">Selected: {{ selectedFiles.detailPath.name }}</p>
                     </div>
-                    <label>
-                      Video URL
-                      <input v-model.trim="draftCourse.videoUrl" type="text" placeholder="https://...">
-                    </label>
-                    <div class="upload-field">
+
+                    <div class="asset-field full-width">
                       <label>
-                        Video upload
-                        <input type="file" accept="video/*" @change="setSelectedFile('videoUrl', $event)">
+                        Video URL
+                        <input v-model.trim="draftCourse.videoUrl" type="text" placeholder="https://...">
                       </label>
-                      <button class="button small" type="button" @click="uploadSelectedFile('videoUrl', 'videos')">
-                        {{ uploadLabel('videoUrl') }}
-                      </button>
+                      <div class="upload-inline">
+                        <label class="file-select">
+                          Video upload
+                          <input type="file" accept="video/*" @change="setSelectedFile('videoUrl', $event)">
+                        </label>
+                        <button class="button small" type="button" @click="uploadSelectedFile('videoUrl', 'videos')">
+                          {{ uploadLabel('videoUrl') }}
+                        </button>
+                      </div>
+                      <p v-if="selectedFiles.videoUrl" class="selected-file">Selected: {{ selectedFiles.videoUrl.name }}</p>
                     </div>
-                    <label>
-                      Document URL
-                      <input v-model.trim="draftCourse.documentUrl" type="text" placeholder="https://... or blob URL">
-                    </label>
-                    <div class="upload-field">
+
+                    <div class="asset-field full-width">
                       <label>
-                        Document upload
-                        <input type="file" @change="setSelectedFile('documentUrl', $event)">
+                        Document URL
+                        <input v-model.trim="draftCourse.documentUrl" type="text" placeholder="https://...">
                       </label>
-                      <button class="button small" type="button" @click="uploadSelectedFile('documentUrl', 'documents')">
-                        {{ uploadLabel('documentUrl') }}
-                      </button>
+                      <div class="upload-inline">
+                        <label class="file-select">
+                          Document upload
+                          <input type="file" @change="setSelectedFile('documentUrl', $event)">
+                        </label>
+                        <button class="button small" type="button" @click="uploadSelectedFile('documentUrl', 'documents')">
+                          {{ uploadLabel('documentUrl') }}
+                        </button>
+                      </div>
+                      <p v-if="selectedFiles.documentUrl" class="selected-file">Selected: {{ selectedFiles.documentUrl.name }}</p>
                     </div>
-                    <label>
-                      PDF URL
-                      <input v-model.trim="draftCourse.pdfUrl" type="text" placeholder="https://... or blob URL">
-                    </label>
-                    <div class="upload-field">
+
+                    <div class="asset-field full-width">
                       <label>
-                        PDF upload
-                        <input type="file" accept="application/pdf" @change="setSelectedFile('pdfUrl', $event)">
+                        PDF URL
+                        <input v-model.trim="draftCourse.pdfUrl" type="text" placeholder="https://...">
                       </label>
-                      <button class="button small" type="button" @click="uploadSelectedFile('pdfUrl', 'pdfs')">
-                        {{ uploadLabel('pdfUrl') }}
-                      </button>
+                      <div class="upload-inline">
+                        <label class="file-select">
+                          PDF upload
+                          <input type="file" accept="application/pdf" @change="setSelectedFile('pdfUrl', $event)">
+                        </label>
+                        <button class="button small" type="button" @click="uploadSelectedFile('pdfUrl', 'pdfs')">
+                          {{ uploadLabel('pdfUrl') }}
+                        </button>
+                      </div>
+                      <p v-if="selectedFiles.pdfUrl" class="selected-file">Selected: {{ selectedFiles.pdfUrl.name }}</p>
                     </div>
                     <label>
                       Download name
@@ -449,6 +464,7 @@
             viewAccountUrl: "https://myaccount.microsoft.com/",
             m365ProfileUrl: "https://www.office.com/profile",
             avatarSrc: "",
+            graphAvatarObjectUrl: "",
             loading: true,
             user: null,
             error: "",
@@ -522,6 +538,12 @@
         mounted() {
           this.bootstrapApp();
         },
+        beforeDestroy() {
+          if (this.graphAvatarObjectUrl) {
+            URL.revokeObjectURL(this.graphAvatarObjectUrl);
+            this.graphAvatarObjectUrl = "";
+          }
+        },
         methods: {
           async bootstrapApp() {
             try {
@@ -551,14 +573,47 @@
               }
 
               const payload = await response.json();
-              const principal = payload.clientPrincipal;
+              const authPayload = Array.isArray(payload) ? payload[0] : payload;
+              const principal = authPayload ? authPayload.clientPrincipal : null;
+              const graphAccessToken = authPayload
+                ? (authPayload.accessToken || authPayload.access_token || "")
+                : "";
 
               this.user = principal && principal.userId ? principal : null;
               if (this.user) {
-                this.avatarSrc = this.getOfficeAvatarUrl(this.user.userDetails);
+                this.avatarSrc = this.getInitialsAvatarUrl(this.user.userDetails);
+                await this.loadGraphProfilePhoto(graphAccessToken);
               }
             } catch (loadError) {
               this.user = null;
+            }
+          },
+          async loadGraphProfilePhoto(accessToken) {
+            if (!accessToken || !this.user || !this.user.userDetails) {
+              this.avatarSrc = this.getOfficeAvatarUrl(this.user ? this.user.userDetails : "");
+              return;
+            }
+
+            try {
+              const response = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", {
+                headers: {
+                  Authorization: "Bearer " + accessToken
+                }
+              });
+
+              if (!response.ok) {
+                this.avatarSrc = this.getOfficeAvatarUrl(this.user.userDetails);
+                return;
+              }
+
+              const imageBlob = await response.blob();
+              if (this.graphAvatarObjectUrl) {
+                URL.revokeObjectURL(this.graphAvatarObjectUrl);
+              }
+              this.graphAvatarObjectUrl = URL.createObjectURL(imageBlob);
+              this.avatarSrc = this.graphAvatarObjectUrl;
+            } catch (graphPhotoError) {
+              this.avatarSrc = this.getOfficeAvatarUrl(this.user.userDetails);
             }
           },
           async apiFetch(url, options = {}) {
@@ -1234,14 +1289,36 @@
         color: #334155;
       }
 
-      .upload-field {
-        display: grid;
-        gap: 0.5rem;
-        align-content: end;
+      .admin-form .full-width {
+        grid-column: 1 / -1;
       }
 
-      .admin-form label.full-width {
-        grid-column: 1 / -1;
+      .asset-field {
+        display: grid;
+        gap: 0.65rem;
+        border: 1px solid rgba(16, 35, 61, 0.08);
+        background: rgba(244, 247, 251, 0.55);
+        border-radius: 12px;
+        padding: 0.85rem;
+      }
+
+      .upload-inline {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .file-select {
+        display: grid;
+        gap: 0.35rem;
+        min-width: min(420px, 100%);
+      }
+
+      .selected-file {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #475569;
       }
 
       .admin-form input,

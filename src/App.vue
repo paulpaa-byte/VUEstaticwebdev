@@ -52,24 +52,34 @@
               <section v-if="showHome" class="home-experience">
                 <article class="hero-banner panel">
                   <div class="hero-layout">
-                    <div>
+                    <div class="hero-content-panel">
                       <p class="mini-kicker">Valuearc.net Consulting</p>
                       <h2>Consulting, talent, and delivery support for ambitious businesses</h2>
-                      <p>
+                      <p class="hero-copy">
                         Valuearc.net helps organizations solve growth, transformation, and hiring challenges
-                        with practical consulting expertise and specialist talent solutions.
+                        with practical consulting expertise, specialist search capability, and execution-focused support.
                       </p>
                       <div class="hero-proof-line">
-                        <span>Strategy</span>
-                        <span>Recruitment</span>
-                        <span>Transformation</span>
+                        <span>Strategy Advisory</span>
+                        <span>Talent Search</span>
+                        <span>Business Transformation</span>
                       </div>
                       <div class="hero-cta-row">
                         <a class="button" href="/services-portfolio">Explore Services</a>
                         <a class="button ghost" href="/contact">Talk to an Expert</a>
                       </div>
                       <div class="actions-row" v-if="!isAuthenticated">
-                        <a class="button secondary" href="/login">Sign in</a>
+                        <a class="hero-signin" href="/login">Sign in to track opportunities</a>
+                      </div>
+                      <div class="hero-trust-strip" aria-label="Valuearc strengths">
+                        <div>
+                          <strong>Enterprise-ready</strong>
+                          <span>Consulting engagements designed for measurable outcomes</span>
+                        </div>
+                        <div>
+                          <strong>Specialist network</strong>
+                          <span>Cross-functional talent across consulting, delivery, and operations</span>
+                        </div>
                       </div>
                     </div>
 
@@ -1343,11 +1353,43 @@
         align-items: center;
       }
 
+      .hero-content-panel {
+        padding: 1.5rem;
+        border-radius: 22px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.08));
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      }
+
+      .hero-copy {
+        margin-top: 0.9rem;
+        color: rgba(248, 251, 255, 0.92);
+        font-size: 1.02rem;
+      }
+
       .hero-cta-row {
         margin-top: 1rem;
         display: flex;
         gap: 0.7rem;
         flex-wrap: wrap;
+      }
+
+      .hero-banner .button {
+        min-width: 180px;
+        box-shadow: 0 10px 24px rgba(6, 24, 58, 0.2);
+      }
+
+      .hero-signin {
+        color: #d9ecff;
+        font-weight: 700;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(217, 236, 255, 0.45);
+        width: fit-content;
+      }
+
+      .hero-signin:hover {
+        color: #ffffff;
+        border-bottom-color: rgba(255, 255, 255, 0.8);
       }
 
       .hero-proof-line {
@@ -1364,6 +1406,29 @@
         font-size: 0.82rem;
         font-weight: 700;
         background: rgba(255, 255, 255, 0.08);
+      }
+
+      .hero-trust-strip {
+        margin-top: 1.2rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+
+      .hero-trust-strip div {
+        padding-top: 0.85rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.16);
+      }
+
+      .hero-trust-strip strong,
+      .hero-trust-strip span {
+        display: block;
+      }
+
+      .hero-trust-strip span {
+        margin-top: 0.25rem;
+        font-size: 0.88rem;
+        color: rgba(232, 242, 255, 0.88);
       }
 
       .button.ghost {
@@ -1924,6 +1989,10 @@
           grid-template-columns: 1fr;
         }
 
+        .hero-trust-strip {
+          grid-template-columns: 1fr;
+        }
+
         .hero-photo-grid,
         .hero-metrics-home {
           grid-template-columns: 1fr 1fr;
@@ -1961,6 +2030,10 @@
         .hero-photo-grid,
         .hero-metrics-home {
           grid-template-columns: 1fr;
+        }
+
+        .hero-content-panel {
+          padding: 1rem;
         }
       }
     </style>

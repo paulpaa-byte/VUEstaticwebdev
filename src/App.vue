@@ -6,15 +6,23 @@
                 <p class="eyebrow">Valuearc.net</p>
                 <h1>{{ pageTitle }}</h1>
               </div>
-              <span class="badge" :class="isAuthenticated ? 'ok' : 'neutral'">
-                {{ isAuthenticated ? "Signed in" : "Anonymous" }}
-              </span>
+              <div class="header-actions">
+                <span class="badge" :class="isAuthenticated ? 'ok' : 'neutral'">
+                  {{ isAuthenticated ? "Signed in" : "Guest" }}
+                </span>
+                <a v-if="!isAuthenticated" class="employee-login" href="/login">Employee Login</a>
+                <a v-else class="employee-login" href="/profile">Employee Login</a>
+                <a v-if="isAdministrator" class="employee-link" href="/admin">Admin</a>
+              </div>
             </header>
 
             <nav class="nav">
               <a href="/" :class="showHome ? 'active' : ''">Home</a>
-              <a href="/profile" :class="isProfileRoute ? 'active' : ''">Profile</a>
-              <a v-if="isAdministrator" href="/admin" :class="isAdminRoute ? 'active' : ''">Admin</a>
+              <a href="/about" :class="isAboutRoute ? 'active' : ''">About Us</a>
+              <a href="/vision" :class="isVisionRoute ? 'active' : ''">Vision</a>
+              <a href="/contact" :class="isContactRoute ? 'active' : ''">Contact</a>
+              <a href="/news-media" :class="isNewsRoute ? 'active' : ''">News & Media</a>
+              <a href="/services-portfolio" :class="isPortfolioRoute ? 'active' : ''">Services</a>
             </nav>
 
             <p class="summary" v-if="isAdminRoute">
@@ -69,7 +77,7 @@
                         <a class="button ghost" href="/contact">Talk to an Expert</a>
                       </div>
                       <div class="actions-row" v-if="!isAuthenticated">
-                        <a class="hero-signin" href="/login">Sign in to track opportunities</a>
+                        <a class="hero-signin" href="/login">Employee login to track opportunities</a>
                       </div>
                       <div class="hero-trust-strip" aria-label="Valuearc strengths">
                         <div>
@@ -1215,6 +1223,14 @@
         gap: 1rem;
       }
 
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
       .eyebrow {
         margin: 0 0 0.75rem;
         font-size: 0.85rem;
@@ -1252,20 +1268,45 @@
         color: #1e40af;
       }
 
+      .employee-login,
+      .employee-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 0.55rem 0.95rem;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .employee-login {
+        background: #10233d;
+        color: #fff;
+        box-shadow: 0 10px 20px rgba(16, 35, 61, 0.12);
+      }
+
+      .employee-link {
+        background: rgba(10, 95, 180, 0.12);
+        color: #0a5fb4;
+      }
+
       .nav {
         margin-top: 1.25rem;
         display: flex;
         gap: 0.75rem;
         flex-wrap: wrap;
+        padding-bottom: 0.35rem;
+        border-bottom: 1px solid rgba(16, 35, 61, 0.08);
       }
 
       .nav a {
         text-decoration: none;
-        color: #0a5fb4;
+        color: #33506f;
         font-weight: 700;
-        padding: 0.35rem 0.65rem;
+        padding: 0.45rem 0.75rem;
         border-radius: 999px;
-        background: rgba(10, 95, 180, 0.1);
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(16, 35, 61, 0.08);
       }
 
       .nav a.active {
@@ -1320,6 +1361,7 @@
         color: #f8fbff;
         border: 0;
         overflow: hidden;
+        padding: 1.6rem;
       }
 
       .hero-banner h2 {
@@ -1356,14 +1398,15 @@
       .hero-content-panel {
         padding: 1.5rem;
         border-radius: 22px;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.08));
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+        background: linear-gradient(180deg, rgba(248, 251, 255, 0.98), rgba(232, 240, 250, 0.96));
+        border: 1px solid rgba(206, 223, 244, 0.95);
+        box-shadow: 0 24px 40px rgba(5, 24, 58, 0.16);
+        color: #10233d;
       }
 
       .hero-copy {
         margin-top: 0.9rem;
-        color: rgba(248, 251, 255, 0.92);
+        color: #4a607c;
         font-size: 1.02rem;
       }
 
@@ -1379,17 +1422,27 @@
         box-shadow: 0 10px 24px rgba(6, 24, 58, 0.2);
       }
 
+      .hero-content-panel .button {
+        box-shadow: 0 12px 26px rgba(10, 95, 180, 0.18);
+      }
+
+      .hero-content-panel .button.ghost {
+        background: #fff;
+        color: #10233d;
+        border: 1px solid rgba(16, 35, 61, 0.12);
+      }
+
       .hero-signin {
-        color: #d9ecff;
+        color: #0a5fb4;
         font-weight: 700;
         text-decoration: none;
-        border-bottom: 1px solid rgba(217, 236, 255, 0.45);
+        border-bottom: 1px solid rgba(10, 95, 180, 0.32);
         width: fit-content;
       }
 
       .hero-signin:hover {
-        color: #ffffff;
-        border-bottom-color: rgba(255, 255, 255, 0.8);
+        color: #073d75;
+        border-bottom-color: rgba(7, 61, 117, 0.8);
       }
 
       .hero-proof-line {
@@ -1400,12 +1453,13 @@
       }
 
       .hero-proof-line span {
-        border: 1px solid rgba(255, 255, 255, 0.26);
+        border: 1px solid rgba(10, 95, 180, 0.18);
         border-radius: 999px;
         padding: 0.35rem 0.7rem;
         font-size: 0.82rem;
         font-weight: 700;
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(10, 95, 180, 0.08);
+        color: #0a5fb4;
       }
 
       .hero-trust-strip {
@@ -1417,7 +1471,7 @@
 
       .hero-trust-strip div {
         padding-top: 0.85rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.16);
+        border-top: 1px solid rgba(16, 35, 61, 0.08);
       }
 
       .hero-trust-strip strong,
@@ -1428,7 +1482,7 @@
       .hero-trust-strip span {
         margin-top: 0.25rem;
         font-size: 0.88rem;
-        color: rgba(232, 242, 255, 0.88);
+        color: #5b718c;
       }
 
       .button.ghost {
@@ -2021,6 +2075,10 @@
         .identity-block {
           display: grid;
           grid-template-columns: 1fr;
+        }
+
+        .header-actions {
+          justify-content: flex-start;
         }
 
         .hero-stats {

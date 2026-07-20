@@ -278,6 +278,20 @@
                     <li>New partnership launched to support digital, analytics, and transformation hiring programs.</li>
                     <li>Leadership webinar announced on future-ready workforce planning and capability building.</li>
                   </ul>
+                  <div class="social-links">
+                    <a class="link-chip" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">
+                      Follow on Facebook
+                    </a>
+                    <a class="link-chip" href="https://twitter.com/" target="_blank" rel="noopener noreferrer">
+                      Follow on Twitter
+                    </a>
+                    <a class="link-chip" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">
+                      Follow on Instagram
+                    </a>
+                    <a class="link-chip" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">
+                      Follow on YouTube
+                    </a>
+                  </div>
                 </article>
               </section>
 
@@ -792,7 +806,7 @@
               return "Job Consultancy Services Portfolio";
             }
 
-            return "Valuearc.net Careers";
+            return "Valuearc | The Inovation Center";
           },
           currentUserKey() {
             return this.user && this.user.userDetails ? this.user.userDetails.toLowerCase() : "anonymous";
@@ -1774,6 +1788,13 @@
         color: #334155;
         display: grid;
         gap: 0.5rem;
+      }
+
+      .social-links {
+        margin-top: 1rem;
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
       }
 
       .portfolio-grid {

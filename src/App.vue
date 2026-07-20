@@ -2104,6 +2104,15 @@
           min-height: 200px;
         }
 
+        .panel,
+        .hero-content-panel,
+        .spotlight-card,
+        .portfolio-item,
+        .course-card,
+        .asset-field {
+          padding: 1rem;
+        }
+
         .upload-inline,
         .course-actions,
         .admin-actions {
@@ -2141,32 +2150,63 @@
           font-size: clamp(1.8rem, 10vw, 2.5rem);
         }
 
-        .nav {
+        .summary,
+        .status,
+        .course-description,
+        .hint,
+        .identity-provider,
+        .identity-roles {
+          font-size: 0.95rem;
+        }
+
+        .header-actions {
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: 1fr;
+          width: 100%;
+        }
+
+        .nav {
+          display: flex;
+          flex-wrap: nowrap;
+          overflow-x: auto;
           gap: 0.55rem;
+          padding-bottom: 0.55rem;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+
+        .nav::-webkit-scrollbar {
+          display: none;
         }
 
         .nav a {
           text-align: center;
+          white-space: nowrap;
+          flex: 0 0 auto;
         }
 
         .hero-stats {
           grid-template-columns: 1fr;
         }
 
-        .hero-photo-grid,
-        .hero-metrics-home {
-          grid-template-columns: 1fr;
+        .hero-layout {
+          gap: 0.75rem;
+        }
+
+        .hero-banner h2 {
+          font-size: clamp(1.55rem, 8vw, 2rem);
         }
 
         .hero-content-panel {
-          padding: 1rem;
+          padding: 0.95rem;
+        }
+
+        .hero-copy {
+          font-size: 0.95rem;
         }
 
         .hero-cta-row,
         .hero-proof-line,
-        .hero-metrics-home,
         .social-links {
           grid-template-columns: 1fr;
         }
@@ -2177,6 +2217,59 @@
         .quick-links,
         .profile-links {
           display: grid;
+        }
+
+        .hero-cta-row {
+          gap: 0.6rem;
+        }
+
+        .hero-proof-line {
+          gap: 0.45rem;
+        }
+
+        .hero-trust-strip {
+          gap: 0.55rem;
+        }
+
+        .hero-visuals {
+          gap: 0.5rem;
+        }
+
+        .hero-photo-main {
+          min-height: 180px;
+        }
+
+        .hero-photo-grid {
+          display: none;
+        }
+
+        .hero-metrics-home {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .hero-metrics div {
+          padding: 0.65rem;
+        }
+
+        .spotlight-panel,
+        .sectors-panel,
+        .home-links-panel {
+          gap: 0.75rem;
+        }
+
+        .spotlight-card h3,
+        .sector-card h3,
+        .home-link-card h3 {
+          font-size: 0.98rem;
+        }
+
+        .sector-card {
+          min-height: 180px;
+        }
+
+        .course-card,
+        .panel {
+          border-radius: 14px;
         }
 
         .hero-proof-line span,
@@ -2194,19 +2287,32 @@
       }
 
       @media (max-width: 420px) {
-        .nav {
-          grid-template-columns: 1fr;
+        .card {
+          padding: 0.85rem;
         }
 
         .hero-layout,
-        .hero-photo-grid,
         .hero-metrics-home,
         .hero-trust-strip {
           grid-template-columns: 1fr;
         }
 
         .hero-banner {
-          padding: 1rem;
+          padding: 0.85rem;
+        }
+
+        .hero-content-panel,
+        .panel,
+        .course-card,
+        .asset-field {
+          padding: 0.85rem;
+        }
+
+        .button,
+        .button.small {
+          min-width: 0;
+          padding-left: 1rem;
+          padding-right: 1rem;
         }
       }
     </style>

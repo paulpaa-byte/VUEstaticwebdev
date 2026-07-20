@@ -82,14 +82,51 @@
 
               <section v-if="showHome" class="home-experience">
                 <article class="hero-banner panel">
-                  <p class="mini-kicker">Valuearc.net Consulting</p>
-                  <h2>Build teams that deliver measurable business impact</h2>
-                  <p>
-                    Select a section to learn more about Valuearc.net services, company vision,
-                    and opportunities.
-                  </p>
-                  <div class="actions-row" v-if="!isAuthenticated">
-                    <a class="button" href="/login">Sign in</a>
+                  <div class="hero-layout">
+                    <div>
+                      <p class="mini-kicker">Valuearc.net Consulting</p>
+                      <h2>Build teams that deliver measurable business impact</h2>
+                      <p>
+                        Strategic consulting and specialist hiring for enterprises building modern,
+                        resilient, and high-performing organizations.
+                      </p>
+                      <div class="hero-cta-row">
+                        <a class="button" href="/services-portfolio">Explore Services</a>
+                        <a class="button ghost" href="/contact">Talk to an Expert</a>
+                      </div>
+                      <div class="actions-row" v-if="!isAuthenticated">
+                        <a class="button secondary" href="/login">Sign in</a>
+                      </div>
+                    </div>
+
+                    <div class="hero-graphic" aria-hidden="true">
+                      <div class="graphic-card">
+                        <p>Delivery Confidence</p>
+                        <strong>96%</strong>
+                        <span>Client mandate completion</span>
+                      </div>
+                      <div class="graphic-bars">
+                        <span class="bar bar-a"></span>
+                        <span class="bar bar-b"></span>
+                        <span class="bar bar-c"></span>
+                        <span class="bar bar-d"></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="hero-metrics">
+                    <div>
+                      <strong>{{ jobOpenings.length }}</strong>
+                      <p>Open opportunities</p>
+                    </div>
+                    <div>
+                      <strong>40+</strong>
+                      <p>Consulting specialists</p>
+                    </div>
+                    <div>
+                      <strong>12</strong>
+                      <p>Industry verticals served</p>
+                    </div>
                   </div>
                 </article>
 
@@ -1174,10 +1211,11 @@
 
       .hero-banner {
         background:
-          linear-gradient(135deg, rgba(6, 39, 91, 0.94), rgba(12, 76, 145, 0.92)),
-          radial-gradient(circle at top right, rgba(255, 255, 255, 0.2), transparent 40%);
+          radial-gradient(circle at 88% 10%, rgba(130, 218, 255, 0.24), transparent 34%),
+          linear-gradient(135deg, rgba(4, 34, 83, 0.97), rgba(9, 78, 154, 0.95));
         color: #f8fbff;
         border: 0;
+        overflow: hidden;
       }
 
       .hero-banner h2 {
@@ -1199,6 +1237,102 @@
         opacity: 0.95;
       }
 
+      .hero-layout {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .hero-cta-row {
+        margin-top: 1rem;
+        display: flex;
+        gap: 0.7rem;
+        flex-wrap: wrap;
+      }
+
+      .button.ghost {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.36);
+        color: #f8fbff;
+      }
+
+      .hero-graphic {
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 16px;
+        padding: 0.95rem;
+        background: rgba(2, 20, 52, 0.44);
+        backdrop-filter: blur(2px);
+      }
+
+      .graphic-card p,
+      .graphic-card span {
+        margin: 0;
+        opacity: 0.9;
+      }
+
+      .graphic-card strong {
+        display: block;
+        margin: 0.2rem 0;
+        font-size: 2rem;
+        letter-spacing: 0.01em;
+      }
+
+      .graphic-bars {
+        margin-top: 0.9rem;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.45rem;
+        align-items: end;
+        min-height: 84px;
+      }
+
+      .bar {
+        display: block;
+        border-radius: 8px 8px 4px 4px;
+        background: linear-gradient(180deg, rgba(104, 214, 255, 0.95), rgba(26, 149, 226, 0.9));
+      }
+
+      .bar-a {
+        height: 38px;
+      }
+
+      .bar-b {
+        height: 65px;
+      }
+
+      .bar-c {
+        height: 52px;
+      }
+
+      .bar-d {
+        height: 78px;
+      }
+
+      .hero-metrics {
+        margin-top: 1rem;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.7rem;
+      }
+
+      .hero-metrics div {
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        border-radius: 12px;
+        padding: 0.7rem;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .hero-metrics strong {
+        font-size: 1.4rem;
+      }
+
+      .hero-metrics p {
+        margin: 0.2rem 0 0;
+        font-size: 0.88rem;
+        opacity: 0.95;
+      }
+
       .home-links-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1210,15 +1344,16 @@
         text-decoration: none;
         border: 1px solid rgba(16, 35, 61, 0.12);
         border-radius: 14px;
-        padding: 1rem;
-        background: rgba(244, 247, 251, 0.68);
+        padding: 1.05rem;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(240, 246, 254, 0.95));
         color: #10233d;
-        transition: transform 140ms ease, box-shadow 140ms ease;
+        transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
       }
 
       .home-link-card:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 8px 24px rgba(16, 35, 61, 0.12);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 26px rgba(16, 35, 61, 0.14);
+        border-color: rgba(10, 95, 180, 0.42);
       }
 
       .home-link-card h3 {
@@ -1542,6 +1677,11 @@
         .panel-grid,
         .profile-layout,
         .admin-form {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-layout,
+        .hero-metrics {
           grid-template-columns: 1fr;
         }
 

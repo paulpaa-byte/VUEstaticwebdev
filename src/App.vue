@@ -65,18 +65,13 @@
                 </div>
               </section>
 
-              <section v-if="showHome" class="panel-grid home-grid">
-                <article class="panel hero-panel">
-                  <h2>Job Openings</h2>
+              <section v-if="showHome" class="home-experience">
+                <article class="hero-banner panel">
+                  <p class="mini-kicker">Valuearc.net Consulting</p>
+                  <h2>Build teams that deliver measurable business impact</h2>
                   <p>
-                    Discover active positions across technology, operations, and consulting teams.
-                    Every role includes expected level, function, and engagement format.
-                  </p>
-                  <div class="actions-row" v-if="!isAuthenticated">
-                    <a class="button" href="/login">Sign in</a>
-                  </div>
-                  <p v-if="!isAuthenticated" class="hint">
-                    Sign in to track your shortlist and manage your applications.
+                    Valuearc.net connects organizations with high-performing talent across strategy,
+                    technology, and operations. Explore our services, latest insights, and open opportunities.
                   </p>
                   <div class="hero-stats">
                     <div>
@@ -85,17 +80,87 @@
                     </div>
                     <div>
                       <span>{{ categoryOptions.length }}</span>
-                      <p>Job categories</p>
+                      <p>Practice areas</p>
                     </div>
                     <div>
                       <span>{{ formatOptions.length }}</span>
                       <p>Engagement models</p>
                     </div>
                   </div>
+                  <div class="actions-row" v-if="!isAuthenticated">
+                    <a class="button" href="/login">Sign in</a>
+                  </div>
                 </article>
 
-                <article class="panel">
-                  <h2>Open Roles</h2>
+                <nav class="section-nav panel" aria-label="Homepage sections">
+                  <a href="#about">About Us</a>
+                  <a href="#vision">Vision</a>
+                  <a href="#contact">Contact</a>
+                  <a href="#news">News and Media</a>
+                  <a href="#portfolio">Services Portfolio</a>
+                  <a href="#jobs">Job Openings</a>
+                </nav>
+
+                <article id="about" class="panel section-panel">
+                  <h2>About Us</h2>
+                  <p>
+                    Valuearc.net is an advisory and recruitment consultancy focused on business transformation,
+                    specialist hiring, and workforce modernization. We partner with enterprises and growth-stage
+                    firms to attract talent that can execute strategic goals.
+                  </p>
+                </article>
+
+                <article id="vision" class="panel section-panel">
+                  <h2>Vision</h2>
+                  <p>
+                    To become the most trusted consulting and talent partner by combining deep domain expertise,
+                    transparent hiring practices, and measurable value delivery for clients and candidates.
+                  </p>
+                </article>
+
+                <article id="contact" class="panel section-panel">
+                  <h2>Contact</h2>
+                  <div class="profile-links">
+                    <a class="link-chip" href="mailto:careers@valuearc.net">careers@valuearc.net</a>
+                    <a class="link-chip" href="tel:+18005550199">+1 (800) 555-0199</a>
+                    <a class="link-chip" href="mailto:media@valuearc.net">media@valuearc.net</a>
+                    <span class="hint">Business hours: Monday to Friday, 9:00 AM to 6:00 PM</span>
+                  </div>
+                </article>
+
+                <article id="news" class="panel section-panel">
+                  <h2>News and Media</h2>
+                  <ul class="news-list">
+                    <li>Valuearc.net publishes quarterly consulting talent trend report.</li>
+                    <li>New partnership launched for digital and analytics hiring programs.</li>
+                    <li>Leadership webinar announced: Future-ready workforce planning.</li>
+                  </ul>
+                </article>
+
+                <article id="portfolio" class="panel section-panel">
+                  <h2>Job Consultancy Services Portfolio</h2>
+                  <div class="portfolio-grid">
+                    <div class="portfolio-item">
+                      <h3>Executive Search</h3>
+                      <p>C-level and leadership mandates for strategic functions.</p>
+                    </div>
+                    <div class="portfolio-item">
+                      <h3>Permanent Hiring</h3>
+                      <p>End-to-end sourcing and placement for full-time roles.</p>
+                    </div>
+                    <div class="portfolio-item">
+                      <h3>Contract Staffing</h3>
+                      <p>Agile workforce support for project and delivery teams.</p>
+                    </div>
+                    <div class="portfolio-item">
+                      <h3>Campus and Early Careers</h3>
+                      <p>Graduate hiring pipelines and internship conversion programs.</p>
+                    </div>
+                  </div>
+                </article>
+
+                <article id="jobs" class="panel section-panel">
+                  <h2>Job Openings</h2>
                   <div class="course-list">
                     <article v-for="job in jobOpenings" :key="job.id" class="course-card">
                       <div class="course-head">
@@ -115,69 +180,13 @@
 
                       <div class="course-actions">
                         <a class="link-chip" :href="job.detailsUrl" target="_blank" rel="noopener noreferrer">
-                          View job details
+                          View details
                         </a>
                         <a class="link-chip" :href="job.detailsUrl" target="_blank" rel="noopener noreferrer">
                           Apply now
                         </a>
                       </div>
                     </article>
-                  </div>
-                </article>
-
-                <article class="panel info-panel">
-                  <h2>About Us</h2>
-                  <p>
-                    We are a job consultancy and talent enablement partner helping companies hire
-                    skilled professionals and helping candidates find growth-focused opportunities.
-                  </p>
-                </article>
-
-                <article class="panel info-panel">
-                  <h2>Vision</h2>
-                  <p>
-                    Build a trusted, inclusive hiring ecosystem where employers and candidates connect
-                    faster through transparent processes and expert guidance.
-                  </p>
-                </article>
-
-                <article class="panel info-panel">
-                  <h2>Contact</h2>
-                  <div class="profile-links">
-                    <a class="link-chip" href="mailto:careers@contoso-consultancy.com">careers@contoso-consultancy.com</a>
-                    <a class="link-chip" href="tel:+18005550199">+1 (800) 555-0199</a>
-                    <span class="hint">Mon-Fri | 9:00 AM - 6:00 PM</span>
-                  </div>
-                </article>
-
-                <article class="panel info-panel">
-                  <h2>News and Media</h2>
-                  <ul class="news-list">
-                    <li>Q3 hiring report published with role-wise market benchmarks.</li>
-                    <li>New strategic partnership launched for campus recruitment services.</li>
-                    <li>Upcoming webinar: Resume strategy and interview preparation.</li>
-                  </ul>
-                </article>
-
-                <article class="panel info-panel full-span">
-                  <h2>Job Consultancy Services Portfolio</h2>
-                  <div class="portfolio-grid">
-                    <div class="portfolio-item">
-                      <h3>Executive Search</h3>
-                      <p>Leadership hiring for specialized and strategic roles.</p>
-                    </div>
-                    <div class="portfolio-item">
-                      <h3>Contract Staffing</h3>
-                      <p>Flexible workforce solutions for short and medium-term needs.</p>
-                    </div>
-                    <div class="portfolio-item">
-                      <h3>Permanent Recruitment</h3>
-                      <p>End-to-end sourcing, screening, and selection support.</p>
-                    </div>
-                    <div class="portfolio-item">
-                      <h3>Career Advisory</h3>
-                      <p>Candidate coaching, resume shaping, and interview readiness.</p>
-                    </div>
                   </div>
                 </article>
               </section>
@@ -1115,8 +1124,57 @@
         grid-template-columns: 1.2fr 0.8fr;
       }
 
-      .home-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .home-experience {
+        margin-top: 1.75rem;
+        display: grid;
+        gap: 1.15rem;
+      }
+
+      .hero-banner {
+        background:
+          linear-gradient(135deg, rgba(6, 39, 91, 0.94), rgba(12, 76, 145, 0.92)),
+          radial-gradient(circle at top right, rgba(255, 255, 255, 0.2), transparent 40%);
+        color: #f8fbff;
+        border: 0;
+      }
+
+      .hero-banner h2 {
+        margin: 0.5rem 0 0;
+        font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+        line-height: 1.15;
+      }
+
+      .hero-banner p {
+        max-width: 74ch;
+      }
+
+      .mini-kicker {
+        margin: 0;
+        font-size: 0.78rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-weight: 700;
+        opacity: 0.95;
+      }
+
+      .section-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+      }
+
+      .section-nav a {
+        text-decoration: none;
+        font-weight: 700;
+        color: #0a5fb4;
+        border: 1px solid rgba(10, 95, 180, 0.3);
+        border-radius: 999px;
+        padding: 0.5rem 0.85rem;
+        background: #fff;
+      }
+
+      .section-panel {
+        scroll-margin-top: 1.25rem;
       }
 
       .panel {
@@ -1161,14 +1219,6 @@
       .hero-stats p {
         margin: 0.2rem 0 0;
         color: #475569;
-      }
-
-      .info-panel {
-        min-height: 180px;
-      }
-
-      .full-span {
-        grid-column: 1 / -1;
       }
 
       .news-list {
@@ -1436,6 +1486,11 @@
         .portfolio-grid {
           grid-template-columns: 1fr;
         }
+
+        .section-nav {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+        }
       }
 
       @media (max-width: 640px) {
@@ -1455,6 +1510,10 @@
         }
 
         .hero-stats {
+          grid-template-columns: 1fr;
+        }
+
+        .section-nav {
           grid-template-columns: 1fr;
         }
       }

@@ -3,7 +3,7 @@
     <section class="card">
             <header class="head">
               <div>
-                <p class="eyebrow">Microsoft Cloud Learning Hub</p>
+                <p class="eyebrow">Valuearc.net</p>
                 <h1>{{ pageTitle }}</h1>
               </div>
               <span class="badge" :class="isAuthenticated ? 'ok' : 'neutral'">
@@ -26,8 +26,8 @@
               account links.
             </p>
             <p class="summary" v-else>
-              Browse Microsoft cloud learning paths, sign in with your organization account, and
-              register for the training courses you want to complete.
+              Explore current job openings, connect with our consultants, and follow company
+              updates from one place.
             </p>
 
             <p v-if="loading" class="status">Loading user and training catalog...</p>
@@ -65,80 +65,119 @@
                 </div>
               </section>
 
-              <section v-if="showHome" class="panel-grid">
+              <section v-if="showHome" class="panel-grid home-grid">
                 <article class="panel hero-panel">
-                  <h2>Training catalog</h2>
+                  <h2>Job Openings</h2>
                   <p>
-                    Build skills across SharePoint, Exchange Online, Teams, Entra ID, Defender, Intune,
-                    and other Microsoft cloud technologies.
+                    Discover active positions across technology, operations, and consulting teams.
+                    Every role includes expected level, function, and engagement format.
                   </p>
                   <div class="actions-row" v-if="!isAuthenticated">
                     <a class="button" href="/login">Sign in</a>
                   </div>
                   <p v-if="!isAuthenticated" class="hint">
-                    Need access? Ask your tenant administrator to create or invite your account.
+                    Sign in to track your shortlist and manage your applications.
                   </p>
-                  <div v-else class="hero-stats">
+                  <div class="hero-stats">
                     <div>
-                      <span>{{ courses.length }}</span>
-                      <p>Available courses</p>
+                      <span>{{ jobOpenings.length }}</span>
+                      <p>Open positions</p>
                     </div>
                     <div>
-                      <span>{{ enrolledCourses.length }}</span>
-                      <p>Registered courses</p>
+                      <span>{{ categoryOptions.length }}</span>
+                      <p>Job categories</p>
                     </div>
                     <div>
-                      <span>{{ downloadableCourses.length }}</span>
-                      <p>Downloads ready</p>
+                      <span>{{ formatOptions.length }}</span>
+                      <p>Engagement models</p>
                     </div>
                   </div>
                 </article>
 
                 <article class="panel">
-                  <h2>Featured courses</h2>
+                  <h2>Open Roles</h2>
                   <div class="course-list">
-                    <article v-for="course in courses" :key="course.id" class="course-card">
+                    <article v-for="job in jobOpenings" :key="job.id" class="course-card">
                       <div class="course-head">
                         <div>
-                          <p class="course-track">{{ course.category }}</p>
-                          <h3>{{ course.title }}</h3>
+                          <p class="course-track">{{ job.department }}</p>
+                          <h3>{{ job.title }}</h3>
                         </div>
-                        <span class="pill">{{ course.level }}</span>
+                        <span class="pill">{{ job.level }}</span>
                       </div>
 
-                      <p class="course-description">{{ course.description }}</p>
+                      <p class="course-description">{{ job.summary }}</p>
 
                       <ul class="course-meta">
-                        <li>Format: {{ course.format }}</li>
-                        <li>Duration: {{ course.duration }}</li>
+                        <li>Work model: {{ job.workModel }}</li>
+                        <li>Location: {{ job.location }}</li>
                       </ul>
 
                       <div class="course-actions">
-                        <a v-if="course.detailPath" class="link-chip" :href="course.detailPath" target="_blank" rel="noopener noreferrer">
-                          Course details
+                        <a class="link-chip" :href="job.detailsUrl" target="_blank" rel="noopener noreferrer">
+                          View job details
                         </a>
-                        <a v-if="course.videoUrl" class="link-chip" :href="course.videoUrl" target="_blank" rel="noopener noreferrer">
-                          Video
+                        <a class="link-chip" :href="job.detailsUrl" target="_blank" rel="noopener noreferrer">
+                          Apply now
                         </a>
-                        <a v-if="course.documentUrl" class="link-chip" :href="course.documentUrl" target="_blank" rel="noopener noreferrer">
-                          Document
-                        </a>
-                        <a v-if="course.pdfUrl" class="link-chip" :href="course.pdfUrl" target="_blank" rel="noopener noreferrer">
-                          PDF
-                        </a>
-                        <a v-if="downloadTarget(course)" class="link-chip" :href="downloadTarget(course)" :download="course.downloadName">
-                          Download
-                        </a>
-                        <button
-                          v-if="isAuthenticated"
-                          class="button small"
-                          type="button"
-                          @click="toggleEnrollment(course.id)"
-                        >
-                          {{ isEnrolled(course.id) ? 'Unregister' : 'Register course' }}
-                        </button>
                       </div>
                     </article>
+                  </div>
+                </article>
+
+                <article class="panel info-panel">
+                  <h2>About Us</h2>
+                  <p>
+                    We are a job consultancy and talent enablement partner helping companies hire
+                    skilled professionals and helping candidates find growth-focused opportunities.
+                  </p>
+                </article>
+
+                <article class="panel info-panel">
+                  <h2>Vision</h2>
+                  <p>
+                    Build a trusted, inclusive hiring ecosystem where employers and candidates connect
+                    faster through transparent processes and expert guidance.
+                  </p>
+                </article>
+
+                <article class="panel info-panel">
+                  <h2>Contact</h2>
+                  <div class="profile-links">
+                    <a class="link-chip" href="mailto:careers@contoso-consultancy.com">careers@contoso-consultancy.com</a>
+                    <a class="link-chip" href="tel:+18005550199">+1 (800) 555-0199</a>
+                    <span class="hint">Mon-Fri | 9:00 AM - 6:00 PM</span>
+                  </div>
+                </article>
+
+                <article class="panel info-panel">
+                  <h2>News and Media</h2>
+                  <ul class="news-list">
+                    <li>Q3 hiring report published with role-wise market benchmarks.</li>
+                    <li>New strategic partnership launched for campus recruitment services.</li>
+                    <li>Upcoming webinar: Resume strategy and interview preparation.</li>
+                  </ul>
+                </article>
+
+                <article class="panel info-panel full-span">
+                  <h2>Job Consultancy Services Portfolio</h2>
+                  <div class="portfolio-grid">
+                    <div class="portfolio-item">
+                      <h3>Executive Search</h3>
+                      <p>Leadership hiring for specialized and strategic roles.</p>
+                    </div>
+                    <div class="portfolio-item">
+                      <h3>Contract Staffing</h3>
+                      <p>Flexible workforce solutions for short and medium-term needs.</p>
+                    </div>
+                    <div class="portfolio-item">
+                      <h3>Permanent Recruitment</h3>
+                      <p>End-to-end sourcing, screening, and selection support.</p>
+                    </div>
+                    <div class="portfolio-item">
+                      <h3>Career Advisory</h3>
+                      <p>Candidate coaching, resume shaping, and interview readiness.</p>
+                    </div>
                   </div>
                 </article>
               </section>
@@ -553,7 +592,7 @@
               return "Your Learning Profile";
             }
 
-            return "Microsoft Cloud Learning";
+            return "Valuearc.net Careers";
           },
           currentUserKey() {
             return this.user && this.user.userDetails ? this.user.userDetails.toLowerCase() : "anonymous";
@@ -566,6 +605,18 @@
           },
           downloadableCourses() {
             return this.courses.filter(course => Boolean(this.downloadTarget(course)));
+          },
+          jobOpenings() {
+            return this.courses.map(course => ({
+              id: course.id,
+              title: course.title,
+              department: course.category || "General",
+              level: course.level || "Open",
+              workModel: course.format || "Full-time",
+              location: course.duration || "Remote / Hybrid",
+              summary: course.description || "Explore this role and apply through the details page.",
+              detailsUrl: course.detailPath || "/"
+            }));
           }
         },
         mounted() {
@@ -1064,6 +1115,10 @@
         grid-template-columns: 1.2fr 0.8fr;
       }
 
+      .home-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
       .panel {
         background: rgba(255, 255, 255, 0.96);
         border: 1px solid rgba(16, 35, 61, 0.1);
@@ -1105,6 +1160,45 @@
 
       .hero-stats p {
         margin: 0.2rem 0 0;
+        color: #475569;
+      }
+
+      .info-panel {
+        min-height: 180px;
+      }
+
+      .full-span {
+        grid-column: 1 / -1;
+      }
+
+      .news-list {
+        margin: 0.2rem 0 0;
+        padding-left: 1.2rem;
+        color: #334155;
+        display: grid;
+        gap: 0.5rem;
+      }
+
+      .portfolio-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.8rem;
+      }
+
+      .portfolio-item {
+        border: 1px solid rgba(16, 35, 61, 0.1);
+        border-radius: 14px;
+        padding: 0.8rem;
+        background: rgba(244, 247, 251, 0.75);
+      }
+
+      .portfolio-item h3 {
+        margin: 0 0 0.35rem;
+        font-size: 1rem;
+      }
+
+      .portfolio-item p {
+        margin: 0;
         color: #475569;
       }
 
@@ -1336,6 +1430,10 @@
         .panel-grid,
         .profile-layout,
         .admin-form {
+          grid-template-columns: 1fr;
+        }
+
+        .portfolio-grid {
           grid-template-columns: 1fr;
         }
       }

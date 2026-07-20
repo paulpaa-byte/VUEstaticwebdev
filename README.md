@@ -1,63 +1,102 @@
-# Vue Basic
+# Valuearc.net Careers Portal (Vue + Azure Static Web Apps)
 
-[Azure Static Web Apps](https://docs.microsoft.com/azure/static-web-apps/overview) allows you to easily build [Vue.js](https://vuejs.org/) apps in minutes. Use this repo with the [Vue quickstart](https://docs.microsoft.com/azure/static-web-apps/getting-started?tabs=vue) to build and customize a new static site.
+This project is a Vue 2 learning portal deployed on Azure Static Web Apps with:
 
-## Microsoft Entra ID authentication
+1. Microsoft Entra sign-in via SWA auth routes.
+2. Role-based admin access through the administrator custom role.
+3. Server-backed catalog/enrollment APIs.
+4. SharePoint-based backend persistence for catalog/enrollment data and uploaded assets.
+5. Browser-cache fallback mode when backend APIs are unavailable.
 
-This app is configured for tenant-restricted Microsoft Entra ID authentication in Azure Static Web Apps.
+## Architecture
 
-### Azure prerequisites
+1. Frontend: Vue CLI app in src.
+2. SWA config: public/staticwebapp.config.json.
+3. API: Node-based functions in api.
+4. Persistence layer: SharePoint via Microsoft Graph in api/shared/blobStore.js.
 
-1. Use an Azure Static Web Apps Standard plan. Custom identity providers are not available on the Free plan.
-2. Create a Microsoft Entra app registration for the site.
-3. Add this redirect URI to the app registration:
+## Authentication and Roles
 
-```text
-https://<your-static-web-app-domain>/.auth/login/aad/callback
-```
+### Sign-in provider settings (SWA)
 
-4. Create a client secret for the app registration.
-5. In the Static Web App resource, add these application settings:
+Set these in Azure Static Web App environment variables:
 
-```text
-AZURE_CLIENT_ID=<application-client-id>
-AZURE_CLIENT_SECRET=<client-secret-value>
-```
+1. AZURE_CLIENT_ID
+2. AZURE_CLIENT_SECRET
 
-6. Replace `<TENANT_ID>` in [public/staticwebapp.config.json](./public/staticwebapp.config.json) with your Microsoft Entra tenant ID.
-7. Keep the app registration audience tenant-specific so only users from your tenant can sign in.
+The login callback URI must exist in the Entra app registration:
 
-### Behavior
+1. https://<your-static-web-app-domain>/.auth/login/aad/callback
 
-- All routes require an authenticated user.
-- Unauthenticated requests are redirected to `/.auth/login/aad`.
-- The Vue app reads the signed-in principal from `/.auth/me` and shows the active user.
-- Signing out goes through `/.auth/logout`.
+### Admin role
 
-## Project setup
+The admin UI is visible only when the signed-in user has the role name administrator.
+
+Assign this through Static Web App Role management invitation flow and validate in:
+
+1. /.auth/me
+
+## SharePoint Backend Configuration
+
+Set these in Azure Static Web App environment variables:
+
+1. SP_SITE_URL
+2. SP_LIBRARY_NAME
+3. SHAREPOINT_ROOT_FOLDER (optional, defaults to learninghub)
+4. STORAGE_TENANT_ID
+5. STORAGE_CLIENT_ID
+6. STORAGE_CLIENT_SECRET
+
+For the storage identity app registration:
+
+1. Grant Microsoft Graph application permission Sites.Selected (or Sites.ReadWrite.All for broader access).
+2. Grant admin consent.
+3. If using Sites.Selected, grant site-level permission to the target SharePoint site.
+
+## Local Development
+
+Install frontend dependencies:
 
 ```bash
 npm install
 ```
 
-### Compiles and hot-reloads for development
+Install API dependencies:
+
+```bash
+cd api
+npm install
+cd ..
+```
+
+Run frontend locally:
 
 ```bash
 npm run serve
 ```
 
-### Compiles and minifies for production
+Build production bundle:
 
 ```bash
 npm run build
 ```
 
-### Lints and fixes files
+## Deployment
 
-```bash
-npm run lint
-```
+Deployment runs from GitHub Actions workflow in .github/workflows.
 
-### Customize configuration
+Push to main to trigger production deployment.
 
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Resilience Behavior
+
+If /api/courses or enrollment APIs fail, the app switches to browser-cache mode:
+
+1. Course catalog is read/written from localStorage.
+2. Enrollment changes are stored locally.
+3. Upload API remains disabled until backend is available.
+
+## Security Notes
+
+1. Rotate client secrets if they are ever exposed.
+2. Prefer least-privilege Graph permissions and site-scoped access.
+3. Avoid storing sensitive values in source control.

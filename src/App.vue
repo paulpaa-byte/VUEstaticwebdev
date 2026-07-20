@@ -49,37 +49,6 @@
             <p v-if="!loading && error" class="status error">{{ error }}</p>
 
             <template v-if="!loading">
-              <section v-if="isAuthenticated" class="account-card">
-                <div class="account-top">
-                  <p class="tenant">{{ tenantName }}</p>
-                  <a class="account-link" href="/logout">Sign out</a>
-                </div>
-
-                <div class="identity-block">
-                  <img
-                    class="avatar"
-                    :src="avatarSrc"
-                    :alt="user.userDetails + ' profile photo'"
-                    @error="handleAvatarError"
-                  >
-
-                  <div>
-                    <p class="identity-name">{{ user.userDetails }}</p>
-                    <p class="identity-provider">Provider: {{ user.identityProvider }}</p>
-                    <p class="identity-roles">Roles: {{ user.userRoles.join(', ') }}</p>
-
-                    <div class="quick-links">
-                      <a class="account-link" :href="viewAccountUrl" target="_blank" rel="noopener noreferrer">
-                        View account
-                      </a>
-                      <a class="account-link" :href="m365ProfileUrl" target="_blank" rel="noopener noreferrer">
-                        My Microsoft 365 profile
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
               <section v-if="showHome" class="home-experience">
                 <article class="hero-banner panel">
                   <div class="hero-layout">
@@ -161,13 +130,15 @@
                 <article class="panel section-panel">
                   <h2>About Us</h2>
                   <p>
-                    Valuearc.net is an advisory and recruitment consultancy focused on business transformation,
-                    specialist hiring, and workforce modernization. We partner with enterprises and growth-stage
-                    firms to attract talent that can execute strategic goals.
+                    Valuearc.net is a consulting and talent advisory firm committed to helping organizations
+                    solve business challenges with the right combination of strategy, execution support, and
+                    specialist hiring. We work with clients to strengthen delivery capability, improve workforce
+                    planning, and place professionals who can contribute from day one.
                   </p>
                   <p>
-                    Our teams combine industry knowledge, data-driven sourcing, and practical implementation
-                    experience to help clients build resilient and high-performance teams.
+                    Our team combines market knowledge, disciplined search practices, and practical business
+                    insight to support both employers and candidates. The result is a more thoughtful, reliable,
+                    and outcome-focused consulting experience.
                   </p>
                 </article>
               </section>
@@ -176,8 +147,14 @@
                 <article class="panel section-panel">
                   <h2>Vision</h2>
                   <p>
-                    To become the most trusted consulting and talent partner by combining deep domain expertise,
-                    transparent hiring practices, and measurable value delivery for clients and candidates.
+                    Our vision is to become a trusted consulting and recruitment partner for organizations that
+                    value quality, transparency, and measurable results. We aim to build long-term relationships
+                    by helping clients create high-performing teams and helping professionals find meaningful,
+                    growth-oriented opportunities.
+                  </p>
+                  <p>
+                    We believe the future belongs to firms that combine people expertise with operational clarity,
+                    digital readiness, and a strong commitment to delivery excellence.
                   </p>
                 </article>
               </section>
@@ -185,6 +162,11 @@
               <section v-if="isContactRoute" class="panel-grid single-panel-layout">
                 <article class="panel section-panel">
                   <h2>Contact</h2>
+                  <p>
+                    We welcome discussions with employers, hiring managers, candidates, and strategic partners.
+                    Whether you need recruitment support, consulting guidance, or more information about our
+                    services, our team is ready to assist.
+                  </p>
                   <div class="profile-links">
                     <a class="link-chip" href="mailto:careers@valuearc.net">careers@valuearc.net</a>
                     <a class="link-chip" href="tel:+18005550199">+1 (800) 555-0199</a>
@@ -197,10 +179,15 @@
               <section v-if="isNewsRoute" class="panel-grid single-panel-layout">
                 <article class="panel section-panel">
                   <h2>News and Media</h2>
+                  <p>
+                    This section highlights company updates, market insights, partnership announcements,
+                    and leadership perspectives from Valuearc.net. It reflects the conversations and trends
+                    that shape our consulting and talent advisory work.
+                  </p>
                   <ul class="news-list">
-                    <li>Valuearc.net publishes quarterly consulting talent trend report.</li>
-                    <li>New partnership launched for digital and analytics hiring programs.</li>
-                    <li>Leadership webinar announced: Future-ready workforce planning.</li>
+                    <li>Valuearc.net publishes a quarterly consulting and hiring market outlook report.</li>
+                    <li>New partnership launched to support digital, analytics, and transformation hiring programs.</li>
+                    <li>Leadership webinar announced on future-ready workforce planning and capability building.</li>
                   </ul>
                 </article>
               </section>
@@ -208,28 +195,64 @@
               <section v-if="isPortfolioRoute" class="panel-grid single-panel-layout">
                 <article class="panel section-panel">
                   <h2>Job Consultancy Services Portfolio</h2>
+                  <p>
+                    Our portfolio is designed to support organizations across the full hiring lifecycle,
+                    from strategic leadership mandates to scalable recruitment programs and early-career talent
+                    development. Every engagement is tailored to business goals, speed requirements, and market complexity.
+                  </p>
                   <div class="portfolio-grid">
                     <div class="portfolio-item">
                       <h3>Executive Search</h3>
-                      <p>C-level and leadership mandates for strategic functions.</p>
+                      <p>Leadership search for strategic, confidential, and business-critical mandates.</p>
                     </div>
                     <div class="portfolio-item">
                       <h3>Permanent Hiring</h3>
-                      <p>End-to-end sourcing and placement for full-time roles.</p>
+                      <p>End-to-end sourcing, screening, and placement for permanent roles.</p>
                     </div>
                     <div class="portfolio-item">
                       <h3>Contract Staffing</h3>
-                      <p>Agile workforce support for project and delivery teams.</p>
+                      <p>Flexible workforce support for project delivery, transformation, and specialist needs.</p>
                     </div>
                     <div class="portfolio-item">
                       <h3>Campus and Early Careers</h3>
-                      <p>Graduate hiring pipelines and internship conversion programs.</p>
+                      <p>Graduate hiring pipelines, internship programs, and early-career talent development.</p>
                     </div>
                   </div>
                 </article>
               </section>
 
               <section v-if="isProfileRoute" class="panel-grid profile-layout">
+                <section v-if="isAuthenticated" class="account-card profile-account-card">
+                  <div class="account-top">
+                    <p class="tenant">{{ tenantName }}</p>
+                    <a class="account-link" href="/logout">Sign out</a>
+                  </div>
+
+                  <div class="identity-block">
+                    <img
+                      class="avatar"
+                      :src="avatarSrc"
+                      :alt="user.userDetails + ' profile photo'"
+                      @error="handleAvatarError"
+                    >
+
+                    <div>
+                      <p class="identity-name">{{ user.userDetails }}</p>
+                      <p class="identity-provider">Provider: {{ user.identityProvider }}</p>
+                      <p class="identity-roles">Roles: {{ user.userRoles.join(', ') }}</p>
+
+                      <div class="quick-links">
+                        <a class="account-link" :href="viewAccountUrl" target="_blank" rel="noopener noreferrer">
+                          View account
+                        </a>
+                        <a class="account-link" :href="m365ProfileUrl" target="_blank" rel="noopener noreferrer">
+                          My Microsoft 365 profile
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
                 <article class="panel">
                   <h2>Your registered courses</h2>
                   <p v-if="!isAuthenticated" class="hint">
@@ -1551,6 +1574,11 @@
         border-radius: 16px;
         overflow: hidden;
         background: #fff;
+      }
+
+      .profile-account-card {
+        grid-column: 1 / -1;
+        margin-top: 0;
       }
 
       .account-top {

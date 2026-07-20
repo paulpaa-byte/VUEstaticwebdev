@@ -25,6 +25,21 @@
               Review your registered courses, open training materials, and manage your Microsoft Entra
               account links.
             </p>
+            <p class="summary" v-else-if="isAboutRoute">
+              Learn more about Valuearc.net and how we support clients with consulting and talent solutions.
+            </p>
+            <p class="summary" v-else-if="isVisionRoute">
+              Explore the long-term direction and strategic vision that guides our consulting practice.
+            </p>
+            <p class="summary" v-else-if="isContactRoute">
+              Reach our team for hiring support, partnership conversations, and candidate assistance.
+            </p>
+            <p class="summary" v-else-if="isNewsRoute">
+              Follow our latest announcements, industry updates, and media mentions.
+            </p>
+            <p class="summary" v-else-if="isPortfolioRoute">
+              Review our job consultancy services portfolio and engagement models.
+            </p>
             <p class="summary" v-else>
               Explore current job openings, connect with our consultants, and follow company
               updates from one place.
@@ -70,55 +85,68 @@
                   <p class="mini-kicker">Valuearc.net Consulting</p>
                   <h2>Build teams that deliver measurable business impact</h2>
                   <p>
-                    Valuearc.net connects organizations with high-performing talent across strategy,
-                    technology, and operations. Explore our services, latest insights, and open opportunities.
+                    Select a section to learn more about Valuearc.net services, company vision,
+                    and opportunities.
                   </p>
-                  <div class="hero-stats">
-                    <div>
-                      <span>{{ jobOpenings.length }}</span>
-                      <p>Open positions</p>
-                    </div>
-                    <div>
-                      <span>{{ categoryOptions.length }}</span>
-                      <p>Practice areas</p>
-                    </div>
-                    <div>
-                      <span>{{ formatOptions.length }}</span>
-                      <p>Engagement models</p>
-                    </div>
-                  </div>
                   <div class="actions-row" v-if="!isAuthenticated">
                     <a class="button" href="/login">Sign in</a>
                   </div>
                 </article>
 
-                <nav class="section-nav panel" aria-label="Homepage sections">
-                  <a href="#about">About Us</a>
-                  <a href="#vision">Vision</a>
-                  <a href="#contact">Contact</a>
-                  <a href="#news">News and Media</a>
-                  <a href="#portfolio">Services Portfolio</a>
-                  <a href="#jobs">Job Openings</a>
-                </nav>
+                <article class="panel home-links-panel">
+                  <h2>Explore</h2>
+                  <div class="home-links-grid">
+                    <a class="home-link-card" href="/about">
+                      <h3>About Us</h3>
+                      <p>Know our background, values, and consulting expertise.</p>
+                    </a>
+                    <a class="home-link-card" href="/vision">
+                      <h3>Vision</h3>
+                      <p>Understand the future direction that guides our work.</p>
+                    </a>
+                    <a class="home-link-card" href="/contact">
+                      <h3>Contact</h3>
+                      <p>Reach us for hiring requests and candidate support.</p>
+                    </a>
+                    <a class="home-link-card" href="/news-media">
+                      <h3>News and Media</h3>
+                      <p>Read announcements, insights, and media updates.</p>
+                    </a>
+                    <a class="home-link-card" href="/services-portfolio">
+                      <h3>Job Consultancy Services Portfolio</h3>
+                      <p>Review service lines across executive, permanent, and contract hiring.</p>
+                    </a>
+                  </div>
+                </article>
+              </section>
 
-                <article id="about" class="panel section-panel">
+              <section v-if="isAboutRoute" class="panel-grid single-panel-layout">
+                <article class="panel section-panel">
                   <h2>About Us</h2>
                   <p>
                     Valuearc.net is an advisory and recruitment consultancy focused on business transformation,
                     specialist hiring, and workforce modernization. We partner with enterprises and growth-stage
                     firms to attract talent that can execute strategic goals.
                   </p>
+                  <p>
+                    Our teams combine industry knowledge, data-driven sourcing, and practical implementation
+                    experience to help clients build resilient and high-performance teams.
+                  </p>
                 </article>
+              </section>
 
-                <article id="vision" class="panel section-panel">
+              <section v-if="isVisionRoute" class="panel-grid single-panel-layout">
+                <article class="panel section-panel">
                   <h2>Vision</h2>
                   <p>
                     To become the most trusted consulting and talent partner by combining deep domain expertise,
                     transparent hiring practices, and measurable value delivery for clients and candidates.
                   </p>
                 </article>
+              </section>
 
-                <article id="contact" class="panel section-panel">
+              <section v-if="isContactRoute" class="panel-grid single-panel-layout">
+                <article class="panel section-panel">
                   <h2>Contact</h2>
                   <div class="profile-links">
                     <a class="link-chip" href="mailto:careers@valuearc.net">careers@valuearc.net</a>
@@ -127,8 +155,10 @@
                     <span class="hint">Business hours: Monday to Friday, 9:00 AM to 6:00 PM</span>
                   </div>
                 </article>
+              </section>
 
-                <article id="news" class="panel section-panel">
+              <section v-if="isNewsRoute" class="panel-grid single-panel-layout">
+                <article class="panel section-panel">
                   <h2>News and Media</h2>
                   <ul class="news-list">
                     <li>Valuearc.net publishes quarterly consulting talent trend report.</li>
@@ -136,8 +166,10 @@
                     <li>Leadership webinar announced: Future-ready workforce planning.</li>
                   </ul>
                 </article>
+              </section>
 
-                <article id="portfolio" class="panel section-panel">
+              <section v-if="isPortfolioRoute" class="panel-grid single-panel-layout">
+                <article class="panel section-panel">
                   <h2>Job Consultancy Services Portfolio</h2>
                   <div class="portfolio-grid">
                     <div class="portfolio-item">
@@ -156,37 +188,6 @@
                       <h3>Campus and Early Careers</h3>
                       <p>Graduate hiring pipelines and internship conversion programs.</p>
                     </div>
-                  </div>
-                </article>
-
-                <article id="jobs" class="panel section-panel">
-                  <h2>Job Openings</h2>
-                  <div class="course-list">
-                    <article v-for="job in jobOpenings" :key="job.id" class="course-card">
-                      <div class="course-head">
-                        <div>
-                          <p class="course-track">{{ job.department }}</p>
-                          <h3>{{ job.title }}</h3>
-                        </div>
-                        <span class="pill">{{ job.level }}</span>
-                      </div>
-
-                      <p class="course-description">{{ job.summary }}</p>
-
-                      <ul class="course-meta">
-                        <li>Work model: {{ job.workModel }}</li>
-                        <li>Location: {{ job.location }}</li>
-                      </ul>
-
-                      <div class="course-actions">
-                        <a class="link-chip" :href="job.detailsUrl" target="_blank" rel="noopener noreferrer">
-                          View details
-                        </a>
-                        <a class="link-chip" :href="job.detailsUrl" target="_blank" rel="noopener noreferrer">
-                          Apply now
-                        </a>
-                      </div>
-                    </article>
                   </div>
                 </article>
               </section>
@@ -573,8 +574,29 @@
           isAdminRoute() {
             return this.currentPath.startsWith("/admin");
           },
+          isAboutRoute() {
+            return this.currentPath.startsWith("/about");
+          },
+          isVisionRoute() {
+            return this.currentPath.startsWith("/vision");
+          },
+          isContactRoute() {
+            return this.currentPath.startsWith("/contact");
+          },
+          isNewsRoute() {
+            return this.currentPath.startsWith("/news-media");
+          },
+          isPortfolioRoute() {
+            return this.currentPath.startsWith("/services-portfolio");
+          },
           showHome() {
-            return !this.isProfileRoute && !this.isAdminRoute;
+            return !this.isProfileRoute
+              && !this.isAdminRoute
+              && !this.isAboutRoute
+              && !this.isVisionRoute
+              && !this.isContactRoute
+              && !this.isNewsRoute
+              && !this.isPortfolioRoute;
           },
           isAdministrator() {
             return Boolean(this.user && this.user.userRoles && this.user.userRoles.includes("administrator"));
@@ -599,6 +621,26 @@
 
             if (this.isProfileRoute) {
               return "Your Learning Profile";
+            }
+
+            if (this.isAboutRoute) {
+              return "About Us";
+            }
+
+            if (this.isVisionRoute) {
+              return "Vision";
+            }
+
+            if (this.isContactRoute) {
+              return "Contact";
+            }
+
+            if (this.isNewsRoute) {
+              return "News and Media";
+            }
+
+            if (this.isPortfolioRoute) {
+              return "Job Consultancy Services Portfolio";
             }
 
             return "Valuearc.net Careers";
@@ -1157,24 +1199,44 @@
         opacity: 0.95;
       }
 
-      .section-nav {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.6rem;
+      .home-links-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.85rem;
       }
 
-      .section-nav a {
+      .home-link-card {
+        display: block;
         text-decoration: none;
-        font-weight: 700;
-        color: #0a5fb4;
-        border: 1px solid rgba(10, 95, 180, 0.3);
-        border-radius: 999px;
-        padding: 0.5rem 0.85rem;
-        background: #fff;
+        border: 1px solid rgba(16, 35, 61, 0.12);
+        border-radius: 14px;
+        padding: 1rem;
+        background: rgba(244, 247, 251, 0.68);
+        color: #10233d;
+        transition: transform 140ms ease, box-shadow 140ms ease;
+      }
+
+      .home-link-card:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 24px rgba(16, 35, 61, 0.12);
+      }
+
+      .home-link-card h3 {
+        margin: 0;
+        font-size: 1rem;
+      }
+
+      .home-link-card p {
+        margin: 0.4rem 0 0;
+        color: #475569;
       }
 
       .section-panel {
         scroll-margin-top: 1.25rem;
+      }
+
+      .single-panel-layout {
+        grid-template-columns: 1fr;
       }
 
       .panel {
@@ -1483,13 +1545,12 @@
           grid-template-columns: 1fr;
         }
 
-        .portfolio-grid {
+        .home-links-grid {
           grid-template-columns: 1fr;
         }
 
-        .section-nav {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
+        .portfolio-grid {
+          grid-template-columns: 1fr;
         }
       }
 
@@ -1510,10 +1571,6 @@
         }
 
         .hero-stats {
-          grid-template-columns: 1fr;
-        }
-
-        .section-nav {
           grid-template-columns: 1fr;
         }
       }

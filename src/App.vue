@@ -54,11 +54,16 @@
                   <div class="hero-layout">
                     <div>
                       <p class="mini-kicker">Valuearc.net Consulting</p>
-                      <h2>Build teams that deliver measurable business impact</h2>
+                      <h2>Consulting, talent, and delivery support for ambitious businesses</h2>
                       <p>
-                        Strategic consulting and specialist hiring for enterprises building modern,
-                        resilient, and high-performing organizations.
+                        Valuearc.net helps organizations solve growth, transformation, and hiring challenges
+                        with practical consulting expertise and specialist talent solutions.
                       </p>
+                      <div class="hero-proof-line">
+                        <span>Strategy</span>
+                        <span>Recruitment</span>
+                        <span>Transformation</span>
+                      </div>
                       <div class="hero-cta-row">
                         <a class="button" href="/services-portfolio">Explore Services</a>
                         <a class="button ghost" href="/contact">Talk to an Expert</a>
@@ -68,22 +73,21 @@
                       </div>
                     </div>
 
-                    <div class="hero-graphic" aria-hidden="true">
-                      <div class="graphic-card">
-                        <p>Delivery Confidence</p>
-                        <strong>96%</strong>
-                        <span>Client mandate completion</span>
+                    <div class="hero-visuals" aria-hidden="true">
+                      <div class="hero-photo hero-photo-main">
+                        <div class="photo-label">
+                          <strong>Advisory Excellence</strong>
+                          <span>Business transformation and talent strategy</span>
+                        </div>
                       </div>
-                      <div class="graphic-bars">
-                        <span class="bar bar-a"></span>
-                        <span class="bar bar-b"></span>
-                        <span class="bar bar-c"></span>
-                        <span class="bar bar-d"></span>
+                      <div class="hero-photo-grid">
+                        <div class="hero-photo hero-photo-team"></div>
+                        <div class="hero-photo hero-photo-growth"></div>
                       </div>
                     </div>
                   </div>
 
-                  <div class="hero-metrics">
+                  <div class="hero-metrics hero-metrics-home">
                     <div>
                       <strong>{{ jobOpenings.length }}</strong>
                       <p>Open opportunities</p>
@@ -96,11 +100,78 @@
                       <strong>12</strong>
                       <p>Industry verticals served</p>
                     </div>
+                    <div>
+                      <strong>95%</strong>
+                      <p>Client retention focus</p>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="panel spotlight-panel">
+                  <div class="spotlight-copy">
+                    <p class="mini-kicker dark-kicker">What We Do</p>
+                    <h2>Supporting growth through consulting and workforce capability</h2>
+                    <p>
+                      We help organizations strengthen hiring, operational delivery, and market readiness.
+                      Our teams work across permanent hiring, contract staffing, leadership search, and
+                      advisory programs that accelerate business outcomes.
+                    </p>
+                  </div>
+                  <div class="spotlight-grid">
+                    <article class="spotlight-card">
+                      <span>01</span>
+                      <h3>Consulting Advisory</h3>
+                      <p>Business-aligned guidance for workforce planning, transformation, and capability building.</p>
+                    </article>
+                    <article class="spotlight-card">
+                      <span>02</span>
+                      <h3>Talent Solutions</h3>
+                      <p>Specialist sourcing and placement across leadership, technical, and delivery roles.</p>
+                    </article>
+                    <article class="spotlight-card">
+                      <span>03</span>
+                      <h3>Delivery Support</h3>
+                      <p>Flexible support models that help clients execute critical projects with confidence.</p>
+                    </article>
+                  </div>
+                </article>
+
+                <article class="panel sectors-panel">
+                  <div class="sectors-head">
+                    <div>
+                      <p class="mini-kicker dark-kicker">Focus Areas</p>
+                      <h2>Where Valuearc.net creates impact</h2>
+                    </div>
+                  </div>
+                  <div class="sector-grid">
+                    <article class="sector-card sector-card-consulting">
+                      <div>
+                        <h3>Business Consulting</h3>
+                        <p>Strategy, operations, transformation, and program support.</p>
+                      </div>
+                    </article>
+                    <article class="sector-card sector-card-hiring">
+                      <div>
+                        <h3>Talent Acquisition</h3>
+                        <p>Permanent, contract, and executive search services.</p>
+                      </div>
+                    </article>
+                    <article class="sector-card sector-card-careers">
+                      <div>
+                        <h3>Career Growth</h3>
+                        <p>Candidate support, career mobility, and leadership pathways.</p>
+                      </div>
+                    </article>
                   </div>
                 </article>
 
                 <article class="panel home-links-panel">
-                  <h2>Explore</h2>
+                  <div class="sectors-head">
+                    <div>
+                      <p class="mini-kicker dark-kicker">Explore</p>
+                      <h2>Learn more about Valuearc.net</h2>
+                    </div>
+                  </div>
                   <div class="home-links-grid">
                     <a class="home-link-card" href="/about">
                       <h3>About Us</h3>
@@ -1260,6 +1331,11 @@
         opacity: 0.95;
       }
 
+      .dark-kicker {
+        color: #0a5fb4;
+        opacity: 1;
+      }
+
       .hero-layout {
         display: grid;
         grid-template-columns: 1.15fr 0.85fr;
@@ -1274,62 +1350,89 @@
         flex-wrap: wrap;
       }
 
+      .hero-proof-line {
+        margin-top: 1rem;
+        display: flex;
+        gap: 0.65rem;
+        flex-wrap: wrap;
+      }
+
+      .hero-proof-line span {
+        border: 1px solid rgba(255, 255, 255, 0.26);
+        border-radius: 999px;
+        padding: 0.35rem 0.7rem;
+        font-size: 0.82rem;
+        font-weight: 700;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
       .button.ghost {
         background: rgba(255, 255, 255, 0.12);
         border: 1px solid rgba(255, 255, 255, 0.36);
         color: #f8fbff;
       }
 
-      .hero-graphic {
-        border: 1px solid rgba(255, 255, 255, 0.22);
-        border-radius: 16px;
-        padding: 0.95rem;
-        background: rgba(2, 20, 52, 0.44);
-        backdrop-filter: blur(2px);
-      }
-
-      .graphic-card p,
-      .graphic-card span {
-        margin: 0;
-        opacity: 0.9;
-      }
-
-      .graphic-card strong {
-        display: block;
-        margin: 0.2rem 0;
-        font-size: 2rem;
-        letter-spacing: 0.01em;
-      }
-
-      .graphic-bars {
-        margin-top: 0.9rem;
+      .hero-visuals {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 0.45rem;
-        align-items: end;
-        min-height: 84px;
+        gap: 0.75rem;
       }
 
-      .bar {
+      .hero-photo-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+
+      .hero-photo {
+        position: relative;
+        min-height: 180px;
+        border-radius: 18px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background-size: cover;
+        background-position: center;
+        box-shadow: inset 0 -80px 100px rgba(7, 22, 48, 0.28);
+      }
+
+      .hero-photo-main {
+        min-height: 270px;
+        background-image:
+          linear-gradient(180deg, rgba(5, 31, 71, 0.08), rgba(5, 31, 71, 0.56)),
+          url('https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80');
+      }
+
+      .hero-photo-team {
+        background-image:
+          linear-gradient(180deg, rgba(5, 31, 71, 0.1), rgba(5, 31, 71, 0.5)),
+          url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=900&q=80');
+      }
+
+      .hero-photo-growth {
+        background-image:
+          linear-gradient(180deg, rgba(5, 31, 71, 0.1), rgba(5, 31, 71, 0.5)),
+          url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=900&q=80');
+      }
+
+      .photo-label {
+        position: absolute;
+        left: 1rem;
+        right: 1rem;
+        bottom: 1rem;
+      }
+
+      .photo-label strong,
+      .photo-label span {
         display: block;
-        border-radius: 8px 8px 4px 4px;
-        background: linear-gradient(180deg, rgba(104, 214, 255, 0.95), rgba(26, 149, 226, 0.9));
       }
 
-      .bar-a {
-        height: 38px;
+      .photo-label strong {
+        font-size: 1.1rem;
       }
 
-      .bar-b {
-        height: 65px;
-      }
-
-      .bar-c {
-        height: 52px;
-      }
-
-      .bar-d {
-        height: 78px;
+      .photo-label span {
+        margin-top: 0.25rem;
+        font-size: 0.92rem;
+        opacity: 0.92;
       }
 
       .hero-metrics {
@@ -1337,6 +1440,10 @@
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 0.7rem;
+      }
+
+      .hero-metrics-home {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
       }
 
       .hero-metrics div {
@@ -1360,6 +1467,107 @@
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 0.85rem;
+      }
+
+      .spotlight-panel,
+      .sectors-panel,
+      .home-links-panel {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(245, 249, 255, 0.96));
+      }
+
+      .sectors-head h2,
+      .spotlight-copy h2 {
+        margin: 0.25rem 0 0;
+        font-size: clamp(1.35rem, 2vw, 1.85rem);
+      }
+
+      .spotlight-panel {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 1rem;
+        align-items: start;
+      }
+
+      .spotlight-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.8rem;
+      }
+
+      .spotlight-card {
+        border-radius: 16px;
+        padding: 1rem;
+        background: #fff;
+        border: 1px solid rgba(16, 35, 61, 0.1);
+        box-shadow: 0 10px 30px rgba(16, 35, 61, 0.06);
+      }
+
+      .spotlight-card span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 999px;
+        background: rgba(10, 95, 180, 0.1);
+        color: #0a5fb4;
+        font-weight: 700;
+      }
+
+      .spotlight-card h3 {
+        margin: 0.75rem 0 0.35rem;
+      }
+
+      .spotlight-card p {
+        margin: 0;
+        color: #475569;
+      }
+
+      .sector-grid {
+        margin-top: 0.95rem;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.85rem;
+      }
+
+      .sector-card {
+        min-height: 240px;
+        display: flex;
+        align-items: end;
+        border-radius: 18px;
+        overflow: hidden;
+        padding: 1rem;
+        color: #fff;
+        background-size: cover;
+        background-position: center;
+        box-shadow: inset 0 -90px 120px rgba(6, 22, 48, 0.45);
+      }
+
+      .sector-card h3 {
+        margin: 0 0 0.3rem;
+      }
+
+      .sector-card p {
+        margin: 0;
+        max-width: 28ch;
+      }
+
+      .sector-card-consulting {
+        background-image:
+          linear-gradient(180deg, rgba(5, 31, 71, 0.08), rgba(5, 31, 71, 0.65)),
+          url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80');
+      }
+
+      .sector-card-hiring {
+        background-image:
+          linear-gradient(180deg, rgba(5, 31, 71, 0.08), rgba(5, 31, 71, 0.65)),
+          url('https://images.unsplash.com/photo-1573497491765-dccce02b29df?auto=format&fit=crop&w=1200&q=80');
+      }
+
+      .sector-card-careers {
+        background-image:
+          linear-gradient(180deg, rgba(5, 31, 71, 0.08), rgba(5, 31, 71, 0.65)),
+          url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80');
       }
 
       .home-link-card {
@@ -1709,8 +1917,16 @@
         }
 
         .hero-layout,
-        .hero-metrics {
+        .hero-metrics,
+        .spotlight-panel,
+        .spotlight-grid,
+        .sector-grid {
           grid-template-columns: 1fr;
+        }
+
+        .hero-photo-grid,
+        .hero-metrics-home {
+          grid-template-columns: 1fr 1fr;
         }
 
         .home-links-grid {
@@ -1739,6 +1955,11 @@
         }
 
         .hero-stats {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-photo-grid,
+        .hero-metrics-home {
           grid-template-columns: 1fr;
         }
       }

@@ -806,7 +806,7 @@
               return "Job Consultancy Services Portfolio";
             }
 
-            return "Valuearc | The Inovation Center";
+            return "Valuearc | The Innovation Center";
           },
           currentUserKey() {
             return this.user && this.user.userDetails ? this.user.userDetails.toLowerCase() : "anonymous";
@@ -2050,6 +2050,20 @@
       }
 
       @media (max-width: 860px) {
+        .card {
+          padding: 1.5rem;
+          border-radius: 20px;
+        }
+
+        .head {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+
+        .header-actions {
+          justify-content: flex-start;
+        }
+
         .panel-grid,
         .profile-layout,
         .admin-form {
@@ -2080,26 +2094,61 @@
         .portfolio-grid {
           grid-template-columns: 1fr;
         }
+
+        .hero-photo-main {
+          min-height: 220px;
+        }
+
+        .hero-photo,
+        .sector-card {
+          min-height: 200px;
+        }
+
+        .upload-inline,
+        .course-actions,
+        .admin-actions {
+          align-items: stretch;
+        }
+
+        .file-select,
+        .admin-form input,
+        .admin-form select,
+        .admin-form textarea,
+        .button,
+        .button.small,
+        .employee-login,
+        .employee-link {
+          width: 100%;
+        }
       }
 
       @media (max-width: 640px) {
         .shell {
-          padding: 1rem;
+          padding: 0.75rem;
         }
 
         .card {
-          padding: 1.5rem;
+          padding: 1rem;
         }
 
-        .head,
         .course-head,
         .identity-block {
           display: grid;
           grid-template-columns: 1fr;
         }
 
-        .header-actions {
-          justify-content: flex-start;
+        h1 {
+          font-size: clamp(1.8rem, 10vw, 2.5rem);
+        }
+
+        .nav {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.55rem;
+        }
+
+        .nav a {
+          text-align: center;
         }
 
         .hero-stats {
@@ -2112,6 +2161,51 @@
         }
 
         .hero-content-panel {
+          padding: 1rem;
+        }
+
+        .hero-cta-row,
+        .hero-proof-line,
+        .hero-metrics-home,
+        .social-links {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-cta-row,
+        .hero-proof-line,
+        .social-links,
+        .quick-links,
+        .profile-links {
+          display: grid;
+        }
+
+        .hero-proof-line span,
+        .link-chip,
+        .home-link-card,
+        .employee-login,
+        .employee-link {
+          width: 100%;
+        }
+
+        .account-top {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .nav {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-layout,
+        .hero-photo-grid,
+        .hero-metrics-home,
+        .hero-trust-strip {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-banner {
           padding: 1rem;
         }
       }

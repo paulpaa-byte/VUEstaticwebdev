@@ -11,6 +11,7 @@
                   {{ isAuthenticated ? "Signed in" : "Guest" }}
                 </span>
                 <a v-if="!isAuthenticated" class="employee-login" href="/login">Employee Login</a>
+                <a v-if="!isAuthenticated" class="employee-link" href="/.auth/login/aad?post_login_redirect_uri=/trainings">Self Sign Up</a>
                 <a v-else class="employee-login" href="/profile">Employee Login</a>
                 <a v-if="isAdministrator" class="employee-link" href="/admin">Admin</a>
               </div>
@@ -23,6 +24,7 @@
               <a href="/contact" :class="isContactRoute ? 'active' : ''">Contact</a>
               <a href="/news-media" :class="isNewsRoute ? 'active' : ''">News & Media</a>
               <a href="/services-portfolio" :class="isPortfolioRoute ? 'active' : ''">Services</a>
+              <a href="/trainings" :class="isTrainingsRoute ? 'active' : ''">Trainings</a>
             </nav>
 
             <p class="summary" v-if="isAdminRoute">
@@ -47,6 +49,9 @@
             </p>
             <p class="summary" v-else-if="isPortfolioRoute">
               Review our job consultancy services portfolio and engagement models.
+            </p>
+            <p class="summary" v-else-if="isTrainingsRoute">
+              Browse the training catalog and register for courses. Guest users can sign in or self sign up.
             </p>
             <p class="summary" v-else>
               Explore current job openings, connect with our consultants, and follow company
@@ -320,6 +325,65 @@
                       <h3>Campus and Early Careers</h3>
                       <p>Graduate hiring pipelines, internship programs, and early-career talent development.</p>
                     </div>
+                  </div>
+                </article>
+              </section>
+
+              <section v-if="isTrainingsRoute" class="panel-grid single-panel-layout">
+                <article class="panel section-panel">
+                  <h2>Training Catalog</h2>
+                  <p>
+                    Explore available training tracks and register for the courses you want to complete.
+                    You can view all courses as a guest. Sign in or self sign up to register.
+                  </p>
+                  <div class="actions-row" v-if="!isAuthenticated">
+                    <a class="button" href="/login">Login to register</a>
+                    <a class="button secondary" href="/.auth/login/aad?post_login_redirect_uri=/trainings">Self Sign Up</a>
+                  </div>
+                  <div class="course-list">
+                    <article v-for="course in courses" :key="course.id" class="course-card">
+                      <div class="course-head">
+                        <div>
+                          <p class="course-track">{{ course.category }}</p>
+                          <h3>{{ course.title }}</h3>
+                        </div>
+                        <span class="pill">{{ course.level }}</span>
+                      </div>
+
+                      <p class="course-description">{{ course.description }}</p>
+
+                      <ul class="course-meta">
+                        <li>Format: {{ course.format }}</li>
+                        <li>Duration: {{ course.duration }}</li>
+                      </ul>
+
+                      <div class="course-actions">
+                        <a v-if="course.detailPath" class="link-chip" :href="course.detailPath" target="_blank" rel="noopener noreferrer">
+                          Course details
+                        </a>
+                        <a v-if="course.videoUrl" class="link-chip" :href="course.videoUrl" target="_blank" rel="noopener noreferrer">
+                          Video
+                        </a>
+                        <a v-if="course.documentUrl" class="link-chip" :href="course.documentUrl" target="_blank" rel="noopener noreferrer">
+                          Document
+                        </a>
+                        <a v-if="course.pdfUrl" class="link-chip" :href="course.pdfUrl" target="_blank" rel="noopener noreferrer">
+                          PDF
+                        </a>
+                        <a v-if="downloadTarget(course)" class="link-chip" :href="downloadTarget(course)" :download="course.downloadName">
+                          Download
+                        </a>
+                        <button
+                          v-if="isAuthenticated"
+                          class="button small"
+                          type="button"
+                          @click="toggleEnrollment(course.id)"
+                        >
+                          {{ isEnrolled(course.id) ? 'Unregister' : 'Register course' }}
+                        </button>
+                        <a v-else class="button small" href="/login">Register</a>
+                      </div>
+                    </article>
                   </div>
                 </article>
               </section>
@@ -752,6 +816,9 @@
           isPortfolioRoute() {
             return this.currentPath.startsWith("/services-portfolio");
           },
+          isTrainingsRoute() {
+            return this.currentPath.startsWith("/trainings");
+          },
           showHome() {
             return !this.isProfileRoute
               && !this.isAdminRoute
@@ -759,7 +826,8 @@
               && !this.isVisionRoute
               && !this.isContactRoute
               && !this.isNewsRoute
-              && !this.isPortfolioRoute;
+              && !this.isPortfolioRoute
+              && !this.isTrainingsRoute;
           },
           isAdministrator() {
             return Boolean(this.user && this.user.userRoles && this.user.userRoles.includes("administrator"));
@@ -804,6 +872,10 @@
 
             if (this.isPortfolioRoute) {
               return "Job Consultancy Services Portfolio";
+            }
+
+            if (this.isTrainingsRoute) {
+              return "Trainings";
             }
 
             return "Valuearc | The Innovation Center";

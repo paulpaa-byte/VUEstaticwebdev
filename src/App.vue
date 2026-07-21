@@ -10,9 +10,9 @@
                 <span class="badge" :class="isAuthenticated ? 'ok' : 'neutral'">
                   {{ isAuthenticated ? "Signed in" : "Guest" }}
                 </span>
-                <a v-if="!isAuthenticated" class="employee-login" href="/login">Employee Login</a>
+                <a v-if="!isAuthenticated" class="employee-login" href="/login">Sign In</a>
                 <a v-if="!isAuthenticated" class="employee-link" href="/.auth/login/aad?post_login_redirect_uri=/trainings">Self Sign Up</a>
-                <a v-else class="employee-login" href="/profile">Employee Login</a>
+                <a v-else class="employee-login" href="/profile">{{ userTypeLabel }} Login</a>
                 <a v-if="isAdministrator" class="employee-link" href="/admin">Admin</a>
               </div>
             </header>
@@ -82,7 +82,7 @@
                         <a class="button ghost" href="/contact">Talk to an Expert</a>
                       </div>
                       <div class="actions-row" v-if="!isAuthenticated">
-                        <a class="hero-signin" href="/login">Employee login to track opportunities</a>
+                        <a class="hero-signin" href="/login">Employee or Guest login to track opportunities</a>
                       </div>
                       <div class="hero-trust-strip" aria-label="Valuearc strengths">
                         <div>
@@ -406,6 +406,7 @@
                     <div>
                       <p class="identity-name">{{ user.userDetails }}</p>
                       <p class="identity-provider">Provider: {{ user.identityProvider }}</p>
+                      <p class="identity-provider">Account type: {{ userTypeLabel }}</p>
                       <p class="identity-roles">Roles: {{ user.userRoles.join(', ') }}</p>
 
                       <div class="quick-links">
@@ -794,6 +795,19 @@
         computed: {
           isAuthenticated() {
             return Boolean(this.user && this.user.userId);
+          },
+          userEmail() {
+            return this.user && this.user.userDetails ? this.user.userDetails.toLowerCase() : "";
+          },
+          isInternalUser() {
+            return this.isAuthenticated && this.userEmail.includes("valuearc.net");
+          },
+          userTypeLabel() {
+            if (!this.isAuthenticated) {
+              return "Employee";
+            }
+
+            return this.isInternalUser ? "Employee" : "Guest";
           },
           isProfileRoute() {
             return this.currentPath.startsWith("/profile");

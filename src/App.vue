@@ -278,11 +278,43 @@
                     and leadership perspectives from Valuearc.net. It reflects the conversations and trends
                     that shape our consulting and talent advisory work.
                   </p>
+                  <div class="news-grid" aria-label="Latest updates">
+                    <article class="news-card">
+                      <p class="news-meta">July 2026 · Market Outlook</p>
+                      <h3>Quarterly Hiring Pulse for Digital and Cloud Teams</h3>
+                      <p>
+                        Our latest market report covers compensation benchmarks, high-demand skill clusters,
+                        and practical hiring guidance for growth-stage organizations.
+                      </p>
+                    </article>
+                    <article class="news-card">
+                      <p class="news-meta">June 2026 · Partnership</p>
+                      <h3>Talent Delivery Alliance Expanded Across North America</h3>
+                      <p>
+                        Valuearc.net expanded its consulting partner network to support enterprise clients
+                        with faster specialist onboarding and broader delivery coverage.
+                      </p>
+                    </article>
+                    <article class="news-card">
+                      <p class="news-meta">May 2026 · Webinar</p>
+                      <h3>Leadership Session on Workforce Transformation</h3>
+                      <p>
+                        Senior advisors shared operating models for building resilient teams and improving
+                        hiring velocity without compromising quality.
+                      </p>
+                    </article>
+                  </div>
                   <ul class="news-list">
                     <li>Valuearc.net publishes a quarterly consulting and hiring market outlook report.</li>
                     <li>New partnership launched to support digital, analytics, and transformation hiring programs.</li>
                     <li>Leadership webinar announced on future-ready workforce planning and capability building.</li>
+                    <li>Customer success stories are now released monthly with measurable delivery outcomes.</li>
+                    <li>Press briefing packs are available for media and analyst conversations.</li>
+                    <li>Community events and career clinics are announced every quarter.</li>
                   </ul>
+                  <p class="news-note">
+                    Media and analyst requests: <a href="mailto:media@valuearc.net">media@valuearc.net</a>
+                  </p>
                   <div class="social-links">
                     <a class="link-chip" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">
                       Follow on Facebook
@@ -1818,10 +1850,18 @@
 
       .section-panel {
         scroll-margin-top: 1.25rem;
+        min-height: 460px;
+        display: grid;
+        gap: 0.9rem;
+        align-content: start;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(242, 248, 255, 0.95));
       }
 
       .single-panel-layout {
         grid-template-columns: 1fr;
+        max-width: 980px;
+        margin-inline: auto;
       }
 
       .panel {
@@ -1829,6 +1869,8 @@
         border: 1px solid rgba(16, 35, 61, 0.1);
         border-radius: 18px;
         padding: 1.35rem;
+        box-shadow: 0 12px 26px rgba(16, 35, 61, 0.08);
+        min-height: 100%;
       }
 
       .panel h2 {
@@ -1874,6 +1916,48 @@
         color: #334155;
         display: grid;
         gap: 0.5rem;
+      }
+
+      .news-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.8rem;
+      }
+
+      .news-card {
+        border: 1px solid rgba(16, 35, 61, 0.12);
+        border-radius: 14px;
+        padding: 0.85rem;
+        background: rgba(255, 255, 255, 0.9);
+      }
+
+      .news-meta {
+        margin: 0;
+        font-size: 0.78rem;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: #0a5fb4;
+      }
+
+      .news-card h3 {
+        margin: 0.4rem 0 0.45rem;
+        font-size: 1rem;
+      }
+
+      .news-card p {
+        margin: 0;
+        color: #475569;
+      }
+
+      .news-note {
+        margin: 0;
+        color: #1e3a5f;
+      }
+
+      .news-note a {
+        color: #0a5fb4;
+        font-weight: 700;
       }
 
       .social-links {
@@ -2181,6 +2265,10 @@
           grid-template-columns: 1fr;
         }
 
+        .news-grid {
+          grid-template-columns: 1fr;
+        }
+
         .hero-photo-main {
           min-height: 220px;
         }
@@ -2356,6 +2444,10 @@
         .course-card,
         .panel {
           border-radius: 14px;
+        }
+
+        .section-panel {
+          min-height: auto;
         }
 
         .hero-proof-line span,

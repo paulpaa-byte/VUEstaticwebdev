@@ -212,8 +212,8 @@
                     <figure class="media-card">
                       <img
                         class="page-gif"
-                        src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif"
-                        alt="Animated team collaboration"
+                        src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1000&q=80"
+                        alt="Consulting team collaboration"
                         loading="lazy"
                       >
                       <figcaption>Collaborative consulting workshops that align teams quickly.</figcaption>
@@ -248,8 +248,8 @@
                     <figure class="media-card">
                       <img
                         class="page-gif"
-                        src="https://media.giphy.com/media/3o7aD2saalBwwftBIY/giphy.gif"
-                        alt="Animated growth and planning graphic"
+                        src="https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1000&q=80"
+                        alt="Enterprise strategic planning workshop"
                         loading="lazy"
                       >
                       <figcaption>Strategic direction supported by measurable transformation plans.</figcaption>
@@ -285,8 +285,8 @@
                     <figure class="media-card">
                       <img
                         class="page-gif"
-                        src="https://media.giphy.com/media/xT9IgzoKnwFNmISR8I/giphy.gif"
-                        alt="Animated customer support response"
+                        src="https://images.unsplash.com/photo-1573164574396-6ad8d9f3f521?auto=format&fit=crop&w=1000&q=80"
+                        alt="Enterprise customer support team"
                         loading="lazy"
                       >
                       <figcaption>Fast response and dedicated support for clients and candidates.</figcaption>
@@ -834,6 +834,7 @@
             avatarSrc: "",
             loading: true,
             user: null,
+            resolvedUserEmail: "",
             error: "",
             offlineMode: false,
             courses: [],
@@ -879,10 +880,24 @@
             return Boolean(this.user && this.user.userId);
           },
           userEmail() {
+            if (this.resolvedUserEmail) {
+              return this.resolvedUserEmail;
+            }
+
             return this.user && this.user.userDetails ? this.user.userDetails.toLowerCase() : "";
           },
           isInternalUser() {
-            return this.isAuthenticated && this.userEmail.includes("valuearc.net");
+            if (!this.isAuthenticated) {
+              return false;
+            }
+
+            if (!this.userEmail || !this.userEmail.includes("@")) {
+              // Default to employee if email claim is unavailable to avoid false guest labeling.
+              return true;
+            }
+
+            const domain = this.userEmail.split("@")[1] || "";
+            return domain === "valuearc.net" || domain.endsWith(".valuearc.net");
           },
           userTypeLabel() {
             if (!this.isAuthenticated) {
@@ -1038,11 +1053,48 @@
 
               this.user = principal && principal.userId ? principal : null;
               if (this.user) {
+                this.resolvedUserEmail = this.resolvePrincipalEmail(this.user);
                 this.avatarSrc = "/api/profile-photo";
+              } else {
+                this.resolvedUserEmail = "";
               }
             } catch (loadError) {
               this.user = null;
+              this.resolvedUserEmail = "";
             }
+          },
+          resolvePrincipalEmail(principal) {
+            const candidates = [];
+
+            if (principal && principal.userDetails) {
+              candidates.push(principal.userDetails);
+            }
+
+            const claims = principal && Array.isArray(principal.claims) ? principal.claims : [];
+            const preferredClaimTypes = [
+              "preferred_username",
+              "email",
+              "emails",
+              "upn",
+              "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
+              "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn"
+            ];
+
+            preferredClaimTypes.forEach(type => {
+              const claim = claims.find(item => (item.typ || "").toLowerCase() === type.toLowerCase());
+              if (claim && claim.val) {
+                candidates.push(claim.val);
+              }
+            });
+
+            for (let index = 0; index < candidates.length; index += 1) {
+              const value = String(candidates[index] || "").trim().toLowerCase();
+              if (value.includes("@")) {
+                return value;
+              }
+            }
+
+            return "";
           },
           async apiFetch(url, options = {}) {
             const response = await fetch(url, {
@@ -1511,7 +1563,7 @@
         align-items: center;
         gap: 0.35rem;
         flex: 1 1 auto;
-        min-width: 680px;
+        min-width: max-content;
       }
 
       .nav-auth {
@@ -1556,7 +1608,7 @@
         border: 1px solid transparent;
         white-space: nowrap;
         letter-spacing: 0.01em;
-        flex: 1 1 0;
+        flex: 0 0 auto;
         text-align: center;
         transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
       }
@@ -1850,9 +1902,11 @@
       }
 
       .quick-links-footer {
-        margin-top: 1.5rem;
-        padding-top: 0.55rem;
+        margin-top: 2rem;
+        padding-top: 0.85rem;
         border-top: 1px solid rgba(144, 170, 255, 0.24);
+        position: relative;
+        z-index: 0;
       }
 
       .quick-links-strip {
@@ -1861,7 +1915,7 @@
         gap: 0.35rem;
         flex-wrap: nowrap;
         overflow-x: auto;
-        padding: 0.35rem 0.45rem;
+        padding: 0.4rem 0.5rem;
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 10px;
         background: linear-gradient(180deg, rgba(19, 47, 131, 0.96), rgba(11, 31, 92, 0.96));
@@ -1884,7 +1938,7 @@
         border: 1px solid transparent;
         white-space: nowrap;
         letter-spacing: 0.01em;
-        flex: 1 1 0;
+        flex: 0 0 auto;
         text-align: center;
       }
 

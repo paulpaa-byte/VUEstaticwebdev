@@ -1877,6 +1877,8 @@
         display: grid;
         place-items: center;
         padding: 2rem;
+        box-sizing: border-box;
+        overflow-x: hidden;
         font-family: "Segoe UI", "Segoe UI Variable", "Helvetica Neue", Arial, sans-serif;
         background:
           radial-gradient(circle at 12% 10%, rgba(101, 132, 255, 0.28), transparent 28%),
@@ -1894,6 +1896,7 @@
         border: 1px solid var(--border-soft);
         box-shadow: 0 26px 84px rgba(2, 6, 22, 0.55);
         backdrop-filter: blur(10px);
+        overflow-x: clip;
       }
 
       .head {
@@ -3353,6 +3356,139 @@
         .account-top {
           align-items: flex-start;
           flex-direction: column;
+        }
+      }
+
+      @media (max-width: 640px) and (orientation: portrait) {
+        .shell {
+          padding: 0.55rem;
+        }
+
+        .card {
+          width: 100%;
+          border-radius: 12px;
+          padding: 0.85rem;
+        }
+
+        .nav {
+          gap: 0.25rem;
+          padding: 0.3rem;
+        }
+
+        .nav a {
+          font-size: 0.82rem;
+          padding: 0.45rem 0.58rem;
+        }
+
+        .quick-links-footer {
+          margin-top: 0.95rem;
+          padding-top: 0.4rem;
+        }
+
+        .quick-links-strip {
+          padding: 0.18rem 0.22rem;
+        }
+
+        .quick-links-strip a {
+          font-size: 0.72rem;
+          padding: 0.3rem 0.45rem;
+          gap: 0.2rem;
+        }
+
+        .quick-link-icon {
+          width: 0.7rem;
+          height: 0.7rem;
+        }
+
+        .hero-metrics-home {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (max-width: 932px) and (orientation: landscape) {
+        .shell {
+          padding: 0.45rem;
+        }
+
+        .card {
+          width: 100%;
+          border-radius: 12px;
+          padding: 0.85rem;
+        }
+
+        .head {
+          margin-top: 0.65rem;
+        }
+
+        h1 {
+          font-size: clamp(1.45rem, 3.5vw, 2rem);
+        }
+
+        .summary,
+        .status,
+        .course-description,
+        .hint,
+        .identity-provider,
+        .identity-roles {
+          font-size: 0.9rem;
+          line-height: 1.45;
+        }
+
+        .nav {
+          gap: 0.25rem;
+          padding: 0.3rem;
+        }
+
+        .nav a {
+          font-size: 0.8rem;
+          padding: 0.42rem 0.56rem;
+        }
+
+        .panel-grid,
+        .profile-layout,
+        .hero-layout,
+        .hero-metrics,
+        .spotlight-panel,
+        .sector-grid,
+        .news-grid,
+        .portfolio-grid,
+        .page-media-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-photo-main,
+        .hero-photo,
+        .sector-card {
+          min-height: 140px;
+        }
+
+        .hero-photo-grid {
+          display: none;
+        }
+
+        .hero-metrics-home {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 0.5rem;
+        }
+
+        .quick-links-footer {
+          margin-top: 0.8rem;
+          padding-top: 0.35rem;
+        }
+
+        .quick-links-strip {
+          padding: 0.16rem 0.2rem;
+        }
+
+        .quick-links-strip a {
+          font-size: 0.7rem;
+          padding: 0.26rem 0.42rem;
+          gap: 0.18rem;
+        }
+
+        .quick-link-icon {
+          width: 0.65rem;
+          height: 0.65rem;
         }
       }
 

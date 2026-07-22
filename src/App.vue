@@ -58,6 +58,45 @@
               updates from one place.
             </p>
 
+            <section v-if="!isAdminRoute && !isProfileRoute" class="panel quick-links-panel">
+              <div class="sectors-head">
+                <div>
+                  <p class="mini-kicker dark-kicker">Explore</p>
+                  <h2>Quick navigation</h2>
+                </div>
+              </div>
+              <div class="home-links-grid">
+                <a class="home-link-card" :class="showHome ? 'active' : ''" href="/">
+                  <h3>Home</h3>
+                  <p>Return to the main overview and highlights.</p>
+                </a>
+                <a class="home-link-card" :class="isAboutRoute ? 'active' : ''" href="/about">
+                  <h3>About Us</h3>
+                  <p>Know our background, values, and consulting expertise.</p>
+                </a>
+                <a class="home-link-card" :class="isVisionRoute ? 'active' : ''" href="/vision">
+                  <h3>Vision</h3>
+                  <p>Understand the future direction that guides our work.</p>
+                </a>
+                <a class="home-link-card" :class="isContactRoute ? 'active' : ''" href="/contact">
+                  <h3>Contact</h3>
+                  <p>Reach us for hiring requests and candidate support.</p>
+                </a>
+                <a class="home-link-card" :class="isNewsRoute ? 'active' : ''" href="/news-media">
+                  <h3>News and Media</h3>
+                  <p>Read announcements, insights, and media updates.</p>
+                </a>
+                <a class="home-link-card" :class="isPortfolioRoute ? 'active' : ''" href="/services-portfolio">
+                  <h3>Services Portfolio</h3>
+                  <p>Review service lines across executive, permanent, and contract hiring.</p>
+                </a>
+                <a class="home-link-card" :class="isTrainingsRoute ? 'active' : ''" href="/trainings">
+                  <h3>Trainings</h3>
+                  <p>Browse course catalog and register with your account.</p>
+                </a>
+              </div>
+            </section>
+
             <p v-if="loading" class="status">Loading user and training catalog...</p>
             <p v-if="!loading && error" class="status error">{{ error }}</p>
 
@@ -188,36 +227,6 @@
                   </div>
                 </article>
 
-                <article class="panel home-links-panel">
-                  <div class="sectors-head">
-                    <div>
-                      <p class="mini-kicker dark-kicker">Explore</p>
-                      <h2>Learn more about Valuearc.net</h2>
-                    </div>
-                  </div>
-                  <div class="home-links-grid">
-                    <a class="home-link-card" href="/about">
-                      <h3>About Us</h3>
-                      <p>Know our background, values, and consulting expertise.</p>
-                    </a>
-                    <a class="home-link-card" href="/vision">
-                      <h3>Vision</h3>
-                      <p>Understand the future direction that guides our work.</p>
-                    </a>
-                    <a class="home-link-card" href="/contact">
-                      <h3>Contact</h3>
-                      <p>Reach us for hiring requests and candidate support.</p>
-                    </a>
-                    <a class="home-link-card" href="/news-media">
-                      <h3>News and Media</h3>
-                      <p>Read announcements, insights, and media updates.</p>
-                    </a>
-                    <a class="home-link-card" href="/services-portfolio">
-                      <h3>Job Consultancy Services Portfolio</h3>
-                      <p>Review service lines across executive, permanent, and contract hiring.</p>
-                    </a>
-                  </div>
-                </article>
               </section>
 
               <section v-if="isAboutRoute" class="panel-grid single-panel-layout">
@@ -1332,24 +1341,29 @@
     </script>
 
     <style scoped>
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap');
+
       .shell {
-        --royal-900: #0b1f5f;
-        --royal-800: #12317f;
-        --royal-700: #1e40af;
-        --royal-600: #2851cc;
-        --royal-500: #3b63e6;
-        --royal-100: #dfe8ff;
-        --ink-900: #101a3b;
-        --ink-700: #2d3f72;
-        --surface-soft: #f2f6ff;
+        --royal-900: #111f66;
+        --royal-800: #1a2f8a;
+        --royal-700: #2b47b8;
+        --royal-600: #3b63e6;
+        --royal-500: #7ea3ff;
+        --ink-900: #ecf2ff;
+        --ink-700: #b8c7f2;
+        --surface-soft: rgba(140, 168, 255, 0.12);
+        --surface-card: rgba(12, 20, 48, 0.78);
+        --border-soft: rgba(144, 170, 255, 0.28);
         min-height: 100vh;
         display: grid;
         place-items: center;
         padding: 2rem;
+        font-family: "Plus Jakarta Sans", "Segoe UI", sans-serif;
         background:
-          radial-gradient(circle at top left, rgba(40, 81, 204, 0.2), transparent 36%),
-          radial-gradient(circle at 95% 8%, rgba(59, 99, 230, 0.14), transparent 30%),
-          linear-gradient(135deg, #eef3ff 0%, #dfe9ff 100%);
+          radial-gradient(circle at 12% 10%, rgba(101, 132, 255, 0.28), transparent 28%),
+          radial-gradient(circle at 88% 12%, rgba(72, 108, 255, 0.2), transparent 30%),
+          radial-gradient(circle at 50% 100%, rgba(16, 29, 83, 0.42), transparent 45%),
+          linear-gradient(145deg, #060a1f 0%, #0a1234 50%, #0e1c49 100%);
         color: var(--ink-900);
       }
 
@@ -1357,10 +1371,10 @@
         width: min(1120px, 100%);
         padding: 2.5rem;
         border-radius: 24px;
-        background: rgba(255, 255, 255, 0.92);
-        border: 1px solid rgba(18, 49, 127, 0.12);
-        box-shadow: 0 26px 84px rgba(16, 26, 59, 0.14);
-        backdrop-filter: blur(8px);
+        background: linear-gradient(180deg, rgba(12, 20, 48, 0.9), rgba(9, 17, 42, 0.84));
+        border: 1px solid var(--border-soft);
+        box-shadow: 0 26px 84px rgba(2, 6, 22, 0.55);
+        backdrop-filter: blur(10px);
       }
 
       .head {
@@ -1384,13 +1398,15 @@
         font-weight: 700;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: var(--royal-700);
+        color: #9ab4ff;
       }
 
       h1 {
         margin: 0;
         font-size: clamp(2rem, 4vw, 3.25rem);
         line-height: 1.05;
+        font-family: "Space Grotesk", "Plus Jakarta Sans", sans-serif;
+        color: #f6f8ff;
       }
 
       .badge {
@@ -1411,8 +1427,8 @@
       }
 
       .badge.neutral {
-        background: rgba(30, 64, 175, 0.12);
-        color: var(--royal-700);
+        background: rgba(126, 163, 255, 0.14);
+        color: #bdd0ff;
       }
 
       .employee-login,
@@ -1429,36 +1445,58 @@
       .employee-login {
         background: linear-gradient(135deg, var(--royal-800), var(--royal-700));
         color: #fff;
-        box-shadow: 0 10px 22px rgba(30, 64, 175, 0.22);
+        box-shadow: 0 10px 24px rgba(59, 99, 230, 0.34);
       }
 
       .employee-link {
-        background: rgba(30, 64, 175, 0.12);
-        color: var(--royal-700);
+        background: rgba(126, 163, 255, 0.14);
+        color: #c5d5ff;
       }
 
       .nav {
         margin-top: 1.25rem;
         display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-        padding-bottom: 0.35rem;
-        border-bottom: 1px solid rgba(16, 35, 61, 0.08);
+        align-items: center;
+        gap: 0.35rem;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 0.45rem 0.55rem;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 10px;
+        background: linear-gradient(180deg, rgba(23, 23, 23, 0.96), rgba(12, 12, 12, 0.96));
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      .nav::-webkit-scrollbar {
+        display: none;
       }
 
       .nav a {
         text-decoration: none;
-        color: var(--ink-700);
-        font-weight: 700;
-        padding: 0.45rem 0.75rem;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.72);
-        border: 1px solid rgba(18, 49, 127, 0.12);
+        color: rgba(255, 255, 255, 0.92);
+        font-weight: 500;
+        font-size: 0.95rem;
+        padding: 0.6rem 0.85rem;
+        border-radius: 4px;
+        background: transparent;
+        border: 1px solid transparent;
+        white-space: nowrap;
+        letter-spacing: 0.01em;
+        transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+      }
+
+      .nav a:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.14);
+        color: #fff;
       }
 
       .nav a.active {
-        background: linear-gradient(135deg, var(--royal-700), var(--royal-600));
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.22);
         color: #fff;
+        box-shadow: inset 0 -2px 0 #7ea3ff;
       }
 
       .summary,
@@ -1474,6 +1512,7 @@
       .summary {
         margin: 1rem 0 0;
         max-width: 72ch;
+        color: #d2ddff;
       }
 
       .status {
@@ -1545,15 +1584,15 @@
       .hero-content-panel {
         padding: 1.5rem;
         border-radius: 22px;
-        background: linear-gradient(180deg, rgba(248, 251, 255, 0.98), rgba(232, 240, 250, 0.96));
-        border: 1px solid rgba(206, 223, 244, 0.95);
-        box-shadow: 0 24px 40px rgba(5, 24, 58, 0.16);
-        color: #10233d;
+        background: linear-gradient(180deg, rgba(12, 24, 61, 0.9), rgba(12, 20, 48, 0.86));
+        border: 1px solid rgba(142, 168, 255, 0.28);
+        box-shadow: 0 24px 40px rgba(2, 6, 22, 0.44);
+        color: #eaf0ff;
       }
 
       .hero-copy {
         margin-top: 0.9rem;
-        color: #405584;
+        color: #bacaf0;
         font-size: 1.02rem;
       }
 
@@ -1574,9 +1613,9 @@
       }
 
       .hero-content-panel .button.ghost {
-        background: #fff;
-        color: #10233d;
-        border: 1px solid rgba(16, 35, 61, 0.12);
+        background: rgba(143, 169, 255, 0.14);
+        color: #e8efff;
+        border: 1px solid rgba(151, 175, 255, 0.35);
       }
 
       .hero-signin {
@@ -1629,7 +1668,7 @@
       .hero-trust-strip span {
         margin-top: 0.25rem;
         font-size: 0.88rem;
-        color: #5b718c;
+        color: #b3c4ef;
       }
 
       .button.ghost {
@@ -1731,14 +1770,18 @@
 
       .home-links-grid {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 0.85rem;
+      }
+
+      .quick-links-panel {
+        margin-top: 1.1rem;
       }
 
       .spotlight-panel,
       .sectors-panel,
       .home-links-panel {
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(240, 246, 255, 0.98));
+        background: linear-gradient(180deg, rgba(13, 24, 58, 0.85), rgba(11, 20, 49, 0.84));
       }
 
       .sectors-head h2,
@@ -1763,9 +1806,9 @@
       .spotlight-card {
         border-radius: 16px;
         padding: 1rem;
-        background: #fff;
-        border: 1px solid rgba(16, 35, 61, 0.1);
-        box-shadow: 0 10px 30px rgba(16, 35, 61, 0.06);
+        background: rgba(21, 35, 81, 0.7);
+        border: 1px solid rgba(143, 169, 255, 0.2);
+        box-shadow: 0 10px 30px rgba(2, 7, 24, 0.32);
       }
 
       .spotlight-card span {
@@ -1775,8 +1818,8 @@
         width: 2rem;
         height: 2rem;
         border-radius: 999px;
-        background: rgba(10, 95, 180, 0.1);
-        color: #0a5fb4;
+        background: rgba(126, 163, 255, 0.18);
+        color: #cfe0ff;
         font-weight: 700;
       }
 
@@ -1786,7 +1829,7 @@
 
       .spotlight-card p {
         margin: 0;
-        color: #475569;
+        color: #b8c8f1;
       }
 
       .sector-grid {
@@ -1839,18 +1882,27 @@
       .home-link-card {
         display: block;
         text-decoration: none;
-        border: 1px solid rgba(16, 35, 61, 0.12);
+        border: 1px solid rgba(143, 169, 255, 0.2);
         border-radius: 14px;
         padding: 1.05rem;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(240, 246, 254, 0.95));
-        color: #10233d;
+        background: linear-gradient(180deg, rgba(20, 34, 80, 0.82), rgba(15, 27, 67, 0.82));
+        color: #eaf0ff;
+        min-height: 128px;
+        display: grid;
+        align-content: start;
+        gap: 0.45rem;
         transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+      }
+
+      .home-link-card.active {
+        border-color: rgba(126, 163, 255, 0.55);
+        box-shadow: 0 10px 24px rgba(59, 99, 230, 0.24);
       }
 
       .home-link-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 12px 26px rgba(16, 35, 61, 0.14);
-        border-color: rgba(10, 95, 180, 0.42);
+        box-shadow: 0 12px 26px rgba(2, 6, 22, 0.4);
+        border-color: rgba(126, 163, 255, 0.45);
       }
 
       .home-link-card h3 {
@@ -1859,8 +1911,8 @@
       }
 
       .home-link-card p {
-        margin: 0.4rem 0 0;
-        color: #475569;
+        margin: 0;
+        color: #b8c8f1;
       }
 
       .section-panel {
@@ -1870,7 +1922,7 @@
         gap: 0.9rem;
         align-content: start;
         background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(234, 242, 255, 0.95));
+          linear-gradient(180deg, rgba(15, 28, 69, 0.9), rgba(11, 22, 57, 0.9));
       }
 
       .single-panel-layout {
@@ -1880,11 +1932,11 @@
       }
 
       .panel {
-        background: rgba(255, 255, 255, 0.96);
-        border: 1px solid rgba(18, 49, 127, 0.14);
+        background: var(--surface-card);
+        border: 1px solid var(--border-soft);
         border-radius: 18px;
         padding: 1.35rem;
-        box-shadow: 0 12px 26px rgba(18, 49, 127, 0.1);
+        box-shadow: 0 12px 26px rgba(2, 6, 22, 0.34);
         min-height: 100%;
       }
 
@@ -1928,7 +1980,7 @@
       .news-list {
         margin: 0.2rem 0 0;
         padding-left: 1.2rem;
-        color: #334155;
+        color: #cfddff;
         display: grid;
         gap: 0.5rem;
       }
@@ -1940,10 +1992,10 @@
       }
 
       .news-card {
-        border: 1px solid rgba(16, 35, 61, 0.12);
+        border: 1px solid rgba(143, 169, 255, 0.2);
         border-radius: 14px;
         padding: 0.85rem;
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(20, 35, 83, 0.7);
       }
 
       .news-meta {
@@ -1962,12 +2014,12 @@
 
       .news-card p {
         margin: 0;
-        color: #475569;
+        color: #b7c8f1;
       }
 
       .news-note {
         margin: 0;
-        color: #1e3a5f;
+        color: #d2dfff;
       }
 
       .news-note a {
@@ -1979,9 +2031,9 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        border-color: rgba(18, 49, 127, 0.16);
+        border-color: rgba(151, 175, 255, 0.25);
         background: var(--surface-soft);
-        color: var(--ink-900);
+        color: #eef3ff;
       }
 
       .social-icon {
@@ -2027,10 +2079,10 @@
       }
 
       .portfolio-item {
-        border: 1px solid rgba(16, 35, 61, 0.1);
+        border: 1px solid rgba(143, 169, 255, 0.2);
         border-radius: 14px;
         padding: 0.8rem;
-        background: rgba(244, 247, 251, 0.75);
+        background: rgba(18, 31, 75, 0.7);
       }
 
       .portfolio-item h3 {
@@ -2040,7 +2092,7 @@
 
       .portfolio-item p {
         margin: 0;
-        color: #475569;
+        color: #b7c8f1;
       }
 
       .course-list {
@@ -2053,14 +2105,14 @@
       }
 
       .course-card {
-        border: 1px solid rgba(16, 35, 61, 0.1);
+        border: 1px solid rgba(143, 169, 255, 0.22);
         border-radius: 16px;
         padding: 1rem;
-        background: rgba(244, 247, 251, 0.72);
+        background: rgba(17, 30, 73, 0.74);
       }
 
       .compact-card {
-        background: #fff;
+        background: rgba(20, 34, 80, 0.8);
       }
 
       .course-head {
@@ -2072,7 +2124,7 @@
 
       .course-track {
         margin: 0 0 0.25rem;
-        color: #0a5fb4;
+        color: #9ab4ff;
         font-size: 0.8rem;
         font-weight: 700;
         letter-spacing: 0.08em;
@@ -2087,7 +2139,7 @@
       .pill {
         border-radius: 999px;
         padding: 0.35rem 0.7rem;
-        background: rgba(16, 35, 61, 0.08);
+        background: rgba(126, 163, 255, 0.16);
         font-size: 0.8rem;
         font-weight: 700;
       }
@@ -2099,7 +2151,7 @@
       .course-meta {
         margin: 0.85rem 0 0;
         padding-left: 1rem;
-        color: #475569;
+        color: #b7c8f1;
       }
 
       .course-actions,
@@ -2117,7 +2169,7 @@
         justify-content: center;
         padding: 0.85rem 1.3rem;
         border-radius: 999px;
-        background: #0a5fb4;
+        background: linear-gradient(135deg, var(--royal-700), var(--royal-600));
         color: #fff;
         font-weight: 700;
         text-decoration: none;
@@ -2126,7 +2178,7 @@
       }
 
       .button.secondary {
-        background: #10233d;
+        background: linear-gradient(135deg, #26397b, #1b295c);
       }
 
       .button.small {
@@ -2136,15 +2188,15 @@
 
       .hint {
         margin: 0.9rem 0 0;
-        color: #475569;
+        color: #b7c8f1;
       }
 
       .account-card {
         margin-top: 1.75rem;
-        border: 1px solid rgba(16, 35, 61, 0.14);
+        border: 1px solid rgba(143, 169, 255, 0.24);
         border-radius: 16px;
         overflow: hidden;
-        background: #fff;
+        background: rgba(13, 24, 59, 0.85);
       }
 
       .profile-account-card {
@@ -2158,7 +2210,7 @@
         gap: 0.75rem;
         align-items: center;
         padding: 0.8rem 1rem;
-        border-bottom: 1px solid rgba(16, 35, 61, 0.1);
+        border-bottom: 1px solid rgba(143, 169, 255, 0.24);
       }
 
       .tenant,
@@ -2179,7 +2231,7 @@
         height: 84px;
         border-radius: 50%;
         object-fit: cover;
-        border: 2px solid rgba(10, 95, 180, 0.25);
+        border: 2px solid rgba(126, 163, 255, 0.42);
       }
 
       .identity-name {
@@ -2194,7 +2246,7 @@
       }
 
       .account-link {
-        color: #0a5fb4;
+        color: #aac3ff;
         font-weight: 700;
         text-decoration: underline;
         text-underline-offset: 2px;
@@ -2205,8 +2257,8 @@
         width: fit-content;
         text-decoration: none;
         font-weight: 700;
-        color: #0a5fb4;
-        background: rgba(10, 95, 180, 0.12);
+        color: #d8e5ff;
+        background: rgba(126, 163, 255, 0.14);
         border-radius: 999px;
         padding: 0.55rem 0.95rem;
       }
@@ -2221,7 +2273,7 @@
         display: grid;
         gap: 0.35rem;
         font-weight: 700;
-        color: #334155;
+        color: #d8e5ff;
       }
 
       .admin-form .full-width {
@@ -2231,8 +2283,8 @@
       .asset-field {
         display: grid;
         gap: 0.65rem;
-        border: 1px solid rgba(16, 35, 61, 0.08);
-        background: rgba(244, 247, 251, 0.55);
+        border: 1px solid rgba(143, 169, 255, 0.18);
+        background: rgba(13, 25, 61, 0.66);
         border-radius: 12px;
         padding: 0.85rem;
       }
@@ -2253,17 +2305,18 @@
       .selected-file {
         margin: 0;
         font-size: 0.9rem;
-        color: #475569;
+        color: #b7c8f1;
       }
 
       .admin-form input,
       .admin-form select,
       .admin-form textarea {
-        border: 1px solid rgba(16, 35, 61, 0.16);
+        border: 1px solid rgba(143, 169, 255, 0.32);
         border-radius: 12px;
         padding: 0.8rem 0.9rem;
         font: inherit;
-        background: #fff;
+        background: rgba(5, 13, 35, 0.72);
+        color: #e8efff;
       }
 
       code {
@@ -2311,7 +2364,7 @@
         }
 
         .home-links-grid {
-          grid-template-columns: 1fr;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
         .portfolio-grid {
@@ -2393,13 +2446,8 @@
         }
 
         .nav {
-          display: flex;
-          flex-wrap: nowrap;
-          overflow-x: auto;
-          gap: 0.55rem;
-          padding-bottom: 0.55rem;
-          scrollbar-width: none;
-          -ms-overflow-style: none;
+          gap: 0.35rem;
+          padding: 0.4rem;
         }
 
         .nav::-webkit-scrollbar {
@@ -2410,6 +2458,8 @@
           text-align: center;
           white-space: nowrap;
           flex: 0 0 auto;
+          padding: 0.55rem 0.7rem;
+          font-size: 0.9rem;
         }
 
         .hero-stats {
@@ -2509,6 +2559,10 @@
         .employee-login,
         .employee-link {
           width: 100%;
+        }
+
+        .home-links-grid {
+          grid-template-columns: 1fr;
         }
 
         .account-top {

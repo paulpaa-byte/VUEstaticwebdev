@@ -317,15 +317,19 @@
                   </p>
                   <div class="social-links">
                     <a class="link-chip" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">
+                      <span class="social-icon social-facebook" aria-hidden="true">f</span>
                       Follow on Facebook
                     </a>
                     <a class="link-chip" href="https://twitter.com/" target="_blank" rel="noopener noreferrer">
+                      <span class="social-icon social-twitter" aria-hidden="true">x</span>
                       Follow on Twitter
                     </a>
                     <a class="link-chip" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">
+                      <span class="social-icon social-instagram" aria-hidden="true">ig</span>
                       Follow on Instagram
                     </a>
                     <a class="link-chip" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">
+                      <span class="social-icon social-youtube" aria-hidden="true">yt</span>
                       Follow on YouTube
                     </a>
                   </div>
@@ -1329,14 +1333,24 @@
 
     <style scoped>
       .shell {
+        --royal-900: #0b1f5f;
+        --royal-800: #12317f;
+        --royal-700: #1e40af;
+        --royal-600: #2851cc;
+        --royal-500: #3b63e6;
+        --royal-100: #dfe8ff;
+        --ink-900: #101a3b;
+        --ink-700: #2d3f72;
+        --surface-soft: #f2f6ff;
         min-height: 100vh;
         display: grid;
         place-items: center;
         padding: 2rem;
         background:
-          radial-gradient(circle at top left, rgba(0, 120, 212, 0.18), transparent 35%),
-          linear-gradient(135deg, #f4f7fb 0%, #e7eef8 100%);
-        color: #10233d;
+          radial-gradient(circle at top left, rgba(40, 81, 204, 0.2), transparent 36%),
+          radial-gradient(circle at 95% 8%, rgba(59, 99, 230, 0.14), transparent 30%),
+          linear-gradient(135deg, #eef3ff 0%, #dfe9ff 100%);
+        color: var(--ink-900);
       }
 
       .card {
@@ -1344,7 +1358,8 @@
         padding: 2.5rem;
         border-radius: 24px;
         background: rgba(255, 255, 255, 0.92);
-        box-shadow: 0 24px 80px rgba(16, 35, 61, 0.14);
+        border: 1px solid rgba(18, 49, 127, 0.12);
+        box-shadow: 0 26px 84px rgba(16, 26, 59, 0.14);
         backdrop-filter: blur(8px);
       }
 
@@ -1369,7 +1384,7 @@
         font-weight: 700;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: #0a5fb4;
+        color: var(--royal-700);
       }
 
       h1 {
@@ -1396,8 +1411,8 @@
       }
 
       .badge.neutral {
-        background: rgba(30, 64, 175, 0.1);
-        color: #1e40af;
+        background: rgba(30, 64, 175, 0.12);
+        color: var(--royal-700);
       }
 
       .employee-login,
@@ -1412,14 +1427,14 @@
       }
 
       .employee-login {
-        background: #10233d;
+        background: linear-gradient(135deg, var(--royal-800), var(--royal-700));
         color: #fff;
-        box-shadow: 0 10px 20px rgba(16, 35, 61, 0.12);
+        box-shadow: 0 10px 22px rgba(30, 64, 175, 0.22);
       }
 
       .employee-link {
-        background: rgba(10, 95, 180, 0.12);
-        color: #0a5fb4;
+        background: rgba(30, 64, 175, 0.12);
+        color: var(--royal-700);
       }
 
       .nav {
@@ -1433,16 +1448,16 @@
 
       .nav a {
         text-decoration: none;
-        color: #33506f;
+        color: var(--ink-700);
         font-weight: 700;
         padding: 0.45rem 0.75rem;
         border-radius: 999px;
         background: rgba(255, 255, 255, 0.72);
-        border: 1px solid rgba(16, 35, 61, 0.08);
+        border: 1px solid rgba(18, 49, 127, 0.12);
       }
 
       .nav a.active {
-        background: #0a5fb4;
+        background: linear-gradient(135deg, var(--royal-700), var(--royal-600));
         color: #fff;
       }
 
@@ -1488,8 +1503,8 @@
 
       .hero-banner {
         background:
-          radial-gradient(circle at 88% 10%, rgba(130, 218, 255, 0.24), transparent 34%),
-          linear-gradient(135deg, rgba(4, 34, 83, 0.97), rgba(9, 78, 154, 0.95));
+          radial-gradient(circle at 88% 10%, rgba(145, 177, 255, 0.3), transparent 34%),
+          linear-gradient(135deg, var(--royal-900), var(--royal-700));
         color: #f8fbff;
         border: 0;
         overflow: hidden;
@@ -1516,7 +1531,7 @@
       }
 
       .dark-kicker {
-        color: #0a5fb4;
+        color: var(--royal-700);
         opacity: 1;
       }
 
@@ -1538,7 +1553,7 @@
 
       .hero-copy {
         margin-top: 0.9rem;
-        color: #4a607c;
+        color: #405584;
         font-size: 1.02rem;
       }
 
@@ -1555,7 +1570,7 @@
       }
 
       .hero-content-panel .button {
-        box-shadow: 0 12px 26px rgba(10, 95, 180, 0.18);
+        box-shadow: 0 12px 26px rgba(30, 64, 175, 0.2);
       }
 
       .hero-content-panel .button.ghost {
@@ -1565,16 +1580,16 @@
       }
 
       .hero-signin {
-        color: #0a5fb4;
+        color: var(--royal-700);
         font-weight: 700;
         text-decoration: none;
-        border-bottom: 1px solid rgba(10, 95, 180, 0.32);
+        border-bottom: 1px solid rgba(30, 64, 175, 0.35);
         width: fit-content;
       }
 
       .hero-signin:hover {
-        color: #073d75;
-        border-bottom-color: rgba(7, 61, 117, 0.8);
+        color: var(--royal-800);
+        border-bottom-color: rgba(18, 49, 127, 0.8);
       }
 
       .hero-proof-line {
@@ -1585,13 +1600,13 @@
       }
 
       .hero-proof-line span {
-        border: 1px solid rgba(10, 95, 180, 0.18);
+        border: 1px solid rgba(30, 64, 175, 0.2);
         border-radius: 999px;
         padding: 0.35rem 0.7rem;
         font-size: 0.82rem;
         font-weight: 700;
-        background: rgba(10, 95, 180, 0.08);
-        color: #0a5fb4;
+        background: rgba(30, 64, 175, 0.08);
+        color: var(--royal-700);
       }
 
       .hero-trust-strip {
@@ -1723,7 +1738,7 @@
       .spotlight-panel,
       .sectors-panel,
       .home-links-panel {
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(245, 249, 255, 0.96));
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(240, 246, 255, 0.98));
       }
 
       .sectors-head h2,
@@ -1855,7 +1870,7 @@
         gap: 0.9rem;
         align-content: start;
         background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(242, 248, 255, 0.95));
+          linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(234, 242, 255, 0.95));
       }
 
       .single-panel-layout {
@@ -1866,10 +1881,10 @@
 
       .panel {
         background: rgba(255, 255, 255, 0.96);
-        border: 1px solid rgba(16, 35, 61, 0.1);
+        border: 1px solid rgba(18, 49, 127, 0.14);
         border-radius: 18px;
         padding: 1.35rem;
-        box-shadow: 0 12px 26px rgba(16, 35, 61, 0.08);
+        box-shadow: 0 12px 26px rgba(18, 49, 127, 0.1);
         min-height: 100%;
       }
 
@@ -1937,7 +1952,7 @@
         letter-spacing: 0.07em;
         text-transform: uppercase;
         font-weight: 700;
-        color: #0a5fb4;
+        color: var(--royal-700);
       }
 
       .news-card h3 {
@@ -1956,8 +1971,46 @@
       }
 
       .news-note a {
-        color: #0a5fb4;
+        color: var(--royal-700);
         font-weight: 700;
+      }
+
+      .social-links .link-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-color: rgba(18, 49, 127, 0.16);
+        background: var(--surface-soft);
+        color: var(--ink-900);
+      }
+
+      .social-icon {
+        width: 1.4rem;
+        height: 1.4rem;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        font-weight: 800;
+        color: #fff;
+      }
+
+      .social-facebook {
+        background: #1877f2;
+      }
+
+      .social-twitter {
+        background: #111827;
+      }
+
+      .social-instagram {
+        background: linear-gradient(135deg, #f97316, #ec4899 55%, #8b5cf6);
+      }
+
+      .social-youtube {
+        background: #dc2626;
       }
 
       .social-links {

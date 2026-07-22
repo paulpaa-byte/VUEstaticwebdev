@@ -1,6 +1,22 @@
 <template>
   <main class="shell">
     <section class="card">
+            <nav class="nav">
+              <div class="nav-links">
+                <a href="/" :class="showHome ? 'active' : ''">Home</a>
+                <a href="/about" :class="isAboutRoute ? 'active' : ''">About Us</a>
+                <a href="/vision" :class="isVisionRoute ? 'active' : ''">Vision</a>
+                <a href="/contact" :class="isContactRoute ? 'active' : ''">Contact</a>
+                <a href="/news-media" :class="isNewsRoute ? 'active' : ''">News & Media</a>
+                <a href="/services-portfolio" :class="isPortfolioRoute ? 'active' : ''">Services</a>
+                <a href="/trainings" :class="isTrainingsRoute ? 'active' : ''">Trainings</a>
+              </div>
+              <div v-if="showHome && !isAuthenticated" class="nav-auth">
+                <a class="nav-auth-link signin" href="/login">Sign In</a>
+                <a class="nav-auth-link signup" href="/.auth/login/aad?post_login_redirect_uri=/trainings">Sign Up</a>
+              </div>
+            </nav>
+
             <header class="head">
               <div>
                 <p class="eyebrow">Valuearc.net</p>
@@ -10,22 +26,10 @@
                 <span v-if="isAuthenticated && !isInternalUser" class="badge neutral">
                   Guest
                 </span>
-                <a v-if="!isAuthenticated" class="employee-login" href="/login">Sign In</a>
-                <a v-if="!isAuthenticated" class="employee-link" href="/.auth/login/aad?post_login_redirect_uri=/trainings">Self Sign Up</a>
-                <a v-else class="employee-login" href="/profile">{{ userTypeLabel }} Login</a>
+                <a v-if="isAuthenticated" class="employee-login" href="/profile">{{ userTypeLabel }} Login</a>
                 <a v-if="isAdministrator" class="employee-link" href="/admin">Admin</a>
               </div>
             </header>
-
-            <nav class="nav">
-              <a href="/" :class="showHome ? 'active' : ''">Home</a>
-              <a href="/about" :class="isAboutRoute ? 'active' : ''">About Us</a>
-              <a href="/vision" :class="isVisionRoute ? 'active' : ''">Vision</a>
-              <a href="/contact" :class="isContactRoute ? 'active' : ''">Contact</a>
-              <a href="/news-media" :class="isNewsRoute ? 'active' : ''">News & Media</a>
-              <a href="/services-portfolio" :class="isPortfolioRoute ? 'active' : ''">Services</a>
-              <a href="/trainings" :class="isTrainingsRoute ? 'active' : ''">Trainings</a>
-            </nav>
 
             <p class="summary" v-if="isAdminRoute">
               Manage the Microsoft cloud training catalog. Files are uploaded to SharePoint and
@@ -204,6 +208,26 @@
                     insight to support both employers and candidates. The result is a more thoughtful, reliable,
                     and outcome-focused consulting experience.
                   </p>
+                  <div class="page-media-grid" aria-label="About visual highlights">
+                    <figure class="media-card">
+                      <img
+                        class="page-gif"
+                        src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif"
+                        alt="Animated team collaboration"
+                        loading="lazy"
+                      >
+                      <figcaption>Collaborative consulting workshops that align teams quickly.</figcaption>
+                    </figure>
+                    <figure class="media-card">
+                      <img
+                        class="page-gif"
+                        src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1000&q=80"
+                        alt="Consulting team in strategy discussion"
+                        loading="lazy"
+                      >
+                      <figcaption>Advisory engagements driven by business outcomes.</figcaption>
+                    </figure>
+                  </div>
                 </article>
               </section>
 
@@ -220,6 +244,26 @@
                     We believe the future belongs to firms that combine people expertise with operational clarity,
                     digital readiness, and a strong commitment to delivery excellence.
                   </p>
+                  <div class="page-media-grid" aria-label="Vision visual highlights">
+                    <figure class="media-card">
+                      <img
+                        class="page-gif"
+                        src="https://media.giphy.com/media/3o7aD2saalBwwftBIY/giphy.gif"
+                        alt="Animated growth and planning graphic"
+                        loading="lazy"
+                      >
+                      <figcaption>Strategic direction supported by measurable transformation plans.</figcaption>
+                    </figure>
+                    <figure class="media-card">
+                      <img
+                        class="page-gif"
+                        src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80"
+                        alt="Business growth dashboard"
+                        loading="lazy"
+                      >
+                      <figcaption>Future-ready capability building for long-term competitiveness.</figcaption>
+                    </figure>
+                  </div>
                 </article>
               </section>
 
@@ -236,6 +280,26 @@
                     <a class="link-chip" href="tel:+18005550199">+1 (800) 555-0199</a>
                     <a class="link-chip" href="mailto:media@valuearc.net">media@valuearc.net</a>
                     <span class="hint">Business hours: Monday to Friday, 9:00 AM to 6:00 PM</span>
+                  </div>
+                  <div class="page-media-grid" aria-label="Contact visual highlights">
+                    <figure class="media-card">
+                      <img
+                        class="page-gif"
+                        src="https://media.giphy.com/media/xT9IgzoKnwFNmISR8I/giphy.gif"
+                        alt="Animated customer support response"
+                        loading="lazy"
+                      >
+                      <figcaption>Fast response and dedicated support for clients and candidates.</figcaption>
+                    </figure>
+                    <figure class="media-card">
+                      <img
+                        class="page-gif"
+                        src="https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1000&q=80"
+                        alt="Support desk and communication"
+                        loading="lazy"
+                      >
+                      <figcaption>Connect with our specialists for hiring and consulting needs.</figcaption>
+                    </figure>
                   </div>
                 </article>
               </section>
@@ -1354,6 +1418,7 @@
         align-items: flex-start;
         justify-content: space-between;
         gap: 1rem;
+        margin-top: 1rem;
       }
 
       .header-actions {
@@ -1427,7 +1492,7 @@
       }
 
       .nav {
-        margin-top: 1.25rem;
+        margin-top: 0;
         display: flex;
         align-items: center;
         gap: 0.35rem;
@@ -1439,6 +1504,41 @@
         background: linear-gradient(180deg, rgba(19, 47, 131, 0.96), rgba(11, 31, 92, 0.96));
         scrollbar-width: none;
         -ms-overflow-style: none;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        flex: 1 1 auto;
+        min-width: 680px;
+      }
+
+      .nav-auth {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin-left: 0.35rem;
+        flex: 0 0 auto;
+      }
+
+      .nav-auth-link {
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 0.45rem 0.75rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        color: #fff;
+        white-space: nowrap;
+      }
+
+      .nav-auth-link.signin {
+        background: linear-gradient(135deg, #3b63e6, #2b47b8);
+      }
+
+      .nav-auth-link.signup {
+        background: rgba(166, 190, 255, 0.18);
       }
 
       .nav::-webkit-scrollbar {
@@ -1750,7 +1850,9 @@
       }
 
       .quick-links-footer {
-        margin-top: 1.15rem;
+        margin-top: 1.5rem;
+        padding-top: 0.55rem;
+        border-top: 1px solid rgba(144, 170, 255, 0.24);
       }
 
       .quick-links-strip {
@@ -1796,7 +1898,35 @@
         background: rgba(255, 255, 255, 0.08);
         border-color: rgba(255, 255, 255, 0.22);
         color: #fff;
-        box-shadow: inset 0 -2px 0 #7ea3ff;
+        box-shadow: none;
+      }
+
+      .page-media-grid {
+        margin-top: 0.4rem;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.85rem;
+      }
+
+      .media-card {
+        margin: 0;
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid rgba(143, 169, 255, 0.22);
+        background: rgba(16, 30, 73, 0.78);
+      }
+
+      .page-gif {
+        display: block;
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+      }
+
+      .media-card figcaption {
+        padding: 0.65rem 0.75rem;
+        font-size: 0.88rem;
+        color: #c4d4fa;
       }
 
       .spotlight-panel,
@@ -2357,6 +2487,10 @@
           grid-template-columns: 1fr;
         }
 
+        .nav-links {
+          min-width: 0;
+        }
+
         .header-actions {
           justify-content: flex-start;
         }
@@ -2386,6 +2520,10 @@
 
         .home-links-grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .page-media-grid {
+          grid-template-columns: 1fr;
         }
 
         .quick-links-strip {
@@ -2485,6 +2623,14 @@
           flex: 0 0 auto;
           padding: 0.55rem 0.7rem;
           font-size: 0.9rem;
+        }
+
+        .nav-links {
+          min-width: max-content;
+        }
+
+        .nav-auth {
+          display: none;
         }
 
         .quick-links-strip a {

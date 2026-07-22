@@ -631,19 +631,19 @@
                         <textarea v-model.trim="siteContent.about.body[1]" rows="4"></textarea>
                       </label>
                       <label>
-                        Image 1 URL
+                        About page image 1 URL
                         <input v-model.trim="siteContent.about.media[0].url" type="text">
                       </label>
                       <label>
-                        Image 1 caption
+                        About page image 1 caption
                         <input v-model.trim="siteContent.about.media[0].caption" type="text">
                       </label>
                       <label>
-                        Image 2 URL
+                        About page image 2 URL
                         <input v-model.trim="siteContent.about.media[1].url" type="text">
                       </label>
                       <label>
-                        Image 2 caption
+                        About page image 2 caption
                         <input v-model.trim="siteContent.about.media[1].caption" type="text">
                       </label>
                     </section>
@@ -664,19 +664,19 @@
                         <textarea v-model.trim="siteContent.vision.body[1]" rows="4"></textarea>
                       </label>
                       <label>
-                        Image 1 URL
+                        Vision page image 1 URL
                         <input v-model.trim="siteContent.vision.media[0].url" type="text">
                       </label>
                       <label>
-                        Image 1 caption
+                        Vision page image 1 caption
                         <input v-model.trim="siteContent.vision.media[0].caption" type="text">
                       </label>
                       <label>
-                        Image 2 URL
+                        Vision page image 2 URL
                         <input v-model.trim="siteContent.vision.media[1].url" type="text">
                       </label>
                       <label>
-                        Image 2 caption
+                        Vision page image 2 caption
                         <input v-model.trim="siteContent.vision.media[1].caption" type="text">
                       </label>
                     </section>

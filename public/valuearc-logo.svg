@@ -1,0 +1,10 @@
+<svg width="360" height="120" viewBox="0 0 360 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Valuearc logo">
+  <rect width="360" height="120" fill="#FFFFFF"/>
+  <g transform="translate(12,10)">
+    <polygon points="40,0 72,18 72,54 40,72 8,54 8,18" fill="none" stroke="#2F57A8" stroke-width="6"/>
+    <path d="M20 22 L40 35 L60 22" stroke="#2F57A8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path d="M20 40 L40 54 L60 40" stroke="#2F57A8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+  <text x="98" y="52" font-family="Segoe UI, Arial, sans-serif" font-size="56" font-weight="700" fill="#0B0F19">VALUEARC</text>
+  <text x="98" y="88" font-family="Segoe UI, Arial, sans-serif" font-size="26" letter-spacing="2" fill="#0B0F19">THE INNOVATION CENTER</text>
+</svg>

@@ -19,7 +19,13 @@
 
             <header class="head">
               <div>
-                <p class="eyebrow">Valuearc.net</p>
+                <div class="brand-row" aria-label="Valuearc identity">
+                  <img class="brand-logo" src="/valuearc-logo.svg" alt="Valuearc logo">
+                  <div>
+                    <p class="eyebrow">VALUEARC</p>
+                    <p class="brand-subtitle">THE INNOVATION CENTER</p>
+                  </div>
+                </div>
                 <h1>{{ pageTitle }}</h1>
               </div>
               <div class="header-actions">
@@ -886,18 +892,62 @@
 
             return this.user && this.user.userDetails ? this.user.userDetails.toLowerCase() : "";
           },
+          userDomain() {
+            if (!this.userEmail || !this.userEmail.includes("@")) {
+              return "";
+            }
+
+            return this.userEmail.split("@")[1].trim();
+          },
+          hasGuestRole() {
+            const roles = this.user && Array.isArray(this.user.userRoles) ? this.user.userRoles : [];
+            return roles.some(role => String(role || "").toLowerCase() === "guest");
+          },
+          hasGuestClaim() {
+            const claims = this.user && Array.isArray(this.user.claims) ? this.user.claims : [];
+            const guestClaimTypes = ["usertype", "role", "groups", "wids"];
+
+            return claims.some(claim => {
+              const typ = String((claim && claim.typ) || "").toLowerCase();
+              const val = String((claim && claim.val) || "").toLowerCase();
+              if (!val) {
+                return false;
+              }
+
+              const typeMatch = guestClaimTypes.some(candidate => typ.includes(candidate));
+              return typeMatch && (val === "guest" || val.includes("external"));
+            });
+          },
+          isInternalDomain() {
+            if (!this.userDomain) {
+              return false;
+            }
+
+            return this.userDomain === "valuearc.net"
+              || this.userDomain.endsWith(".valuearc.net")
+              || this.userDomain === "valuearcnet.onmicrosoft.com"
+              || this.userDomain.endsWith(".onmicrosoft.com");
+          },
           isInternalUser() {
             if (!this.isAuthenticated) {
               return false;
             }
 
-            if (!this.userEmail || !this.userEmail.includes("@")) {
-              // Default to employee if email claim is unavailable to avoid false guest labeling.
+            // Explicit guest markers from Entra should always be treated as guest accounts.
+            if (this.hasGuestRole || this.hasGuestClaim) {
+              return false;
+            }
+
+            if (this.isInternalDomain) {
               return true;
             }
 
-            const domain = this.userEmail.split("@")[1] || "";
-            return domain === "valuearc.net" || domain.endsWith(".valuearc.net");
+            // If we cannot resolve a reliable domain or claim, default to employee to prevent false guest labels.
+            if (!this.userDomain) {
+              return true;
+            }
+
+            return false;
           },
           userTypeLabel() {
             if (!this.isAuthenticated) {
@@ -1473,6 +1523,27 @@
         margin-top: 1rem;
       }
 
+      .brand-row {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+      }
+
+      .brand-logo {
+        width: 54px;
+        height: 54px;
+        object-fit: contain;
+        filter: drop-shadow(0 6px 10px rgba(6, 14, 46, 0.35));
+      }
+
+      .brand-subtitle {
+        margin: 0.15rem 0 0;
+        color: #c9d8ff;
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
       .header-actions {
         display: flex;
         align-items: center;
@@ -1904,9 +1975,11 @@
       .quick-links-footer {
         margin-top: 2rem;
         padding-top: 0.85rem;
+        padding-bottom: 0.15rem;
         border-top: 1px solid rgba(144, 170, 255, 0.24);
         position: relative;
         z-index: 0;
+        clear: both;
       }
 
       .quick-links-strip {
@@ -1921,6 +1994,8 @@
         background: linear-gradient(180deg, rgba(19, 47, 131, 0.96), rgba(11, 31, 92, 0.96));
         scrollbar-width: none;
         -ms-overflow-style: none;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       .quick-links-strip::-webkit-scrollbar {
@@ -2541,6 +2616,11 @@
           grid-template-columns: 1fr;
         }
 
+        .brand-logo {
+          width: 46px;
+          height: 46px;
+        }
+
         .nav-links {
           min-width: 0;
         }
@@ -2660,6 +2740,10 @@
           display: grid;
           grid-template-columns: 1fr;
           width: 100%;
+        }
+
+        .brand-row {
+          align-items: flex-start;
         }
 
         .nav {

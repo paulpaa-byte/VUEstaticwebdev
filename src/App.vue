@@ -777,13 +777,34 @@
 
               <section v-if="!isAdminRoute && !isProfileRoute" class="quick-links-footer" aria-label="Quick navigation links">
                 <nav class="quick-links-strip">
-                  <a href="/" :class="showHome ? 'active' : ''">Home</a>
-                  <a href="/about" :class="isAboutRoute ? 'active' : ''">About Us</a>
-                  <a href="/vision" :class="isVisionRoute ? 'active' : ''">Vision</a>
-                  <a href="/contact" :class="isContactRoute ? 'active' : ''">Contact</a>
-                  <a href="/news-media" :class="isNewsRoute ? 'active' : ''">News & Media</a>
-                  <a href="/services-portfolio" :class="isPortfolioRoute ? 'active' : ''">Services</a>
-                  <a href="/trainings" :class="isTrainingsRoute ? 'active' : ''">Trainings</a>
+                  <a href="/" :class="showHome ? 'active' : ''">
+                    <svg class="quick-link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-5h-5v5H5a1 1 0 0 1-1-1v-8.5Z" fill="currentColor"/></svg>
+                    <span>Home</span>
+                  </a>
+                  <a href="/about" :class="isAboutRoute ? 'active' : ''">
+                    <svg class="quick-link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 1 0 8.5 8.5A8.51 8.51 0 0 0 12 3.5Zm0 4.2a1.25 1.25 0 1 1-1.25 1.25A1.25 1.25 0 0 1 12 7.7Zm1.6 8h-3.2v-1.5h.8v-2.7h-.8V10h2.4v4.2h.8Z" fill="currentColor"/></svg>
+                    <span>About Us</span>
+                  </a>
+                  <a href="/vision" :class="isVisionRoute ? 'active' : ''">
+                    <svg class="quick-link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6C6.8 6 3 12 3 12s3.8 6 9 6 9-6 9-6-3.8-6-9-6Zm0 9.2A3.2 3.2 0 1 1 15.2 12 3.2 3.2 0 0 1 12 15.2Z" fill="currentColor"/></svg>
+                    <span>Vision</span>
+                  </a>
+                  <a href="/contact" :class="isContactRoute ? 'active' : ''">
+                    <svg class="quick-link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5h13A2.5 2.5 0 0 1 21 7.5v9A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5v-9Zm2 .2V8l7 4.7L19 8v-.3a.5.5 0 0 0-.5-.5h-13a.5.5 0 0 0-.5.5Zm0 2.7v6.1a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-6.1l-6.4 4.3a1 1 0 0 1-1.2 0L5 10.4Z" fill="currentColor"/></svg>
+                    <span>Contact</span>
+                  </a>
+                  <a href="/news-media" :class="isNewsRoute ? 'active' : ''">
+                    <svg class="quick-link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11a2 2 0 0 1 2 2v10a4 4 0 0 0 1 2.7.8.8 0 0 1-.6 1.3H7a4 4 0 0 1-4-4V6a2 2 0 0 1 2-2Zm1.5 4.2h8v1.6h-8Zm0 3h8v1.6h-8Zm0 3h5.2v1.6H6.5Z" fill="currentColor"/></svg>
+                    <span>News &amp; Media</span>
+                  </a>
+                  <a href="/services-portfolio" :class="isPortfolioRoute ? 'active' : ''">
+                    <svg class="quick-link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v10a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 5 16.5v-10Zm2.5-.5a.5.5 0 0 0-.5.5v1h10v-1a.5.5 0 0 0-.5-.5h-9ZM7 9.5v7a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-7H7Z" fill="currentColor"/></svg>
+                    <span>Services</span>
+                  </a>
+                  <a href="/trainings" :class="isTrainingsRoute ? 'active' : ''">
+                    <svg class="quick-link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 3 8.5 12 13l7.1-3.6v6h1.9V8.5L12 4Zm-6.9 8.2V16c0 1.9 3.1 3.5 6.9 3.5s6.9-1.6 6.9-3.5v-3.8L12 15.8l-6.9-3.6Z" fill="currentColor"/></svg>
+                    <span>Trainings</span>
+                  </a>
                 </nav>
               </section>
       </template>
@@ -2340,10 +2361,10 @@
       }
 
       .quick-links-footer {
-        margin-top: 2rem;
-        padding-top: 0.85rem;
-        padding-bottom: 0.15rem;
-        border-top: 1px solid rgba(144, 170, 255, 0.24);
+        margin-top: 1.4rem;
+        padding-top: 0.55rem;
+        padding-bottom: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
         position: relative;
         z-index: 0;
         clear: both;
@@ -2352,13 +2373,13 @@
       .quick-links-strip {
         display: flex;
         align-items: center;
-        gap: 0.35rem;
+        gap: 0.2rem;
         flex-wrap: nowrap;
         overflow-x: auto;
-        padding: 0.4rem 0.5rem;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 10px;
-        background: linear-gradient(180deg, rgba(19, 47, 131, 0.96), rgba(11, 31, 92, 0.96));
+        padding: 0.25rem 0.35rem;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 0;
+        background: #0b0b0b;
         scrollbar-width: none;
         -ms-overflow-style: none;
         width: 100%;
@@ -2370,12 +2391,15 @@
       }
 
       .quick-links-strip a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
         text-decoration: none;
-        color: rgba(255, 255, 255, 0.92);
+        color: rgba(255, 255, 255, 0.85);
         font-weight: 600;
-        font-size: 0.86rem;
-        padding: 0.45rem 0.7rem;
-        border-radius: 4px;
+        font-size: 0.79rem;
+        padding: 0.35rem 0.58rem;
+        border-radius: 3px;
         background: transparent;
         border: 1px solid transparent;
         white-space: nowrap;
@@ -2384,15 +2408,22 @@
         text-align: center;
       }
 
+      .quick-link-icon {
+        width: 0.85rem;
+        height: 0.85rem;
+        flex: 0 0 auto;
+        opacity: 0.92;
+      }
+
       .quick-links-strip a:hover {
         background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.14);
+        border-color: rgba(255, 255, 255, 0.2);
         color: #fff;
       }
 
       .quick-links-strip a.active {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.22);
+        background: rgba(255, 0, 95, 0.13);
+        border-color: rgba(255, 53, 126, 0.42);
         color: #fff;
         box-shadow: none;
       }
@@ -3086,7 +3117,7 @@
         }
 
         .quick-links-strip {
-          padding: 0.3rem 0.4rem;
+          padding: 0.22rem 0.28rem;
         }
 
         .portfolio-grid {
@@ -3206,8 +3237,14 @@
 
         .quick-links-strip a {
           flex: 0 0 auto;
-          font-size: 0.83rem;
-          padding: 0.42rem 0.62rem;
+          font-size: 0.77rem;
+          padding: 0.34rem 0.52rem;
+          gap: 0.26rem;
+        }
+
+        .quick-link-icon {
+          width: 0.78rem;
+          height: 0.78rem;
         }
 
         .hero-stats {

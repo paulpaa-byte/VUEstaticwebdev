@@ -3,6 +3,9 @@
     <section class="card">
             <nav class="nav">
               <div class="nav-links">
+                <a class="nav-brand" href="/" aria-label="Valuearc home">
+                  <img class="nav-brand-logo" src="/valuearc-logo.svg" alt="Valuearc logo">
+                </a>
                 <a href="/" :class="showHome ? 'active' : ''">Home</a>
                 <a href="/about" :class="isAboutRoute ? 'active' : ''">About Us</a>
                 <a href="/vision" :class="isVisionRoute ? 'active' : ''">Vision</a>
@@ -19,13 +22,7 @@
 
             <header class="head">
               <div>
-                <div class="brand-row" aria-label="Valuearc identity">
-                  <img class="brand-logo" src="/valuearc-logo.svg" alt="Valuearc logo">
-                  <div>
-                    <p class="eyebrow">VALUEARC</p>
-                    <p class="brand-subtitle">THE INNOVATION CENTER</p>
-                  </div>
-                </div>
+                <p class="eyebrow">VALUEARC.NET</p>
                 <h1>{{ pageTitle }}</h1>
               </div>
               <div class="header-actions">
@@ -1523,27 +1520,6 @@
         margin-top: 1rem;
       }
 
-      .brand-row {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.65rem;
-      }
-
-      .brand-logo {
-        width: 54px;
-        height: 54px;
-        object-fit: contain;
-        filter: drop-shadow(0 6px 10px rgba(6, 14, 46, 0.35));
-      }
-
-      .brand-subtitle {
-        margin: 0.15rem 0 0;
-        color: #c9d8ff;
-        font-size: 0.8rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
       .header-actions {
         display: flex;
         align-items: center;
@@ -1635,6 +1611,32 @@
         gap: 0.35rem;
         flex: 1 1 auto;
         min-width: max-content;
+      }
+
+      .nav-brand {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 52px;
+        min-width: 52px;
+        height: 44px;
+        padding: 0;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        flex: 0 0 auto;
+      }
+
+      .nav-brand:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .nav-brand-logo {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+        display: block;
       }
 
       .nav-auth {
@@ -2742,8 +2744,10 @@
           width: 100%;
         }
 
-        .brand-row {
-          align-items: flex-start;
+        .nav-brand {
+          width: 48px;
+          min-width: 48px;
+          height: 40px;
         }
 
         .nav {

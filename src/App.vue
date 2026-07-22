@@ -5,7 +5,6 @@
               <div class="nav-links">
                 <a class="nav-brand" href="/" aria-label="Valuearc home">
                   <img class="nav-brand-logo" src="/valuearc-logo.svg" alt="Valuearc logo">
-                  <span class="nav-brand-text">Valuearc</span>
                 </a>
                 <a href="/" :class="showHome ? 'active' : ''">Home</a>
                 <a href="/about" :class="isAboutRoute ? 'active' : ''">About Us</a>
@@ -1981,11 +1980,10 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: auto;
+        width: 52px;
         min-width: 52px;
         height: 44px;
-        padding: 0 0.55rem;
-        gap: 0.4rem;
+        padding: 0;
         border-radius: 10px;
         background: linear-gradient(135deg, rgba(235, 243, 255, 0.18), rgba(171, 195, 255, 0.12));
         border: 1px solid rgba(230, 239, 255, 0.42);
@@ -2004,15 +2002,6 @@
         object-fit: contain;
         display: block;
         filter: drop-shadow(0 2px 6px rgba(3, 9, 28, 0.45));
-      }
-
-      .nav-brand-text {
-        color: #f8fbff;
-        font-size: 0.74rem;
-        font-weight: 800;
-        letter-spacing: 0.09em;
-        text-transform: uppercase;
-        line-height: 1;
       }
 
       .nav-auth {
@@ -3179,21 +3168,15 @@
         }
 
         .nav-brand {
-          width: auto;
+          width: 46px;
           min-width: 46px;
           height: 40px;
-          padding: 0 0.42rem;
-          gap: 0.3rem;
+          padding: 0;
         }
 
         .nav-brand-logo {
           width: 30px;
           height: 30px;
-        }
-
-        .nav-brand-text {
-          font-size: 0.68rem;
-          letter-spacing: 0.08em;
         }
 
         .nav {
@@ -3342,11 +3325,8 @@
         }
 
         .nav-brand {
-          padding: 0 0.35rem;
-        }
-
-        .nav-brand-text {
-          display: none;
+          width: 44px;
+          min-width: 44px;
         }
 
         .hero-layout,

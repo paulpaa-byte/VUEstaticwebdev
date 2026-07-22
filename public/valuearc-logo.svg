@@ -8,19 +8,8 @@
   <text x="98" y="52" font-family="Segoe UI, Arial, sans-serif" font-size="56" font-weight="700" fill="#0B0F19">VALUEARC</text>
   <text x="98" y="88" font-family="Segoe UI, Arial, sans-serif" font-size="26" letter-spacing="2" fill="#0B0F19">THE INNOVATION CENTER</text>
 <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Valuearc logo">
-  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
-  <path d="M24 33L64 11L104 33V77L64 101L24 77V33Z" fill="url(#frame)"/>
-  <path d="M37 40L64 25L91 40L82 45L64 35L46 45L37 40Z" fill="#F8FBFF" fill-opacity="0.96"/>
-  <path d="M43 53L64 65L85 53V63L64 76L43 63V53Z" fill="#F8FBFF"/>
-  <path d="M43 72L64 84L85 72V81L64 94L43 81V72Z" fill="#C9D8FF"/>
-  <defs>
-    <linearGradient id="bg" x1="14" y1="10" x2="112" y2="118" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#345CD8"/>
-      <stop offset="1" stop-color="#122B7E"/>
-    </linearGradient>
-    <linearGradient id="frame" x1="24" y1="11" x2="104" y2="101" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#F3F7FF"/>
-      <stop offset="1" stop-color="#B8CCFF"/>
-    </linearGradient>
-  </defs>
+  <path d="M64 9L111 35.5V92.5L64 119L17 92.5V35.5L64 9Z" stroke="#F8FBFF" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M35 34L50 24L64 31L78 24L93 34L64 48L35 34Z" fill="#F8FBFF"/>
+  <path d="M37 48L64 64L91 48V59L64 76L37 59V48Z" fill="#F8FBFF"/>
+  <path d="M43 68L64 81L85 68V79L64 92L43 79V68Z" fill="#F8FBFF" fill-opacity="0.92"/>
 </svg>

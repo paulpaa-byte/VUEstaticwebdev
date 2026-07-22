@@ -14,7 +14,7 @@
                 <a href="/services-portfolio" :class="isPortfolioRoute ? 'active' : ''">Services</a>
                 <a href="/trainings" :class="isTrainingsRoute ? 'active' : ''">Trainings</a>
               </div>
-              <div v-if="showHome && !isAuthenticated" class="nav-auth">
+              <div v-if="!isAuthenticated" class="nav-auth">
                 <a class="nav-auth-link signin" href="/login">Sign In</a>
                 <a class="nav-auth-link signup" href="/.auth/login/aad?post_login_redirect_uri=/trainings">Sign Up</a>
               </div>
@@ -1622,14 +1622,14 @@
         height: 44px;
         padding: 0;
         border-radius: 10px;
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         flex: 0 0 auto;
       }
 
       .nav-brand:hover {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.14);
       }
 
       .nav-brand-logo {

@@ -1879,7 +1879,7 @@
         place-items: center;
         padding: 2rem;
         box-sizing: border-box;
-        overflow-x: hidden;
+        overflow-x: auto;
         font-family: "Segoe UI", "Segoe UI Variable", "Helvetica Neue", Arial, sans-serif;
         background:
           radial-gradient(circle at 12% 10%, rgba(101, 132, 255, 0.28), transparent 28%),
@@ -1897,7 +1897,20 @@
         border: 1px solid var(--border-soft);
         box-shadow: 0 26px 84px rgba(2, 6, 22, 0.55);
         backdrop-filter: blur(10px);
-        overflow-x: clip;
+        overflow-x: visible;
+      }
+
+      .panel,
+      .hero-content-panel,
+      .spotlight-card,
+      .portfolio-item,
+      .course-card,
+      .media-card,
+      .news-card,
+      .section-panel,
+      .hero-layout > *,
+      .spotlight-panel > * {
+        min-width: 0;
       }
 
       .head {
@@ -3231,8 +3244,10 @@
         }
 
         .nav {
-          gap: 0.35rem;
+          gap: 0.3rem;
           padding: 0.4rem;
+          flex-wrap: wrap;
+          overflow-x: visible;
         }
 
         .nav::-webkit-scrollbar {
@@ -3241,22 +3256,37 @@
 
         .nav a {
           text-align: center;
-          white-space: nowrap;
-          flex: 0 0 auto;
+          white-space: normal;
+          flex: 1 1 calc(50% - 0.3rem);
+          min-width: 0;
           padding: 0.55rem 0.7rem;
           font-size: 0.9rem;
         }
 
         .nav-links {
-          min-width: max-content;
+          width: 100%;
+          min-width: 0;
+          flex-wrap: wrap;
+        }
+
+        .nav-brand {
+          margin-right: 0.1rem;
         }
 
         .nav-auth {
           display: none;
         }
 
+        .quick-links-strip {
+          overflow-x: visible;
+          flex-wrap: wrap;
+        }
+
         .quick-links-strip a {
-          flex: 0 0 auto;
+          flex: 1 1 calc(50% - 0.2rem);
+          min-width: 0;
+          justify-content: center;
+          white-space: normal;
           font-size: 0.77rem;
           padding: 0.34rem 0.52rem;
           gap: 0.26rem;
@@ -3394,7 +3424,7 @@
 
         .nav a {
           font-size: 0.82rem;
-          padding: 0.45rem 0.58rem;
+          padding: 0.42rem 0.52rem;
         }
 
         .quick-links-footer {
@@ -3408,7 +3438,7 @@
 
         .quick-links-strip a {
           font-size: 0.72rem;
-          padding: 0.3rem 0.45rem;
+          padding: 0.28rem 0.4rem;
           gap: 0.2rem;
         }
 
@@ -3454,11 +3484,22 @@
         .nav {
           gap: 0.25rem;
           padding: 0.3rem;
+          flex-wrap: wrap;
+          overflow-x: visible;
         }
 
         .nav a {
           font-size: 0.8rem;
-          padding: 0.42rem 0.56rem;
+          padding: 0.38rem 0.48rem;
+          flex: 1 1 calc(33.33% - 0.25rem);
+          min-width: 0;
+          white-space: normal;
+        }
+
+        .nav-links {
+          width: 100%;
+          min-width: 0;
+          flex-wrap: wrap;
         }
 
         .panel-grid,
@@ -3495,12 +3536,18 @@
 
         .quick-links-strip {
           padding: 0.16rem 0.2rem;
+          overflow-x: visible;
+          flex-wrap: wrap;
         }
 
         .quick-links-strip a {
           font-size: 0.7rem;
           padding: 0.26rem 0.42rem;
           gap: 0.18rem;
+          flex: 1 1 calc(33.33% - 0.2rem);
+          min-width: 0;
+          justify-content: center;
+          white-space: normal;
         }
 
         .quick-link-icon {

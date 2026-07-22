@@ -2,10 +2,12 @@ const { ClientSecretCredential } = require("@azure/identity");
 const nodeFetch = require("node-fetch");
 
 const defaultCourses = require("./defaultCourses");
+const defaultSiteContent = require("./defaultSiteContent");
 
 const sharePointRootFolder = process.env.SHAREPOINT_ROOT_FOLDER || "learninghub";
 const sharePointLibraryName = process.env.SP_LIBRARY_NAME || "Documents";
 const catalogBlobName = `${sharePointRootFolder}/catalog/courses.json`;
+const siteContentBlobName = `${sharePointRootFolder}/catalog/site-content.json`;
 
 let cachedToken;
 let cachedTokenExpiresOn;
@@ -234,6 +236,16 @@ async function saveCourses(courses) {
   return courses;
 }
 
+async function getSiteContent() {
+  const payload = await readJson(siteContentBlobName, defaultSiteContent);
+  return payload && typeof payload === "object" ? payload : defaultSiteContent;
+}
+
+async function saveSiteContent(siteContent) {
+  await writeJson(siteContentBlobName, siteContent);
+  return siteContent;
+}
+
 async function getEnrollments(userKey) {
   const blobName = `${sharePointRootFolder}/enrollments/${userKey}.json`;
   const payload = await readJson(blobName, { courseIds: [] });
@@ -305,7 +317,9 @@ async function getUserPhoto({ userEmail, delegatedToken }) {
 module.exports = {
   createUploadUrl,
   getCourses,
+  getSiteContent,
   saveCourses,
+  saveSiteContent,
   getEnrollments,
   saveEnrollments,
   getUserPhoto

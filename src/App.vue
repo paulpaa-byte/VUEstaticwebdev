@@ -1,5 +1,5 @@
 <template>
-  <main class="shell">
+  <main class="shell" :style="shellStyle">
     <section class="card">
             <nav class="nav">
               <div class="nav-links">
@@ -18,52 +18,20 @@
                 <a class="nav-auth-link signin" href="/login">Sign In</a>
                 <a class="nav-auth-link signup" href="/.auth/login/aad?post_login_redirect_uri=/trainings">Sign Up</a>
               </div>
+              <div v-else class="nav-auth">
+                <a class="nav-auth-link signin" href="/profile">{{ userTypeLabel }} Login</a>
+                <a v-if="isAdministrator" class="nav-auth-link signup" href="/admin">Admin</a>
+              </div>
             </nav>
 
             <header class="head">
               <div>
-                <p class="eyebrow">VALUEARC.NET</p>
+                <p class="eyebrow">{{ siteContent.branding.eyebrow }}</p>
                 <h1>{{ pageTitle }}</h1>
-              </div>
-              <div class="header-actions">
-                <span v-if="isAuthenticated && !isInternalUser" class="badge neutral">
-                  Guest
-                </span>
-                <a v-if="isAuthenticated" class="employee-login" href="/profile">{{ userTypeLabel }} Login</a>
-                <a v-if="isAdministrator" class="employee-link" href="/admin">Admin</a>
               </div>
             </header>
 
-            <p class="summary" v-if="isAdminRoute">
-              Manage the Microsoft cloud training catalog. Files are uploaded to SharePoint and
-              course metadata is stored server-side through Azure Functions.
-            </p>
-            <p class="summary" v-else-if="isProfileRoute">
-              Review your registered courses, open training materials, and manage your Microsoft Entra
-              account links.
-            </p>
-            <p class="summary" v-else-if="isAboutRoute">
-              Learn more about Valuearc.net and how we support clients with consulting and talent solutions.
-            </p>
-            <p class="summary" v-else-if="isVisionRoute">
-              Explore the long-term direction and strategic vision that guides our consulting practice.
-            </p>
-            <p class="summary" v-else-if="isContactRoute">
-              Reach our team for hiring support, partnership conversations, and candidate assistance.
-            </p>
-            <p class="summary" v-else-if="isNewsRoute">
-              Follow our latest announcements, industry updates, and media mentions.
-            </p>
-            <p class="summary" v-else-if="isPortfolioRoute">
-              Review our job consultancy services portfolio and engagement models.
-            </p>
-            <p class="summary" v-else-if="isTrainingsRoute">
-              Browse the training catalog and register for courses. Guest users can sign in or self sign up.
-            </p>
-            <p class="summary" v-else>
-              Explore current job openings, connect with our consultants, and follow company
-              updates from one place.
-            </p>
+            <p class="summary">{{ currentSummary }}</p>
 
             <p v-if="loading" class="status">Loading user and training catalog...</p>
             <p v-if="!loading && error" class="status error">{{ error }}</p>
@@ -73,12 +41,9 @@
                 <article class="hero-banner panel">
                   <div class="hero-layout">
                     <div class="hero-content-panel">
-                      <p class="mini-kicker">Valuearc.net Consulting</p>
-                      <h2>Consulting, talent, and delivery support for ambitious businesses</h2>
-                      <p class="hero-copy">
-                        Valuearc.net helps organizations solve growth, transformation, and hiring challenges
-                        with practical consulting expertise, specialist search capability, and execution-focused support.
-                      </p>
+                      <p class="mini-kicker">{{ siteContent.home.heroKicker }}</p>
+                      <h2>{{ siteContent.home.heroTitle }}</h2>
+                      <p class="hero-copy">{{ siteContent.home.heroCopy }}</p>
                       <div class="hero-proof-line">
                         <span>Strategy Advisory</span>
                         <span>Talent Search</span>
@@ -89,7 +54,7 @@
                         <a class="button ghost" href="/contact">Talk to an Expert</a>
                       </div>
                       <div class="actions-row" v-if="!isAuthenticated">
-                        <a class="hero-signin" href="/login">Employee or Guest login to track opportunities</a>
+                        <a class="hero-signin" href="/login">{{ siteContent.home.signInHint }}</a>
                       </div>
                       <div class="hero-trust-strip" aria-label="Valuearc strengths">
                         <div>
@@ -199,36 +164,17 @@
 
               <section v-if="isAboutRoute" class="panel-grid single-panel-layout">
                 <article class="panel section-panel">
-                  <h2>About Us</h2>
-                  <p>
-                    Valuearc.net is a consulting and talent advisory firm committed to helping organizations
-                    solve business challenges with the right combination of strategy, execution support, and
-                    specialist hiring. We work with clients to strengthen delivery capability, improve workforce
-                    planning, and place professionals who can contribute from day one.
-                  </p>
-                  <p>
-                    Our team combines market knowledge, disciplined search practices, and practical business
-                    insight to support both employers and candidates. The result is a more thoughtful, reliable,
-                    and outcome-focused consulting experience.
-                  </p>
+                  <h2>{{ siteContent.about.title }}</h2>
+                  <p v-for="(paragraph, index) in siteContent.about.body" :key="'about-body-' + index">{{ paragraph }}</p>
                   <div class="page-media-grid" aria-label="About visual highlights">
-                    <figure class="media-card">
+                    <figure v-for="(item, index) in siteContent.about.media" :key="'about-media-' + index" class="media-card">
                       <img
                         class="page-gif"
-                        src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1000&q=80"
-                        alt="Consulting team collaboration"
+                        :src="item.url"
+                        :alt="item.alt"
                         loading="lazy"
                       >
-                      <figcaption>Collaborative consulting workshops that align teams quickly.</figcaption>
-                    </figure>
-                    <figure class="media-card">
-                      <img
-                        class="page-gif"
-                        src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1000&q=80"
-                        alt="Consulting team in strategy discussion"
-                        loading="lazy"
-                      >
-                      <figcaption>Advisory engagements driven by business outcomes.</figcaption>
+                      <figcaption>{{ item.caption }}</figcaption>
                     </figure>
                   </div>
                 </article>
@@ -236,35 +182,17 @@
 
               <section v-if="isVisionRoute" class="panel-grid single-panel-layout">
                 <article class="panel section-panel">
-                  <h2>Vision</h2>
-                  <p>
-                    Our vision is to become a trusted consulting and recruitment partner for organizations that
-                    value quality, transparency, and measurable results. We aim to build long-term relationships
-                    by helping clients create high-performing teams and helping professionals find meaningful,
-                    growth-oriented opportunities.
-                  </p>
-                  <p>
-                    We believe the future belongs to firms that combine people expertise with operational clarity,
-                    digital readiness, and a strong commitment to delivery excellence.
-                  </p>
+                  <h2>{{ siteContent.vision.title }}</h2>
+                  <p v-for="(paragraph, index) in siteContent.vision.body" :key="'vision-body-' + index">{{ paragraph }}</p>
                   <div class="page-media-grid" aria-label="Vision visual highlights">
-                    <figure class="media-card">
+                    <figure v-for="(item, index) in siteContent.vision.media" :key="'vision-media-' + index" class="media-card">
                       <img
                         class="page-gif"
-                        src="https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1000&q=80"
-                        alt="Enterprise strategic planning workshop"
+                        :src="item.url"
+                        :alt="item.alt"
                         loading="lazy"
                       >
-                      <figcaption>Strategic direction supported by measurable transformation plans.</figcaption>
-                    </figure>
-                    <figure class="media-card">
-                      <img
-                        class="page-gif"
-                        src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80"
-                        alt="Business growth dashboard"
-                        loading="lazy"
-                      >
-                      <figcaption>Future-ready capability building for long-term competitiveness.</figcaption>
+                      <figcaption>{{ item.caption }}</figcaption>
                     </figure>
                   </div>
                 </article>
@@ -272,36 +200,23 @@
 
               <section v-if="isContactRoute" class="panel-grid single-panel-layout">
                 <article class="panel section-panel">
-                  <h2>Contact</h2>
-                  <p>
-                    We welcome discussions with employers, hiring managers, candidates, and strategic partners.
-                    Whether you need recruitment support, consulting guidance, or more information about our
-                    services, our team is ready to assist.
-                  </p>
+                  <h2>{{ siteContent.contact.title }}</h2>
+                  <p v-for="(paragraph, index) in siteContent.contact.body" :key="'contact-body-' + index">{{ paragraph }}</p>
                   <div class="profile-links">
-                    <a class="link-chip" href="mailto:careers@valuearc.net">careers@valuearc.net</a>
-                    <a class="link-chip" href="tel:+18005550199">+1 (800) 555-0199</a>
-                    <a class="link-chip" href="mailto:media@valuearc.net">media@valuearc.net</a>
-                    <span class="hint">Business hours: Monday to Friday, 9:00 AM to 6:00 PM</span>
+                    <a class="link-chip" :href="'mailto:' + siteContent.contact.email">{{ siteContent.contact.email }}</a>
+                    <a class="link-chip" :href="'tel:' + siteContent.contact.phone.replace(/[^\d+]/g, '')">{{ siteContent.contact.phone }}</a>
+                    <a class="link-chip" :href="'mailto:' + siteContent.contact.mediaEmail">{{ siteContent.contact.mediaEmail }}</a>
+                    <span class="hint">{{ siteContent.contact.businessHours }}</span>
                   </div>
                   <div class="page-media-grid" aria-label="Contact visual highlights">
-                    <figure class="media-card">
+                    <figure v-for="(item, index) in siteContent.contact.media" :key="'contact-media-' + index" class="media-card">
                       <img
                         class="page-gif"
-                        src="https://images.unsplash.com/photo-1573164574396-6ad8d9f3f521?auto=format&fit=crop&w=1000&q=80"
-                        alt="Enterprise customer support team"
+                        :src="item.url"
+                        :alt="item.alt"
                         loading="lazy"
                       >
-                      <figcaption>Fast response and dedicated support for clients and candidates.</figcaption>
-                    </figure>
-                    <figure class="media-card">
-                      <img
-                        class="page-gif"
-                        src="https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1000&q=80"
-                        alt="Support desk and communication"
-                        loading="lazy"
-                      >
-                      <figcaption>Connect with our specialists for hiring and consulting needs.</figcaption>
+                      <figcaption>{{ item.caption }}</figcaption>
                     </figure>
                   </div>
                 </article>
@@ -309,48 +224,20 @@
 
               <section v-if="isNewsRoute" class="panel-grid single-panel-layout">
                 <article class="panel section-panel">
-                  <h2>News and Media</h2>
-                  <p>
-                    This section highlights company updates, market insights, partnership announcements,
-                    and leadership perspectives from Valuearc.net. It reflects the conversations and trends
-                    that shape our consulting and talent advisory work.
-                  </p>
+                  <h2>{{ siteContent.news.title }}</h2>
+                  <p>{{ siteContent.news.intro }}</p>
                   <div class="news-grid" aria-label="Latest updates">
-                    <article class="news-card">
-                      <p class="news-meta">July 2026 · Market Outlook</p>
-                      <h3>Quarterly Hiring Pulse for Digital and Cloud Teams</h3>
-                      <p>
-                        Our latest market report covers compensation benchmarks, high-demand skill clusters,
-                        and practical hiring guidance for growth-stage organizations.
-                      </p>
-                    </article>
-                    <article class="news-card">
-                      <p class="news-meta">June 2026 · Partnership</p>
-                      <h3>Talent Delivery Alliance Expanded Across North America</h3>
-                      <p>
-                        Valuearc.net expanded its consulting partner network to support enterprise clients
-                        with faster specialist onboarding and broader delivery coverage.
-                      </p>
-                    </article>
-                    <article class="news-card">
-                      <p class="news-meta">May 2026 · Webinar</p>
-                      <h3>Leadership Session on Workforce Transformation</h3>
-                      <p>
-                        Senior advisors shared operating models for building resilient teams and improving
-                        hiring velocity without compromising quality.
-                      </p>
+                    <article v-for="(item, index) in siteContent.news.highlights" :key="'news-highlight-' + index" class="news-card">
+                      <p class="news-meta">{{ item.meta }}</p>
+                      <h3>{{ item.title }}</h3>
+                      <p>{{ item.body }}</p>
                     </article>
                   </div>
                   <ul class="news-list">
-                    <li>Valuearc.net publishes a quarterly consulting and hiring market outlook report.</li>
-                    <li>New partnership launched to support digital, analytics, and transformation hiring programs.</li>
-                    <li>Leadership webinar announced on future-ready workforce planning and capability building.</li>
-                    <li>Customer success stories are now released monthly with measurable delivery outcomes.</li>
-                    <li>Press briefing packs are available for media and analyst conversations.</li>
-                    <li>Community events and career clinics are announced every quarter.</li>
+                    <li v-for="(item, index) in siteContent.news.bullets" :key="'news-bullet-' + index">{{ item }}</li>
                   </ul>
                   <p class="news-note">
-                    Media and analyst requests: <a href="mailto:media@valuearc.net">media@valuearc.net</a>
+                    Media and analyst requests: <a :href="'mailto:' + siteContent.news.mediaContact">{{ siteContent.news.mediaContact }}</a>
                   </p>
                   <div class="social-links">
                     <a class="link-chip" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">
@@ -375,28 +262,12 @@
 
               <section v-if="isPortfolioRoute" class="panel-grid single-panel-layout">
                 <article class="panel section-panel">
-                  <h2>Job Consultancy Services Portfolio</h2>
-                  <p>
-                    Our portfolio is designed to support organizations across the full hiring lifecycle,
-                    from strategic leadership mandates to scalable recruitment programs and early-career talent
-                    development. Every engagement is tailored to business goals, speed requirements, and market complexity.
-                  </p>
+                  <h2>{{ siteContent.portfolio.title }}</h2>
+                  <p>{{ siteContent.portfolio.intro }}</p>
                   <div class="portfolio-grid">
-                    <div class="portfolio-item">
-                      <h3>Executive Search</h3>
-                      <p>Leadership search for strategic, confidential, and business-critical mandates.</p>
-                    </div>
-                    <div class="portfolio-item">
-                      <h3>Permanent Hiring</h3>
-                      <p>End-to-end sourcing, screening, and placement for permanent roles.</p>
-                    </div>
-                    <div class="portfolio-item">
-                      <h3>Contract Staffing</h3>
-                      <p>Flexible workforce support for project delivery, transformation, and specialist needs.</p>
-                    </div>
-                    <div class="portfolio-item">
-                      <h3>Campus and Early Careers</h3>
-                      <p>Graduate hiring pipelines, internship programs, and early-career talent development.</p>
+                    <div v-for="(item, index) in siteContent.portfolio.items" :key="'portfolio-item-' + index" class="portfolio-item">
+                      <h3>{{ item.title }}</h3>
+                      <p>{{ item.body }}</p>
                     </div>
                   </div>
                 </article>
@@ -404,11 +275,8 @@
 
               <section v-if="isTrainingsRoute" class="panel-grid single-panel-layout">
                 <article class="panel section-panel">
-                  <h2>Training Catalog</h2>
-                  <p>
-                    Explore available training tracks and register for the courses you want to complete.
-                    You can view all courses as a guest. Sign in or self sign up to register.
-                  </p>
+                  <h2>{{ siteContent.trainings.title }}</h2>
+                  <p>{{ siteContent.trainings.intro }}</p>
                   <div class="actions-row" v-if="!isAuthenticated">
                     <a class="button" href="/login">Login to register</a>
                     <a class="button secondary" href="/.auth/login/aad?post_login_redirect_uri=/trainings">Self Sign Up</a>
@@ -698,6 +566,209 @@
                   </div>
                 </article>
 
+                <article v-if="isAdministrator" class="panel">
+                  <h2>Website content editor</h2>
+                  <p class="hint compact-hint">
+                    Edit every public page directly in the browser. You can update text, image URLs, and theme font settings,
+                    then save the changes through the admin console.
+                  </p>
+                  <form class="site-content-form" @submit.prevent="saveSiteContent">
+                    <label class="full-width">
+                      Commit note
+                      <input v-model.trim="siteContentCommitMessage" type="text" placeholder="Describe this content update">
+                    </label>
+
+                    <section class="editor-section">
+                      <h3>Branding and Theme</h3>
+                      <label>
+                        Top eyebrow label
+                        <input v-model.trim="siteContent.branding.eyebrow" type="text">
+                      </label>
+                      <label>
+                        Font family
+                        <input v-model.trim="siteContent.theme.fontFamily" type="text">
+                      </label>
+                    </section>
+
+                    <section class="editor-section">
+                      <h3>Home Page</h3>
+                      <label>
+                        Summary
+                        <textarea v-model.trim="siteContent.home.summary" rows="3"></textarea>
+                      </label>
+                      <label>
+                        Hero kicker
+                        <input v-model.trim="siteContent.home.heroKicker" type="text">
+                      </label>
+                      <label>
+                        Hero title
+                        <input v-model.trim="siteContent.home.heroTitle" type="text">
+                      </label>
+                      <label class="full-width">
+                        Hero copy
+                        <textarea v-model.trim="siteContent.home.heroCopy" rows="4"></textarea>
+                      </label>
+                      <label>
+                        Sign-in hint
+                        <input v-model.trim="siteContent.home.signInHint" type="text">
+                      </label>
+                    </section>
+
+                    <section class="editor-section">
+                      <h3>About Page</h3>
+                      <label><input v-model.trim="siteContent.about.title" type="text"></label>
+                      <label class="full-width">
+                        Summary
+                        <textarea v-model.trim="siteContent.about.summary" rows="3"></textarea>
+                      </label>
+                      <label class="full-width">
+                        Body paragraph 1
+                        <textarea v-model.trim="siteContent.about.body[0]" rows="4"></textarea>
+                      </label>
+                      <label class="full-width">
+                        Body paragraph 2
+                        <textarea v-model.trim="siteContent.about.body[1]" rows="4"></textarea>
+                      </label>
+                      <label>
+                        Image 1 URL
+                        <input v-model.trim="siteContent.about.media[0].url" type="text">
+                      </label>
+                      <label>
+                        Image 1 caption
+                        <input v-model.trim="siteContent.about.media[0].caption" type="text">
+                      </label>
+                      <label>
+                        Image 2 URL
+                        <input v-model.trim="siteContent.about.media[1].url" type="text">
+                      </label>
+                      <label>
+                        Image 2 caption
+                        <input v-model.trim="siteContent.about.media[1].caption" type="text">
+                      </label>
+                    </section>
+
+                    <section class="editor-section">
+                      <h3>Vision Page</h3>
+                      <label><input v-model.trim="siteContent.vision.title" type="text"></label>
+                      <label class="full-width">
+                        Summary
+                        <textarea v-model.trim="siteContent.vision.summary" rows="3"></textarea>
+                      </label>
+                      <label class="full-width">
+                        Body paragraph 1
+                        <textarea v-model.trim="siteContent.vision.body[0]" rows="4"></textarea>
+                      </label>
+                      <label class="full-width">
+                        Body paragraph 2
+                        <textarea v-model.trim="siteContent.vision.body[1]" rows="4"></textarea>
+                      </label>
+                      <label>
+                        Image 1 URL
+                        <input v-model.trim="siteContent.vision.media[0].url" type="text">
+                      </label>
+                      <label>
+                        Image 1 caption
+                        <input v-model.trim="siteContent.vision.media[0].caption" type="text">
+                      </label>
+                      <label>
+                        Image 2 URL
+                        <input v-model.trim="siteContent.vision.media[1].url" type="text">
+                      </label>
+                      <label>
+                        Image 2 caption
+                        <input v-model.trim="siteContent.vision.media[1].caption" type="text">
+                      </label>
+                    </section>
+
+                    <section class="editor-section">
+                      <h3>Contact Page</h3>
+                      <label><input v-model.trim="siteContent.contact.title" type="text"></label>
+                      <label class="full-width">
+                        Summary
+                        <textarea v-model.trim="siteContent.contact.summary" rows="3"></textarea>
+                      </label>
+                      <label class="full-width">
+                        Intro copy
+                        <textarea v-model.trim="siteContent.contact.body[0]" rows="4"></textarea>
+                      </label>
+                      <label><input v-model.trim="siteContent.contact.email" type="text"></label>
+                      <label><input v-model.trim="siteContent.contact.phone" type="text"></label>
+                      <label><input v-model.trim="siteContent.contact.mediaEmail" type="text"></label>
+                      <label><input v-model.trim="siteContent.contact.businessHours" type="text"></label>
+                    </section>
+
+                    <section class="editor-section">
+                      <h3>News Page</h3>
+                      <label><input v-model.trim="siteContent.news.title" type="text"></label>
+                      <label class="full-width">
+                        Summary
+                        <textarea v-model.trim="siteContent.news.summary" rows="3"></textarea>
+                      </label>
+                      <label class="full-width">
+                        Intro
+                        <textarea v-model.trim="siteContent.news.intro" rows="4"></textarea>
+                      </label>
+                      <label class="full-width">
+                        Media contact
+                        <input v-model.trim="siteContent.news.mediaContact" type="text">
+                      </label>
+                    </section>
+
+                    <section class="editor-section">
+                      <h3>Services Page</h3>
+                      <label><input v-model.trim="siteContent.portfolio.title" type="text"></label>
+                      <label class="full-width">
+                        Summary
+                        <textarea v-model.trim="siteContent.portfolio.summary" rows="3"></textarea>
+                      </label>
+                      <label class="full-width">
+                        Intro
+                        <textarea v-model.trim="siteContent.portfolio.intro" rows="4"></textarea>
+                      </label>
+                    </section>
+
+                    <section class="editor-section">
+                      <h3>Trainings Page</h3>
+                      <label><input v-model.trim="siteContent.trainings.title" type="text"></label>
+                      <label class="full-width">
+                        Summary
+                        <textarea v-model.trim="siteContent.trainings.summary" rows="3"></textarea>
+                      </label>
+                      <label class="full-width">
+                        Intro
+                        <textarea v-model.trim="siteContent.trainings.intro" rows="4"></textarea>
+                      </label>
+                    </section>
+
+                    <div class="admin-actions">
+                      <button class="button" type="button" :disabled="savingSiteContent" @click="saveStructuredSiteContent">
+                        {{ savingSiteContent ? 'Saving...' : 'Save and Commit' }}
+                      </button>
+                      <button class="button secondary" type="button" @click="resetSiteContentDraftToCurrent">
+                        Restore current
+                      </button>
+                      <button class="button secondary" type="button" @click="loadDefaultSiteContentDraft">
+                        Load defaults
+                      </button>
+                    </div>
+                    <p class="hint">{{ lastCommittedDescription }}</p>
+                    <p v-if="siteContentStatus" class="hint">{{ siteContentStatus }}</p>
+
+                    <details class="advanced-editor full-width">
+                      <summary>Advanced JSON editor</summary>
+                      <label class="full-width">
+                        Site content JSON
+                        <textarea v-model="draftSiteContentJson" rows="24" spellcheck="false"></textarea>
+                      </label>
+                      <div class="admin-actions">
+                        <button class="button secondary" type="submit" :disabled="savingSiteContent">
+                          {{ savingSiteContent ? 'Saving...' : 'Save JSON' }}
+                        </button>
+                      </div>
+                    </details>
+                  </form>
+                </article>
+
                 <article v-else class="panel">
                   <h2>Admin console</h2>
                   <p class="hint">Only users with the administrator role can manage courses.</p>
@@ -808,6 +879,189 @@
         }
       ];
 
+      const DEFAULT_SITE_CONTENT = {
+        theme: {
+          fontFamily: '"Segoe UI", "Segoe UI Variable", "Helvetica Neue", Arial, sans-serif'
+        },
+        branding: {
+          eyebrow: "VALUEARC.NET"
+        },
+        home: {
+          summary: "Explore current job openings, connect with our consultants, and follow company updates from one place.",
+          heroKicker: "Valuearc.net Consulting",
+          heroTitle: "Consulting, talent, and delivery support for ambitious businesses",
+          heroCopy: "Valuearc.net helps organizations solve growth, transformation, and hiring challenges with practical consulting expertise, specialist search capability, and execution-focused support.",
+          signInHint: "Employee or Guest login to track opportunities"
+        },
+        about: {
+          title: "About Us",
+          summary: "Learn more about Valuearc.net and how we support clients with consulting and talent solutions.",
+          body: [
+            "Valuearc.net is a consulting and talent advisory firm committed to helping organizations solve business challenges with the right combination of strategy, execution support, and specialist hiring. We work with clients to strengthen delivery capability, improve workforce planning, and place professionals who can contribute from day one.",
+            "Our team combines market knowledge, disciplined search practices, and practical business insight to support both employers and candidates. The result is a more thoughtful, reliable, and outcome-focused consulting experience."
+          ],
+          media: [
+            {
+              url: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1000&q=80",
+              alt: "Consulting team collaboration",
+              caption: "Collaborative consulting workshops that align teams quickly."
+            },
+            {
+              url: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1000&q=80",
+              alt: "Consulting team in strategy discussion",
+              caption: "Advisory engagements driven by business outcomes."
+            }
+          ]
+        },
+        vision: {
+          title: "Vision",
+          summary: "Explore the long-term direction and strategic vision that guides our consulting practice.",
+          body: [
+            "Our vision is to become a trusted consulting and recruitment partner for organizations that value quality, transparency, and measurable results. We aim to build long-term relationships by helping clients create high-performing teams and helping professionals find meaningful, growth-oriented opportunities.",
+            "We believe the future belongs to firms that combine people expertise with operational clarity, digital readiness, and a strong commitment to delivery excellence."
+          ],
+          media: [
+            {
+              url: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1000&q=80",
+              alt: "Enterprise strategic planning workshop",
+              caption: "Strategic direction supported by measurable transformation plans."
+            },
+            {
+              url: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80",
+              alt: "Business growth dashboard",
+              caption: "Future-ready capability building for long-term competitiveness."
+            }
+          ]
+        },
+        contact: {
+          title: "Contact",
+          summary: "Reach our team for hiring support, partnership conversations, and candidate assistance.",
+          body: [
+            "We welcome discussions with employers, hiring managers, candidates, and strategic partners. Whether you need recruitment support, consulting guidance, or more information about our services, our team is ready to assist."
+          ],
+          email: "careers@valuearc.net",
+          phone: "+1 (800) 555-0199",
+          mediaEmail: "media@valuearc.net",
+          businessHours: "Business hours: Monday to Friday, 9:00 AM to 6:00 PM",
+          media: [
+            {
+              url: "https://images.unsplash.com/photo-1573164574396-6ad8d9f3f521?auto=format&fit=crop&w=1000&q=80",
+              alt: "Enterprise customer support team",
+              caption: "Fast response and dedicated support for clients and candidates."
+            },
+            {
+              url: "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1000&q=80",
+              alt: "Support desk and communication",
+              caption: "Connect with our specialists for hiring and consulting needs."
+            }
+          ]
+        },
+        news: {
+          title: "News and Media",
+          summary: "Follow our latest announcements, industry updates, and media mentions.",
+          intro: "This section highlights company updates, market insights, partnership announcements, and leadership perspectives from Valuearc.net. It reflects the conversations and trends that shape our consulting and talent advisory work.",
+          highlights: [
+            {
+              meta: "July 2026 · Market Outlook",
+              title: "Quarterly Hiring Pulse for Digital and Cloud Teams",
+              body: "Our latest market report covers compensation benchmarks, high-demand skill clusters, and practical hiring guidance for growth-stage organizations."
+            },
+            {
+              meta: "June 2026 · Partnership",
+              title: "Talent Delivery Alliance Expanded Across North America",
+              body: "Valuearc.net expanded its consulting partner network to support enterprise clients with faster specialist onboarding and broader delivery coverage."
+            },
+            {
+              meta: "May 2026 · Webinar",
+              title: "Leadership Session on Workforce Transformation",
+              body: "Senior advisors shared operating models for building resilient teams and improving hiring velocity without compromising quality."
+            }
+          ],
+          bullets: [
+            "Valuearc.net publishes a quarterly consulting and hiring market outlook report.",
+            "New partnership launched to support digital, analytics, and transformation hiring programs.",
+            "Leadership webinar announced on future-ready workforce planning and capability building.",
+            "Customer success stories are now released monthly with measurable delivery outcomes.",
+            "Press briefing packs are available for media and analyst conversations.",
+            "Community events and career clinics are announced every quarter."
+          ],
+          mediaContact: "media@valuearc.net"
+        },
+        portfolio: {
+          title: "Job Consultancy Services Portfolio",
+          summary: "Review our job consultancy services portfolio and engagement models.",
+          intro: "Our portfolio is designed to support organizations across the full hiring lifecycle, from strategic leadership mandates to scalable recruitment programs and early-career talent development. Every engagement is tailored to business goals, speed requirements, and market complexity.",
+          items: [
+            { title: "Executive Search", body: "Leadership search for strategic, confidential, and business-critical mandates." },
+            { title: "Permanent Hiring", body: "End-to-end sourcing, screening, and placement for permanent roles." },
+            { title: "Contract Staffing", body: "Flexible workforce support for project delivery, transformation, and specialist needs." },
+            { title: "Campus and Early Careers", body: "Graduate hiring pipelines, internship programs, and early-career talent development." }
+          ]
+        },
+        trainings: {
+          title: "Training Catalog",
+          summary: "Browse the training catalog and register for courses. Guest users can sign in or self sign up.",
+          intro: "Explore available training tracks and register for the courses you want to complete. You can view all courses as a guest. Sign in or self sign up to register."
+        },
+        profile: {
+          summary: "Review your registered courses, open training materials, and manage your Microsoft Entra account links."
+        },
+        admin: {
+          summary: "Manage the Microsoft cloud training catalog and site content. Content and theme changes are saved through Azure Functions to the shared content store."
+        },
+        metadata: {
+          lastCommittedAt: "",
+          lastCommittedBy: "",
+          commitMessage: ""
+        }
+      };
+
+      function cloneSiteContent() {
+        return JSON.parse(JSON.stringify(DEFAULT_SITE_CONTENT));
+      }
+
+      function normalizeSiteContent(payload) {
+        const fallback = cloneSiteContent();
+        if (!payload || typeof payload !== "object") {
+          return fallback;
+        }
+
+        const next = cloneSiteContent();
+        const sectionKeys = ["theme", "branding", "home", "about", "vision", "contact", "news", "portfolio", "trainings", "profile", "admin", "metadata"];
+        sectionKeys.forEach(key => {
+          if (payload[key] && typeof payload[key] === "object" && !Array.isArray(payload[key])) {
+            next[key] = {
+              ...next[key],
+              ...payload[key]
+            };
+          }
+        });
+
+        ["about", "vision", "contact"].forEach(key => {
+          if (payload[key] && Array.isArray(payload[key].body) && payload[key].body.length) {
+            next[key].body = payload[key].body;
+          }
+          if (payload[key] && Array.isArray(payload[key].media) && payload[key].media.length) {
+            next[key].media = payload[key].media;
+          }
+        });
+
+        if (payload.news) {
+          if (Array.isArray(payload.news.highlights) && payload.news.highlights.length) {
+            next.news.highlights = payload.news.highlights;
+          }
+          if (Array.isArray(payload.news.bullets) && payload.news.bullets.length) {
+            next.news.bullets = payload.news.bullets;
+          }
+        }
+
+        if (payload.portfolio && Array.isArray(payload.portfolio.items) && payload.portfolio.items.length) {
+          next.portfolio.items = payload.portfolio.items;
+        }
+
+        return next;
+      }
+
       function emptyDraftCourse() {
         return {
           id: "",
@@ -838,6 +1092,11 @@
             loading: true,
             user: null,
             resolvedUserEmail: "",
+            siteContent: cloneSiteContent(),
+            draftSiteContentJson: JSON.stringify(cloneSiteContent(), null, 2),
+            siteContentCommitMessage: "",
+            savingSiteContent: false,
+            siteContentStatus: "",
             error: "",
             offlineMode: false,
             courses: [],
@@ -879,6 +1138,13 @@
           };
         },
         computed: {
+          shellStyle() {
+            return {
+              fontFamily: this.siteContent && this.siteContent.theme && this.siteContent.theme.fontFamily
+                ? this.siteContent.theme.fontFamily
+                : DEFAULT_SITE_CONTENT.theme.fontFamily
+            };
+          },
           isAuthenticated() {
             return Boolean(this.user && this.user.userId);
           },
@@ -1005,7 +1271,7 @@
           },
           pageTitle() {
             if (this.isAdminRoute) {
-              return "Admin Console";
+              return this.siteContent.admin.title || "Admin Console";
             }
 
             if (this.isProfileRoute) {
@@ -1013,30 +1279,75 @@
             }
 
             if (this.isAboutRoute) {
-              return "About Us";
+              return this.siteContent.about.title || "About Us";
             }
 
             if (this.isVisionRoute) {
-              return "Vision";
+              return this.siteContent.vision.title || "Vision";
             }
 
             if (this.isContactRoute) {
-              return "Contact";
+              return this.siteContent.contact.title || "Contact";
             }
 
             if (this.isNewsRoute) {
-              return "News and Media";
+              return this.siteContent.news.title || "News and Media";
             }
 
             if (this.isPortfolioRoute) {
-              return "Job Consultancy Services Portfolio";
+              return this.siteContent.portfolio.title || "Job Consultancy Services Portfolio";
             }
 
             if (this.isTrainingsRoute) {
-              return "Trainings";
+              return this.siteContent.trainings.title || "Trainings";
             }
 
             return "Valuearc | The Innovation Center";
+          },
+          currentSummary() {
+            if (this.isAdminRoute) {
+              return this.siteContent.admin.summary;
+            }
+
+            if (this.isProfileRoute) {
+              return this.siteContent.profile.summary;
+            }
+
+            if (this.isAboutRoute) {
+              return this.siteContent.about.summary;
+            }
+
+            if (this.isVisionRoute) {
+              return this.siteContent.vision.summary;
+            }
+
+            if (this.isContactRoute) {
+              return this.siteContent.contact.summary;
+            }
+
+            if (this.isNewsRoute) {
+              return this.siteContent.news.summary;
+            }
+
+            if (this.isPortfolioRoute) {
+              return this.siteContent.portfolio.summary;
+            }
+
+            if (this.isTrainingsRoute) {
+              return this.siteContent.trainings.summary;
+            }
+
+            return this.siteContent.home.summary;
+          },
+          lastCommittedDescription() {
+            const metadata = this.siteContent && this.siteContent.metadata ? this.siteContent.metadata : {};
+            if (!metadata.lastCommittedAt) {
+              return "Not yet committed.";
+            }
+
+            const author = metadata.lastCommittedBy ? ` by ${metadata.lastCommittedBy}` : "";
+            const message = metadata.commitMessage ? ` (${metadata.commitMessage})` : "";
+            return `Last committed ${metadata.lastCommittedAt}${author}${message}`;
           },
           currentUserKey() {
             return this.user && this.user.userDetails ? this.user.userDetails.toLowerCase() : "anonymous";
@@ -1069,7 +1380,7 @@
         methods: {
           async bootstrapApp() {
             try {
-              await Promise.all([this.fetchCourses(), this.loadUser()]);
+              await Promise.all([this.fetchCourses(), this.loadUser(), this.fetchSiteContent()]);
               if (this.isAuthenticated) {
                 await this.fetchEnrollments();
               }
@@ -1180,6 +1491,58 @@
               this.courses = (localCourses || DEFAULT_COURSES).map(course => this.normalizeCourse(course));
               this.writeLocalCourses(this.courses);
               this.enableLocalMode("Course service is temporarily unavailable. Running in browser cache mode.");
+            }
+          },
+          async fetchSiteContent() {
+            try {
+              const payload = await this.apiFetch("/api/site-content");
+              this.siteContent = normalizeSiteContent(payload && payload.siteContent ? payload.siteContent : payload);
+              this.refreshSiteContentDraft();
+            } catch (fetchError) {
+              this.siteContent = cloneSiteContent();
+              this.refreshSiteContentDraft();
+            }
+          },
+          refreshSiteContentDraft() {
+            this.draftSiteContentJson = JSON.stringify(this.siteContent, null, 2);
+          },
+          resetSiteContentDraftToCurrent() {
+            this.siteContent = normalizeSiteContent(JSON.parse(this.draftSiteContentJson || "{}"));
+            this.refreshSiteContentDraft();
+            this.siteContentStatus = "Reverted unsaved changes.";
+          },
+          loadDefaultSiteContentDraft() {
+            this.siteContent = cloneSiteContent();
+            this.draftSiteContentJson = JSON.stringify(this.siteContent, null, 2);
+            this.siteContentStatus = "Loaded default content into the editor. Save to commit it.";
+          },
+          async saveStructuredSiteContent() {
+            this.draftSiteContentJson = JSON.stringify(this.siteContent, null, 2);
+            await this.saveSiteContent();
+          },
+          async saveSiteContent() {
+            this.savingSiteContent = true;
+            this.siteContentStatus = "";
+
+            try {
+              const parsed = JSON.parse(this.draftSiteContentJson || "{}");
+              const normalized = normalizeSiteContent(parsed);
+              const payload = await this.apiFetch("/api/site-content/save", {
+                method: "POST",
+                body: JSON.stringify({
+                  siteContent: normalized,
+                  commitMessage: this.siteContentCommitMessage
+                })
+              });
+
+              this.siteContent = normalizeSiteContent(payload && payload.siteContent ? payload.siteContent : normalized);
+              this.refreshSiteContentDraft();
+              this.siteContentCommitMessage = "";
+              this.siteContentStatus = "Site content saved and committed.";
+            } catch (saveError) {
+              this.siteContentStatus = saveError.message || "Unable to save site content.";
+            } finally {
+              this.savingSiteContent = false;
             }
           },
           async fetchEnrollments() {
@@ -2562,6 +2925,63 @@
         grid-column: 1 / -1;
       }
 
+      .site-content-form {
+        display: grid;
+        gap: 0.9rem;
+      }
+
+      .editor-section {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.9rem;
+        padding: 1rem;
+        border: 1px solid rgba(143, 169, 255, 0.18);
+        border-radius: 14px;
+        background: rgba(13, 25, 61, 0.5);
+      }
+
+      .editor-section h3 {
+        grid-column: 1 / -1;
+        margin: 0;
+      }
+
+      .site-content-form label {
+        display: grid;
+        gap: 0.35rem;
+        font-weight: 700;
+        color: #d8e5ff;
+      }
+
+      .site-content-form input,
+      .site-content-form textarea {
+        border: 1px solid rgba(143, 169, 255, 0.32);
+        border-radius: 12px;
+        padding: 0.8rem 0.9rem;
+        font: inherit;
+        background: rgba(5, 13, 35, 0.72);
+        color: #e8efff;
+      }
+
+      .site-content-form textarea {
+        min-height: 28rem;
+        font-family: Consolas, "Courier New", monospace;
+        line-height: 1.5;
+        resize: vertical;
+      }
+
+      .advanced-editor {
+        border: 1px solid rgba(143, 169, 255, 0.18);
+        border-radius: 14px;
+        padding: 0.85rem 1rem;
+        background: rgba(9, 18, 46, 0.5);
+      }
+
+      .advanced-editor summary {
+        cursor: pointer;
+        font-weight: 700;
+        color: #d8e5ff;
+      }
+
       .asset-field {
         display: grid;
         gap: 0.65rem;
@@ -2633,7 +3053,8 @@
 
         .panel-grid,
         .profile-layout,
-        .admin-form {
+        .admin-form,
+        .editor-section {
           grid-template-columns: 1fr;
         }
 

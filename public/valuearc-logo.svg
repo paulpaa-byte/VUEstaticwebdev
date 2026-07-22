@@ -1,15 +1,6 @@
-<svg width="360" height="120" viewBox="0 0 360 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Valuearc logo">
-  <rect width="360" height="120" fill="#FFFFFF"/>
-  <g transform="translate(12,10)">
-    <polygon points="40,0 72,18 72,54 40,72 8,54 8,18" fill="none" stroke="#2F57A8" stroke-width="6"/>
-    <path d="M20 22 L40 35 L60 22" stroke="#2F57A8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-    <path d="M20 40 L40 54 L60 40" stroke="#2F57A8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  </g>
-  <text x="98" y="52" font-family="Segoe UI, Arial, sans-serif" font-size="56" font-weight="700" fill="#0B0F19">VALUEARC</text>
-  <text x="98" y="88" font-family="Segoe UI, Arial, sans-serif" font-size="26" letter-spacing="2" fill="#0B0F19">THE INNOVATION CENTER</text>
 <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Valuearc logo">
-  <path d="M64 9L111 35.5V92.5L64 119L17 92.5V35.5L64 9Z" stroke="#F8FBFF" stroke-width="8" stroke-linejoin="round"/>
-  <path d="M35 34L50 24L64 31L78 24L93 34L64 48L35 34Z" fill="#F8FBFF"/>
-  <path d="M37 48L64 64L91 48V59L64 76L37 59V48Z" fill="#F8FBFF"/>
-  <path d="M43 68L64 81L85 68V79L64 92L43 79V68Z" fill="#F8FBFF" fill-opacity="0.92"/>
+  <path d="M64 9L111 35.5V92.5L64 119L17 92.5V35.5L64 9Z" stroke="#2F4E93" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M35 34L50 24L64 31L78 24L93 34L64 48L35 34Z" fill="#2F4E93"/>
+  <path d="M37 48L64 64L91 48V59L64 76L37 59V48Z" fill="#2F4E93"/>
+  <path d="M43 68L64 81L85 68V79L64 92L43 79V68Z" fill="#2F4E93" fill-opacity="0.94"/>
 </svg>

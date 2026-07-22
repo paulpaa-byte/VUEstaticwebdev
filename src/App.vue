@@ -7,8 +7,8 @@
                 <h1>{{ pageTitle }}</h1>
               </div>
               <div class="header-actions">
-                <span class="badge" :class="isAuthenticated ? 'ok' : 'neutral'">
-                  {{ isAuthenticated ? "Signed in" : "Guest" }}
+                <span v-if="isAuthenticated && !isInternalUser" class="badge neutral">
+                  Guest
                 </span>
                 <a v-if="!isAuthenticated" class="employee-login" href="/login">Sign In</a>
                 <a v-if="!isAuthenticated" class="employee-link" href="/.auth/login/aad?post_login_redirect_uri=/trainings">Self Sign Up</a>
@@ -57,45 +57,6 @@
               Explore current job openings, connect with our consultants, and follow company
               updates from one place.
             </p>
-
-            <section v-if="!isAdminRoute && !isProfileRoute" class="panel quick-links-panel">
-              <div class="sectors-head">
-                <div>
-                  <p class="mini-kicker dark-kicker">Explore</p>
-                  <h2>Quick navigation</h2>
-                </div>
-              </div>
-              <div class="home-links-grid">
-                <a class="home-link-card" :class="showHome ? 'active' : ''" href="/">
-                  <h3>Home</h3>
-                  <p>Return to the main overview and highlights.</p>
-                </a>
-                <a class="home-link-card" :class="isAboutRoute ? 'active' : ''" href="/about">
-                  <h3>About Us</h3>
-                  <p>Know our background, values, and consulting expertise.</p>
-                </a>
-                <a class="home-link-card" :class="isVisionRoute ? 'active' : ''" href="/vision">
-                  <h3>Vision</h3>
-                  <p>Understand the future direction that guides our work.</p>
-                </a>
-                <a class="home-link-card" :class="isContactRoute ? 'active' : ''" href="/contact">
-                  <h3>Contact</h3>
-                  <p>Reach us for hiring requests and candidate support.</p>
-                </a>
-                <a class="home-link-card" :class="isNewsRoute ? 'active' : ''" href="/news-media">
-                  <h3>News and Media</h3>
-                  <p>Read announcements, insights, and media updates.</p>
-                </a>
-                <a class="home-link-card" :class="isPortfolioRoute ? 'active' : ''" href="/services-portfolio">
-                  <h3>Services Portfolio</h3>
-                  <p>Review service lines across executive, permanent, and contract hiring.</p>
-                </a>
-                <a class="home-link-card" :class="isTrainingsRoute ? 'active' : ''" href="/trainings">
-                  <h3>Trainings</h3>
-                  <p>Browse course catalog and register with your account.</p>
-                </a>
-              </div>
-            </section>
 
             <p v-if="loading" class="status">Loading user and training catalog...</p>
             <p v-if="!loading && error" class="status error">{{ error }}</p>
@@ -674,6 +635,19 @@
                   <h2>Admin console</h2>
                   <p class="hint">Only users with the administrator role can manage courses.</p>
                 </article>
+              </section>
+
+              <section v-if="!isAdminRoute && !isProfileRoute" class="quick-links-footer" aria-label="Quick navigation links">
+                <p class="quick-links-label">Quick navigation</p>
+                <nav class="quick-links-strip">
+                  <a href="/" :class="showHome ? 'active' : ''">Home</a>
+                  <a href="/about" :class="isAboutRoute ? 'active' : ''">About Us</a>
+                  <a href="/vision" :class="isVisionRoute ? 'active' : ''">Vision</a>
+                  <a href="/contact" :class="isContactRoute ? 'active' : ''">Contact</a>
+                  <a href="/news-media" :class="isNewsRoute ? 'active' : ''">News & Media</a>
+                  <a href="/services-portfolio" :class="isPortfolioRoute ? 'active' : ''">Services</a>
+                  <a href="/trainings" :class="isTrainingsRoute ? 'active' : ''">Trainings</a>
+                </nav>
               </section>
       </template>
     </section>
@@ -1774,8 +1748,61 @@
         gap: 0.85rem;
       }
 
-      .quick-links-panel {
-        margin-top: 1.1rem;
+      .quick-links-footer {
+        margin-top: 1.15rem;
+      }
+
+      .quick-links-label {
+        margin: 0 0 0.4rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #b8c7f2;
+        font-weight: 700;
+      }
+
+      .quick-links-strip {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 0.32rem 0.45rem;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 10px;
+        background: linear-gradient(180deg, rgba(23, 23, 23, 0.96), rgba(12, 12, 12, 0.96));
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      .quick-links-strip::-webkit-scrollbar {
+        display: none;
+      }
+
+      .quick-links-strip a {
+        text-decoration: none;
+        color: rgba(255, 255, 255, 0.92);
+        font-weight: 500;
+        font-size: 0.86rem;
+        padding: 0.45rem 0.7rem;
+        border-radius: 4px;
+        background: transparent;
+        border: 1px solid transparent;
+        white-space: nowrap;
+        letter-spacing: 0.01em;
+      }
+
+      .quick-links-strip a:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.14);
+        color: #fff;
+      }
+
+      .quick-links-strip a.active {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.22);
+        color: #fff;
+        box-shadow: inset 0 -2px 0 #7ea3ff;
       }
 
       .spotlight-panel,
@@ -2367,6 +2394,10 @@
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
+        .quick-links-strip {
+          padding: 0.3rem 0.4rem;
+        }
+
         .portfolio-grid {
           grid-template-columns: 1fr;
         }
@@ -2460,6 +2491,12 @@
           flex: 0 0 auto;
           padding: 0.55rem 0.7rem;
           font-size: 0.9rem;
+        }
+
+        .quick-links-strip a {
+          flex: 0 0 auto;
+          font-size: 0.83rem;
+          padding: 0.42rem 0.62rem;
         }
 
         .hero-stats {

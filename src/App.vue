@@ -638,7 +638,6 @@
               </section>
 
               <section v-if="!isAdminRoute && !isProfileRoute" class="quick-links-footer" aria-label="Quick navigation links">
-                <p class="quick-links-label">Quick navigation</p>
                 <nav class="quick-links-strip">
                   <a href="/" :class="showHome ? 'active' : ''">Home</a>
                   <a href="/about" :class="isAboutRoute ? 'active' : ''">About Us</a>
@@ -1315,7 +1314,6 @@
     </script>
 
     <style scoped>
-      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap');
 
       .shell {
         --royal-900: #111f66;
@@ -1332,7 +1330,7 @@
         display: grid;
         place-items: center;
         padding: 2rem;
-        font-family: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+        font-family: "Segoe UI", "Segoe UI Variable", "Helvetica Neue", Arial, sans-serif;
         background:
           radial-gradient(circle at 12% 10%, rgba(101, 132, 255, 0.28), transparent 28%),
           radial-gradient(circle at 88% 12%, rgba(72, 108, 255, 0.2), transparent 30%),
@@ -1379,7 +1377,8 @@
         margin: 0;
         font-size: clamp(2rem, 4vw, 3.25rem);
         line-height: 1.05;
-        font-family: "Space Grotesk", "Plus Jakarta Sans", sans-serif;
+        font-family: "Segoe UI", "Segoe UI Variable", "Helvetica Neue", Arial, sans-serif;
+        font-weight: 700;
         color: #f6f8ff;
       }
 
@@ -1437,7 +1436,7 @@
         padding: 0.45rem 0.55rem;
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 10px;
-        background: linear-gradient(180deg, rgba(23, 23, 23, 0.96), rgba(12, 12, 12, 0.96));
+        background: linear-gradient(180deg, rgba(19, 47, 131, 0.96), rgba(11, 31, 92, 0.96));
         scrollbar-width: none;
         -ms-overflow-style: none;
       }
@@ -1449,7 +1448,7 @@
       .nav a {
         text-decoration: none;
         color: rgba(255, 255, 255, 0.92);
-        font-weight: 500;
+        font-weight: 600;
         font-size: 0.95rem;
         padding: 0.6rem 0.85rem;
         border-radius: 4px;
@@ -1457,6 +1456,8 @@
         border: 1px solid transparent;
         white-space: nowrap;
         letter-spacing: 0.01em;
+        flex: 1 1 0;
+        text-align: center;
         transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
       }
 
@@ -1752,25 +1753,16 @@
         margin-top: 1.15rem;
       }
 
-      .quick-links-label {
-        margin: 0 0 0.4rem;
-        font-size: 0.8rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: #b8c7f2;
-        font-weight: 700;
-      }
-
       .quick-links-strip {
         display: flex;
         align-items: center;
         gap: 0.35rem;
         flex-wrap: nowrap;
         overflow-x: auto;
-        padding: 0.32rem 0.45rem;
+        padding: 0.35rem 0.45rem;
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 10px;
-        background: linear-gradient(180deg, rgba(23, 23, 23, 0.96), rgba(12, 12, 12, 0.96));
+        background: linear-gradient(180deg, rgba(19, 47, 131, 0.96), rgba(11, 31, 92, 0.96));
         scrollbar-width: none;
         -ms-overflow-style: none;
       }
@@ -1782,7 +1774,7 @@
       .quick-links-strip a {
         text-decoration: none;
         color: rgba(255, 255, 255, 0.92);
-        font-weight: 500;
+        font-weight: 600;
         font-size: 0.86rem;
         padding: 0.45rem 0.7rem;
         border-radius: 4px;
@@ -1790,6 +1782,8 @@
         border: 1px solid transparent;
         white-space: nowrap;
         letter-spacing: 0.01em;
+        flex: 1 1 0;
+        text-align: center;
       }
 
       .quick-links-strip a:hover {

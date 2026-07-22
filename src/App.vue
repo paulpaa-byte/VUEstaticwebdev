@@ -5,6 +5,7 @@
               <div class="nav-links">
                 <a class="nav-brand" href="/" aria-label="Valuearc home">
                   <img class="nav-brand-logo" src="/valuearc-logo.svg" alt="Valuearc logo">
+                  <span class="nav-brand-text">Valuearc</span>
                 </a>
                 <a href="/" :class="showHome ? 'active' : ''">Home</a>
                 <a href="/about" :class="isAboutRoute ? 'active' : ''">About Us</a>
@@ -2002,30 +2003,41 @@
 
       .nav-brand {
         display: inline-flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        width: 52px;
-        min-width: 52px;
-        height: 44px;
+        width: 64px;
+        min-width: 64px;
+        height: auto;
+        min-height: 44px;
         padding: 0;
-        border-radius: 10px;
-        background: linear-gradient(135deg, rgba(235, 243, 255, 0.18), rgba(171, 195, 255, 0.12));
-        border: 1px solid rgba(230, 239, 255, 0.42);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 10px 24px rgba(3, 10, 33, 0.28);
+        gap: 0.08rem;
+        border-radius: 0;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
         flex: 0 0 auto;
       }
 
       .nav-brand:hover {
-        background: linear-gradient(135deg, rgba(245, 250, 255, 0.24), rgba(186, 208, 255, 0.18));
-        border-color: rgba(238, 245, 255, 0.56);
+        background: transparent;
       }
 
       .nav-brand-logo {
-        width: 34px;
-        height: 34px;
+        width: 28px;
+        height: 28px;
         object-fit: contain;
         display: block;
-        filter: drop-shadow(0 2px 6px rgba(3, 9, 28, 0.45));
+        filter: drop-shadow(0 2px 5px rgba(3, 9, 28, 0.4));
+      }
+
+      .nav-brand-text {
+        color: rgba(248, 251, 255, 0.92);
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        line-height: 1;
+        text-transform: uppercase;
       }
 
       .nav-auth {
@@ -3202,15 +3214,20 @@
         }
 
         .nav-brand {
-          width: 46px;
-          min-width: 46px;
-          height: 40px;
+          width: 58px;
+          min-width: 58px;
+          min-height: 40px;
           padding: 0;
         }
 
         .nav-brand-logo {
-          width: 30px;
-          height: 30px;
+          width: 24px;
+          height: 24px;
+        }
+
+        .nav-brand-text {
+          font-size: 0.56rem;
+          letter-spacing: 0.07em;
         }
 
         .nav {
@@ -3498,8 +3515,17 @@
         }
 
         .nav-brand {
-          width: 44px;
-          min-width: 44px;
+          width: 54px;
+          min-width: 54px;
+        }
+
+        .nav-brand-logo {
+          width: 22px;
+          height: 22px;
+        }
+
+        .nav-brand-text {
+          font-size: 0.52rem;
         }
 
         .hero-layout,

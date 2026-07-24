@@ -2704,8 +2704,11 @@
         width: 58px;
         height: 58px;
         border-radius: 50%;
-        background: #ffffff;
-        padding: 0.25rem;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        padding: 0.35rem;
+        display: block;
+        object-fit: contain;
       }
 
       .store-footer-title,
@@ -2769,9 +2772,12 @@
         width: 22px;
         height: 22px;
         border-radius: 50%;
-        background: #ffffff;
-        padding: 0.05rem;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        padding: 0.12rem;
         margin-right: 0.12rem;
+        display: block;
+        object-fit: contain;
       }
 
       .store-footer-legal-links a {

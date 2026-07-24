@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-label="ValueArc media placeholder">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a2f8a"/>
+      <stop offset="100%" stop-color="#0e1c49"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2d448f" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#1b2d68" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="700" fill="url(#bg)"/>
+  <rect x="100" y="115" width="1000" height="470" rx="30" fill="url(#panel)" stroke="#7ea3ff" stroke-opacity="0.38"/>
+
+  <circle cx="245" cy="350" r="85" fill="#ffffff" fill-opacity="0.1"/>
+  <path d="M245 290l52 30v60l-52 30-52-30v-60l52-30Z" stroke="#f8fbff" stroke-width="8" fill="none" stroke-linejoin="round"/>
+  <path d="M213 322l32-18 32 18-32 18-32-18Z" fill="#f8fbff"/>
+  <path d="M215 347l30 17 30-17v14l-30 17-30-17v-14Z" fill="#f8fbff"/>
+
+  <text x="365" y="332" fill="#f8fbff" font-family="Segoe UI, Arial, sans-serif" font-size="56" font-weight="700">VALUEARC</text>
+  <text x="365" y="388" fill="#b8c7f2" font-family="Segoe UI, Arial, sans-serif" font-size="33" font-weight="600">Media preview unavailable</text>
+  <text x="365" y="432" fill="#9ab4ff" font-family="Segoe UI, Arial, sans-serif" font-size="28">Showing local fallback image</text>
+</svg>

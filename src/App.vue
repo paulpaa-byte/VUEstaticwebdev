@@ -173,6 +173,7 @@
                         class="page-gif"
                         :src="item.url"
                         :alt="item.alt"
+                        @error="handlePageMediaError($event, 'about', index)"
                         loading="lazy"
                       >
                       <figcaption>{{ item.caption }}</figcaption>
@@ -191,6 +192,7 @@
                         class="page-gif"
                         :src="item.url"
                         :alt="item.alt"
+                        @error="handlePageMediaError($event, 'vision', index)"
                         loading="lazy"
                       >
                       <figcaption>{{ item.caption }}</figcaption>
@@ -2151,11 +2153,6 @@
               return;
             }
 
-            if (image.dataset.fallbackApplied === "1") {
-              image.style.display = "none";
-              return;
-            }
-
             const section = DEFAULT_SITE_CONTENT && DEFAULT_SITE_CONTENT[sectionKey]
               ? DEFAULT_SITE_CONTENT[sectionKey]
               : null;
@@ -2164,11 +2161,59 @@
               ? defaults[mediaIndex].url
               : "";
 
-            const emergencyFallback = "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1000&q=80";
-            const fallbackUrl = defaultUrl || emergencyFallback;
+            const emergencyFallbackBySection = {
+              about: [
+                "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1000&q=80",
+                "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1000&q=80"
+              ],
+              vision: [
+                "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1000&q=80",
+                "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80"
+              ],
+              contact: [
+                "https://images.unsplash.com/photo-1573164574396-6ad8d9f3f521?auto=format&fit=crop&w=1000&q=80",
+                "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1000&q=80"
+              ]
+            };
 
-            image.dataset.fallbackApplied = "1";
-            image.src = fallbackUrl;
+            const emergencyFallbacks = emergencyFallbackBySection[sectionKey] || [];
+            const emergencyFallback = emergencyFallbacks[mediaIndex]
+              || emergencyFallbacks[0]
+              || "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1000&q=80";
+            const localFallback = "/page-media-fallback.svg";
+
+            const stage = image.dataset.fallbackStage || "initial";
+            const currentSrc = image.currentSrc || image.src || "";
+
+            if (stage === "initial") {
+              // First retry: use section default URL if it is different from the current failing URL.
+              if (defaultUrl && !currentSrc.includes(defaultUrl)) {
+                image.dataset.fallbackStage = "default";
+                image.src = defaultUrl;
+                return;
+              }
+
+              image.dataset.fallbackStage = "emergency";
+              image.src = emergencyFallback;
+              return;
+            }
+
+            if (stage === "default" && defaultUrl && !currentSrc.includes(emergencyFallback)) {
+              // Second retry: emergency URL if default also failed.
+              image.dataset.fallbackStage = "emergency";
+              image.src = emergencyFallback;
+              return;
+            }
+
+            if (stage === "emergency" && !currentSrc.includes(localFallback)) {
+              // Final retry: always-available local image served by this app.
+              image.dataset.fallbackStage = "local";
+              image.src = localFallback;
+              return;
+            }
+
+            // Hide only if all fallback attempts fail.
+            image.style.display = "none";
           }
         }
       };

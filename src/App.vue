@@ -215,7 +215,7 @@
                     <figure v-for="(item, index) in siteContent.contact.media" :key="'contact-media-' + index" class="media-card">
                       <img
                         class="page-gif"
-                        :src="item.url"
+                        :src="resolveMediaUrl('contact', index, item.url)"
                         :alt="item.alt"
                         @error="handlePageMediaError($event, 'contact', index)"
                         loading="lazy"
@@ -1075,7 +1075,7 @@
           businessHours: "Business hours: Monday to Friday, 9:00 AM to 6:00 PM",
           media: [
             {
-              url: "https://images.unsplash.com/photo-1573164574396-6ad8d9f3f521?auto=format&fit=crop&w=1000&q=80",
+              url: "/images/contact-support-team.svg",
               alt: "Enterprise customer support team",
               caption: "Fast response and dedicated support for clients and candidates."
             },
@@ -2131,6 +2131,15 @@
           downloadTarget(course) {
             return course.pdfUrl || course.documentUrl || course.detailPath || "";
           },
+          resolveMediaUrl(sectionKey, mediaIndex, url) {
+            if (sectionKey === "contact" && mediaIndex === 0) {
+              const knownBroken = "https://images.unsplash.com/photo-1573164574396-6ad8d9f3f521";
+              if (!url || String(url).startsWith(knownBroken)) {
+                return "/images/contact-support-team.svg";
+              }
+            }
+            return url;
+          },
           getOfficeAvatarUrl(userEmail) {
             return "https://outlook.office.com/owa/service.svc/s/GetPersonaPhoto?size=HR96x96&email=" + encodeURIComponent(userEmail);
           },
@@ -2171,7 +2180,7 @@
                 "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80"
               ],
               contact: [
-                "https://images.unsplash.com/photo-1573164574396-6ad8d9f3f521?auto=format&fit=crop&w=1000&q=80",
+                "/images/contact-support-team.svg",
                 "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1000&q=80"
               ]
             };

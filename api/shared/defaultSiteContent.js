@@ -64,7 +64,7 @@ module.exports = {
     businessHours: "Business hours: Monday to Friday, 9:00 AM to 6:00 PM",
     media: [
       {
-        url: "https://images.unsplash.com/photo-1573164574396-6ad8d9f3f521?auto=format&fit=crop&w=1000&q=80",
+        url: "/images/contact-support-team.svg",
         alt: "Enterprise customer support team",
         caption: "Fast response and dedicated support for clients and candidates."
       },

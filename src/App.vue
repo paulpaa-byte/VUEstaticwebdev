@@ -2778,10 +2778,10 @@
 
       .store-footer {
         margin-top: 1rem;
-        border-radius: 0;
+        border-radius: 12px;
         overflow: hidden;
         border: 1px solid rgba(255, 255, 255, 0.12);
-        background: #312c61;
+        background: linear-gradient(180deg, rgba(19, 47, 131, 0.96), rgba(11, 31, 92, 0.96));
         position: relative;
         clear: both;
       }
@@ -2853,7 +2853,7 @@
 
       .store-footer-legal {
         border-top: 1px solid rgba(255, 255, 255, 0.12);
-        background: #2b2857;
+        background: linear-gradient(180deg, rgba(16, 39, 112, 0.98), rgba(10, 28, 82, 0.98));
         padding: 0.58rem 1.6rem;
       }
 
@@ -4258,8 +4258,6 @@
           grid-template-columns: 1fr;
           padding: 0.56rem;
           gap: 0.45rem;
-          max-height: 102px;
-          overflow: hidden;
         }
 
         .store-footer-brand {
@@ -4287,22 +4285,16 @@
         .store-footer-links a {
           font-size: 0.62rem;
           line-height: 1.15;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+          white-space: normal;
         }
 
         .store-footer-legal {
           padding: 0.34rem 0.56rem;
-          max-height: 30px;
-          overflow: hidden;
         }
 
         .store-footer-legal-links {
-          flex-wrap: nowrap;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+          flex-wrap: wrap;
+          white-space: normal;
           gap: 0.28rem;
           font-size: 0.58rem;
         }

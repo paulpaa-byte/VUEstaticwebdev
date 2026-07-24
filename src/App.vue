@@ -886,7 +886,12 @@
                 </article>
               </section>
 
-              <footer v-if="!isAdminRoute && !isProfileRoute" class="store-footer" aria-label="Site footer">
+              <footer
+                v-if="!isAdminRoute && !isProfileRoute"
+                class="store-footer"
+                :class="{ 'store-footer-narrow': !showHome }"
+                aria-label="Site footer"
+              >
                 <section class="store-footer-main">
                   <div class="store-footer-brand">
                     <img class="store-footer-logo" src="/valuearc-logo.svg" alt="Valuearc logo">
@@ -2784,6 +2789,15 @@
         background: linear-gradient(180deg, rgba(19, 47, 131, 0.96), rgba(11, 31, 92, 0.96));
         position: relative;
         clear: both;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .store-footer-narrow {
+        max-width: 980px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 1.2rem;
       }
 
       .store-footer-main {

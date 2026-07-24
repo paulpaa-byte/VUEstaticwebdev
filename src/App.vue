@@ -215,6 +215,7 @@
                         class="page-gif"
                         :src="item.url"
                         :alt="item.alt"
+                        @error="handlePageMediaError($event, 'contact', index)"
                         loading="lazy"
                       >
                       <figcaption>{{ item.caption }}</figcaption>
@@ -2143,6 +2144,31 @@
             if (this.avatarSrc !== fallback) {
               this.avatarSrc = fallback;
             }
+          },
+          handlePageMediaError(event, sectionKey, mediaIndex) {
+            const image = event && event.target ? event.target : null;
+            if (!image) {
+              return;
+            }
+
+            if (image.dataset.fallbackApplied === "1") {
+              image.style.display = "none";
+              return;
+            }
+
+            const section = DEFAULT_SITE_CONTENT && DEFAULT_SITE_CONTENT[sectionKey]
+              ? DEFAULT_SITE_CONTENT[sectionKey]
+              : null;
+            const defaults = section && Array.isArray(section.media) ? section.media : [];
+            const defaultUrl = defaults[mediaIndex] && defaults[mediaIndex].url
+              ? defaults[mediaIndex].url
+              : "";
+
+            const emergencyFallback = "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1000&q=80";
+            const fallbackUrl = defaultUrl || emergencyFallback;
+
+            image.dataset.fallbackApplied = "1";
+            image.src = fallbackUrl;
           }
         }
       };
@@ -2679,11 +2705,13 @@
       }
 
       .store-footer {
-        margin-top: 1.6rem;
+        margin-top: 1rem;
         border-radius: 0;
         overflow: hidden;
         border: 1px solid rgba(255, 255, 255, 0.12);
         background: #312c61;
+        position: relative;
+        clear: both;
       }
 
       .store-footer-main {
@@ -2691,7 +2719,7 @@
         grid-template-columns: 1.2fr 1fr;
         gap: 1.25rem;
         align-items: center;
-        padding: 2rem 2.2rem;
+        padding: 1.15rem 1.6rem;
       }
 
       .store-footer-brand {
@@ -2701,12 +2729,12 @@
       }
 
       .store-footer-logo {
-        width: 58px;
-        height: 58px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         background: rgba(255, 255, 255, 0.08);
         border: 1px solid rgba(255, 255, 255, 0.28);
-        padding: 0.35rem;
+        padding: 0.25rem;
         display: block;
         object-fit: contain;
       }
@@ -2718,14 +2746,14 @@
       }
 
       .store-footer-title {
-        font-size: 1.16rem;
+        font-size: 1.01rem;
         font-weight: 900;
         letter-spacing: 0.02em;
       }
 
       .store-footer-subtitle {
         margin-top: 0.25rem;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         letter-spacing: 0.08em;
         color: rgba(255, 255, 255, 0.8);
       }
@@ -2754,7 +2782,7 @@
       .store-footer-legal {
         border-top: 1px solid rgba(255, 255, 255, 0.12);
         background: #2b2857;
-        padding: 1rem 2.2rem;
+        padding: 0.58rem 1.6rem;
       }
 
       .store-footer-legal-links {
@@ -2763,18 +2791,18 @@
         align-items: center;
         flex-wrap: wrap;
         color: rgba(255, 255, 255, 0.82);
-        font-size: 0.78rem;
+        font-size: 0.72rem;
         letter-spacing: 0.03em;
         text-transform: uppercase;
       }
 
       .store-footer-legal-logo {
-        width: 22px;
-        height: 22px;
+        width: 18px;
+        height: 18px;
         border-radius: 50%;
         background: rgba(255, 255, 255, 0.08);
         border: 1px solid rgba(255, 255, 255, 0.25);
-        padding: 0.12rem;
+        padding: 0.1rem;
         margin-right: 0.12rem;
         display: block;
         object-fit: contain;
@@ -3675,7 +3703,7 @@
 
         .store-footer-main {
           grid-template-columns: 1fr;
-          padding: 1.4rem;
+          padding: 0.95rem;
         }
 
         .store-footer-links {
@@ -3683,7 +3711,7 @@
         }
 
         .store-footer-legal {
-          padding: 0.85rem 1.4rem;
+          padding: 0.56rem 0.95rem;
         }
 
         .portfolio-grid {
@@ -3828,20 +3856,20 @@
         }
 
         .store-footer {
-          margin-top: 1rem;
+          margin-top: 0.8rem;
         }
 
         .store-footer-main {
-          padding: 1rem;
-          gap: 0.95rem;
+          padding: 0.82rem;
+          gap: 0.75rem;
         }
 
         .store-footer-title {
-          font-size: 0.98rem;
+          font-size: 0.88rem;
         }
 
         .store-footer-subtitle {
-          font-size: 0.78rem;
+          font-size: 0.72rem;
         }
 
         .store-footer-links {
@@ -3853,17 +3881,17 @@
         }
 
         .store-footer-legal {
-          padding: 0.75rem 1rem;
+          padding: 0.48rem 0.82rem;
         }
 
         .store-footer-legal-links {
-          font-size: 0.68rem;
+          font-size: 0.64rem;
           gap: 0.38rem;
         }
 
         .store-footer-legal-logo {
-          width: 18px;
-          height: 18px;
+          width: 16px;
+          height: 16px;
         }
 
         .catalog-toolbar {
@@ -4028,7 +4056,7 @@
         }
 
         .store-footer-main {
-          padding: 0.9rem;
+          padding: 0.72rem;
         }
 
         .store-footer-brand {
@@ -4036,8 +4064,8 @@
         }
 
         .store-footer-logo {
-          width: 48px;
-          height: 48px;
+          width: 36px;
+          height: 36px;
         }
 
         .store-footer-links {
@@ -4045,7 +4073,7 @@
         }
 
         .store-footer-legal {
-          padding: 0.65rem 0.9rem;
+          padding: 0.42rem 0.72rem;
         }
 
         .hero-metrics-home {
@@ -4132,7 +4160,7 @@
 
         .store-footer-main {
           grid-template-columns: 1fr;
-          padding: 0.85rem;
+          padding: 0.65rem;
           gap: 0.8rem;
         }
 
@@ -4141,13 +4169,75 @@
         }
 
         .store-footer-legal {
-          padding: 0.6rem 0.85rem;
+          padding: 0.42rem 0.65rem;
         }
       }
 
       @media (max-width: 420px) {
         .card {
           padding: 0.85rem;
+        }
+
+        .store-footer {
+          margin-top: 0.65rem;
+        }
+
+        .store-footer-main {
+          grid-template-columns: 1fr;
+          padding: 0.56rem;
+          gap: 0.45rem;
+          max-height: 102px;
+          overflow: hidden;
+        }
+
+        .store-footer-brand {
+          gap: 0.5rem;
+        }
+
+        .store-footer-title {
+          font-size: 0.8rem;
+          line-height: 1.1;
+        }
+
+        .store-footer-subtitle {
+          margin-top: 0.1rem;
+          font-size: 0.66rem;
+          line-height: 1.1;
+        }
+
+        .store-footer-links {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 0.18rem 0.35rem;
+          width: 100%;
+        }
+
+        .store-footer-links a {
+          font-size: 0.62rem;
+          line-height: 1.15;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .store-footer-legal {
+          padding: 0.34rem 0.56rem;
+          max-height: 30px;
+          overflow: hidden;
+        }
+
+        .store-footer-legal-links {
+          flex-wrap: nowrap;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          gap: 0.28rem;
+          font-size: 0.58rem;
+        }
+
+        .store-footer-legal-logo {
+          width: 14px;
+          height: 14px;
         }
 
         .nav-brand {

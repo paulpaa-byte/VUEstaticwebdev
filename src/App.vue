@@ -282,50 +282,157 @@
                     <a class="button" href="/login">Login to register</a>
                     <a class="button secondary" href="/.auth/login/aad?post_login_redirect_uri=/trainings">Self Sign Up</a>
                   </div>
-                  <div class="course-list">
-                    <article v-for="course in courses" :key="course.id" class="course-card">
-                      <div class="course-head">
-                        <div>
-                          <p class="course-track">{{ course.category }}</p>
-                          <h3>{{ course.title }}</h3>
-                        </div>
-                        <span class="pill">{{ course.level }}</span>
-                      </div>
-
-                      <p class="course-description">{{ course.description }}</p>
-
-                      <ul class="course-meta">
-                        <li>Format: {{ course.format }}</li>
-                        <li>Duration: {{ course.duration }}</li>
-                      </ul>
-
-                      <div class="course-actions">
-                        <a v-if="course.detailPath" class="link-chip" :href="course.detailPath" target="_blank" rel="noopener noreferrer">
-                          Course details
-                        </a>
-                        <a v-if="course.videoUrl" class="link-chip" :href="course.videoUrl" target="_blank" rel="noopener noreferrer">
-                          Video
-                        </a>
-                        <a v-if="course.documentUrl" class="link-chip" :href="course.documentUrl" target="_blank" rel="noopener noreferrer">
-                          Document
-                        </a>
-                        <a v-if="course.pdfUrl" class="link-chip" :href="course.pdfUrl" target="_blank" rel="noopener noreferrer">
-                          PDF
-                        </a>
-                        <a v-if="downloadTarget(course)" class="link-chip" :href="downloadTarget(course)" :download="course.downloadName">
-                          Download
-                        </a>
-                        <button
-                          v-if="isAuthenticated"
-                          class="button small"
-                          type="button"
-                          @click="toggleEnrollment(course.id)"
+                  <div class="catalog-layout">
+                    <aside class="catalog-filters" aria-label="Course filters">
+                      <div class="catalog-filter-group">
+                        <label for="course-search" class="catalog-filter-label">Search Courses</label>
+                        <input
+                          id="course-search"
+                          v-model.trim="trainingSearch"
+                          class="catalog-search"
+                          type="search"
+                          placeholder="Search by title or keyword"
                         >
-                          {{ isEnrolled(course.id) ? 'Unregister' : 'Register course' }}
-                        </button>
-                        <a v-else class="button small" href="/login">Register</a>
                       </div>
-                    </article>
+
+                      <div class="catalog-filter-group">
+                        <p class="catalog-filter-label">Browse Categories</p>
+                        <button
+                          type="button"
+                          class="catalog-filter-item"
+                          :class="trainingCategoryFilter === 'all' ? 'active' : ''"
+                          @click="setTrainingCategory('all')"
+                        >
+                          <span>View all categories</span>
+                          <strong>{{ courses.length }}</strong>
+                        </button>
+                        <button
+                          v-for="group in trainingCategoryBuckets"
+                          :key="'category-filter-' + group.value"
+                          type="button"
+                          class="catalog-filter-item"
+                          :class="trainingCategoryFilter === group.value ? 'active' : ''"
+                          @click="setTrainingCategory(group.value)"
+                        >
+                          <span>{{ group.label }}</span>
+                          <strong>{{ group.count }}</strong>
+                        </button>
+                      </div>
+
+                      <div class="catalog-filter-group">
+                        <label for="course-level" class="catalog-filter-label">Level</label>
+                        <select id="course-level" v-model="trainingLevelFilter" class="catalog-select">
+                          <option value="all">All levels</option>
+                          <option v-for="level in trainingLevels" :key="'level-filter-' + level" :value="level">{{ level }}</option>
+                        </select>
+                      </div>
+
+                      <div class="catalog-filter-group">
+                        <label for="course-format" class="catalog-filter-label">Format</label>
+                        <select id="course-format" v-model="trainingFormatFilter" class="catalog-select">
+                          <option value="all">All formats</option>
+                          <option v-for="format in trainingFormats" :key="'format-filter-' + format" :value="format">{{ format }}</option>
+                        </select>
+                      </div>
+
+                      <button
+                        v-if="hasActiveTrainingFilters"
+                        type="button"
+                        class="button secondary small catalog-clear"
+                        @click="clearTrainingFilters"
+                      >
+                        Clear filters
+                      </button>
+                    </aside>
+
+                    <div class="catalog-results">
+                      <div class="catalog-tabs" role="tablist" aria-label="Course shelves">
+                        <button
+                          v-for="tab in trainingShelfTabs"
+                          :key="'shelf-tab-' + tab.value"
+                          type="button"
+                          class="catalog-tab"
+                          :class="trainingShelfFilter === tab.value ? 'active' : ''"
+                          @click="setTrainingShelf(tab.value)"
+                        >
+                          <span>{{ tab.label }}</span>
+                          <strong>{{ tab.count }}</strong>
+                        </button>
+                      </div>
+
+                      <div class="catalog-toolbar">
+                        <p>{{ filteredCourses.length }} courses available</p>
+                        <label for="course-sort" class="catalog-sort">
+                          <span>Sort by</span>
+                          <select id="course-sort" v-model="trainingSort" class="catalog-select">
+                            <option value="title-asc">Title (A-Z)</option>
+                            <option value="title-desc">Title (Z-A)</option>
+                            <option value="level">Level</option>
+                            <option value="category">Category</option>
+                          </select>
+                        </label>
+                      </div>
+
+                      <div class="course-list">
+                        <article v-for="course in filteredCourses" :key="course.id" class="course-card">
+                          <div class="course-badges" aria-label="Course spotlight tags">
+                            <span class="course-badge new">{{ shelfBadgeLabel(course) }}</span>
+                            <span v-if="hasCourseDiscount(course)" class="course-badge discount">-{{ courseDiscountPercent(course) }}%</span>
+                          </div>
+
+                          <div class="course-head">
+                            <div>
+                              <p class="course-track">{{ course.category }}</p>
+                              <h3>{{ course.title }}</h3>
+                            </div>
+                            <span class="pill">{{ course.level }}</span>
+                          </div>
+
+                          <p class="course-description">{{ course.description }}</p>
+
+                          <div class="course-pricing" aria-label="Course fee">
+                            <p class="course-price-current">{{ courseOfferPrice(course) }}</p>
+                            <p class="course-price-original">{{ courseListPrice(course) }}</p>
+                          </div>
+
+                          <ul class="course-meta">
+                            <li>Format: {{ course.format }}</li>
+                            <li>Duration: {{ course.duration }}</li>
+                          </ul>
+
+                          <div class="course-actions">
+                            <a v-if="course.detailPath" class="link-chip" :href="course.detailPath" target="_blank" rel="noopener noreferrer">
+                              Course details
+                            </a>
+                            <a v-if="course.videoUrl" class="link-chip" :href="course.videoUrl" target="_blank" rel="noopener noreferrer">
+                              Video
+                            </a>
+                            <a v-if="course.documentUrl" class="link-chip" :href="course.documentUrl" target="_blank" rel="noopener noreferrer">
+                              Document
+                            </a>
+                            <a v-if="course.pdfUrl" class="link-chip" :href="course.pdfUrl" target="_blank" rel="noopener noreferrer">
+                              PDF
+                            </a>
+                            <a v-if="downloadTarget(course)" class="link-chip" :href="downloadTarget(course)" :download="course.downloadName">
+                              Download
+                            </a>
+                            <button
+                              v-if="isAuthenticated"
+                              class="button small"
+                              type="button"
+                              @click="toggleEnrollment(course.id)"
+                            >
+                              {{ isEnrolled(course.id) ? 'Unregister' : 'Register course' }}
+                            </button>
+                            <a v-else class="button small" href="/login">Register</a>
+                          </div>
+                        </article>
+                      </div>
+
+                      <p v-if="!filteredCourses.length" class="hint catalog-empty">
+                        No courses match your current filters. Try broadening your search or clearing filters.
+                      </p>
+                    </div>
                   </div>
                 </article>
               </section>
@@ -776,38 +883,42 @@
                 </article>
               </section>
 
-              <section v-if="!isAdminRoute && !isProfileRoute" class="quick-links-footer" aria-label="Quick navigation links">
-                <nav class="quick-links-strip">
-                  <a href="/" :class="showHome ? 'active' : ''">
-                    <svg class="quick-link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-5h-5v5H5a1 1 0 0 1-1-1v-8.5Z" fill="currentColor"/></svg>
-                    <span>Home</span>
-                  </a>
-                  <a href="/about" :class="isAboutRoute ? 'active' : ''">
-                    <svg class="quick-link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 1 0 8.5 8.5A8.51 8.51 0 0 0 12 3.5Zm0 4.2a1.25 1.25 0 1 1-1.25 1.25A1.25 1.25 0 0 1 12 7.7Zm1.6 8h-3.2v-1.5h.8v-2.7h-.8V10h2.4v4.2h.8Z" fill="currentColor"/></svg>
-                    <span>About Us</span>
-                  </a>
-                  <a href="/vision" :class="isVisionRoute ? 'active' : ''">
-                    <svg class="quick-link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6C6.8 6 3 12 3 12s3.8 6 9 6 9-6 9-6-3.8-6-9-6Zm0 9.2A3.2 3.2 0 1 1 15.2 12 3.2 3.2 0 0 1 12 15.2Z" fill="currentColor"/></svg>
-                    <span>Vision</span>
-                  </a>
-                  <a href="/contact" :class="isContactRoute ? 'active' : ''">
-                    <svg class="quick-link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5h13A2.5 2.5 0 0 1 21 7.5v9A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5v-9Zm2 .2V8l7 4.7L19 8v-.3a.5.5 0 0 0-.5-.5h-13a.5.5 0 0 0-.5.5Zm0 2.7v6.1a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-6.1l-6.4 4.3a1 1 0 0 1-1.2 0L5 10.4Z" fill="currentColor"/></svg>
-                    <span>Contact</span>
-                  </a>
-                  <a href="/news-media" :class="isNewsRoute ? 'active' : ''">
-                    <svg class="quick-link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11a2 2 0 0 1 2 2v10a4 4 0 0 0 1 2.7.8.8 0 0 1-.6 1.3H7a4 4 0 0 1-4-4V6a2 2 0 0 1 2-2Zm1.5 4.2h8v1.6h-8Zm0 3h8v1.6h-8Zm0 3h5.2v1.6H6.5Z" fill="currentColor"/></svg>
-                    <span>News &amp; Media</span>
-                  </a>
-                  <a href="/services-portfolio" :class="isPortfolioRoute ? 'active' : ''">
-                    <svg class="quick-link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v10a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 5 16.5v-10Zm2.5-.5a.5.5 0 0 0-.5.5v1h10v-1a.5.5 0 0 0-.5-.5h-9ZM7 9.5v7a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-7H7Z" fill="currentColor"/></svg>
-                    <span>Services</span>
-                  </a>
-                  <a href="/trainings" :class="isTrainingsRoute ? 'active' : ''">
-                    <svg class="quick-link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 3 8.5 12 13l7.1-3.6v6h1.9V8.5L12 4Zm-6.9 8.2V16c0 1.9 3.1 3.5 6.9 3.5s6.9-1.6 6.9-3.5v-3.8L12 15.8l-6.9-3.6Z" fill="currentColor"/></svg>
-                    <span>Trainings</span>
-                  </a>
-                </nav>
-              </section>
+              <footer v-if="!isAdminRoute && !isProfileRoute" class="store-footer" aria-label="Site footer">
+                <section class="store-footer-main">
+                  <div class="store-footer-brand">
+                    <img class="store-footer-logo" src="/valuearc-logo.svg" alt="Valuearc logo">
+                    <div>
+                      <p class="store-footer-title">EVANGELICAL LITERATURE SERVICE</p>
+                      <p class="store-footer-subtitle">CHRISTIAN BOOKS INDIA</p>
+                    </div>
+                  </div>
+
+                  <nav class="store-footer-links" aria-label="Footer links">
+                    <a href="/about">About</a>
+                    <a href="/contact">Contact</a>
+                    <a href="/vision">Returns</a>
+                    <a href="/services-portfolio">Shipping Policy</a>
+                    <a href="/trainings">Visit Our Stores</a>
+                  </nav>
+
+                  <div class="store-footer-help">
+                    <p class="store-footer-help-title">Need help?</p>
+                    <p>Call us at <a href="tel:+914425323231">91-44-25323231</a></p>
+                    <p>or email us at <a href="mailto:info@christianbooksindia.com">info@christianbooksindia.com</a></p>
+                  </div>
+                </section>
+
+                <section class="store-footer-legal" aria-label="Footer legal">
+                  <div class="store-footer-legal-links">
+                    <img class="store-footer-legal-logo" src="/valuearc-logo.svg" alt="Valuearc logo">
+                    <span>EVANGELICAL LITERATURE SERVICE</span>
+                    <span>|</span>
+                    <a href="/about">Terms of Use</a>
+                    <span>|</span>
+                    <a href="/contact">Privacy Policy</a>
+                  </div>
+                </section>
+              </footer>
       </template>
     </section>
   </main>
@@ -1156,6 +1267,12 @@
               "Certification Prep",
               "Webinar"
             ],
+            trainingSearch: "",
+            trainingCategoryFilter: "all",
+            trainingLevelFilter: "all",
+            trainingFormatFilter: "all",
+            trainingShelfFilter: "all",
+            trainingSort: "title-asc",
             draftCourse: emptyDraftCourse()
           };
         },
@@ -1383,6 +1500,109 @@
           downloadableCourses() {
             return this.courses.filter(course => Boolean(this.downloadTarget(course)));
           },
+          trainingCategoryBuckets() {
+            const counts = {};
+            this.courses.forEach(course => {
+              const key = course.category || "Uncategorized";
+              counts[key] = (counts[key] || 0) + 1;
+            });
+
+            return Object.keys(counts)
+              .sort((left, right) => left.localeCompare(right))
+              .map(key => ({
+                value: key,
+                label: key,
+                count: counts[key]
+              }));
+          },
+          trainingLevels() {
+            return Array.from(new Set(this.courses.map(course => course.level).filter(Boolean))).sort((left, right) => left.localeCompare(right));
+          },
+          trainingFormats() {
+            return Array.from(new Set(this.courses.map(course => course.format).filter(Boolean))).sort((left, right) => left.localeCompare(right));
+          },
+          trainingShelfTabs() {
+            const baseCourses = this.baseFilteredCourses;
+            const tabCounts = {
+              all: baseCourses.length,
+              "new-arrivals": 0,
+              "special-offers": 0,
+              "top-sellers": 0
+            };
+
+            baseCourses.forEach(course => {
+              const shelf = this.shelfKeyForCourse(course);
+              if (tabCounts[shelf] !== undefined) {
+                tabCounts[shelf] += 1;
+              }
+            });
+
+            return [
+              { value: "new-arrivals", label: "New Arrivals", count: tabCounts["new-arrivals"] },
+              { value: "special-offers", label: "Special Offers", count: tabCounts["special-offers"] },
+              { value: "top-sellers", label: "Top Sellers", count: tabCounts["top-sellers"] },
+              { value: "all", label: "View All", count: tabCounts.all }
+            ];
+          },
+          baseFilteredCourses() {
+            const query = this.trainingSearch.trim().toLowerCase();
+
+            return this.courses.filter(course => {
+              const categoryOk = this.trainingCategoryFilter === "all" || course.category === this.trainingCategoryFilter;
+              const levelOk = this.trainingLevelFilter === "all" || course.level === this.trainingLevelFilter;
+              const formatOk = this.trainingFormatFilter === "all" || course.format === this.trainingFormatFilter;
+              const text = [course.title, course.description, course.category, course.level, course.format]
+                .join(" ")
+                .toLowerCase();
+              const searchOk = !query || text.includes(query);
+              return categoryOk && levelOk && formatOk && searchOk;
+            });
+          },
+          filteredCourses() {
+            const levelRank = {
+              Beginner: 1,
+              Intermediate: 2,
+              Advanced: 3,
+              Expert: 4
+            };
+
+            const filtered = this.baseFilteredCourses.filter(course => {
+              return this.trainingShelfFilter === "all" || this.shelfKeyForCourse(course) === this.trainingShelfFilter;
+            });
+
+            const sorted = [...filtered];
+            if (this.trainingSort === "title-desc") {
+              sorted.sort((left, right) => right.title.localeCompare(left.title));
+            } else if (this.trainingSort === "level") {
+              sorted.sort((left, right) => {
+                const leftRank = levelRank[left.level] || 99;
+                const rightRank = levelRank[right.level] || 99;
+                if (leftRank === rightRank) {
+                  return left.title.localeCompare(right.title);
+                }
+                return leftRank - rightRank;
+              });
+            } else if (this.trainingSort === "category") {
+              sorted.sort((left, right) => {
+                const categoryCompare = (left.category || "").localeCompare(right.category || "");
+                if (categoryCompare === 0) {
+                  return left.title.localeCompare(right.title);
+                }
+                return categoryCompare;
+              });
+            } else {
+              sorted.sort((left, right) => left.title.localeCompare(right.title));
+            }
+
+            return sorted;
+          },
+          hasActiveTrainingFilters() {
+            return this.trainingSearch.trim() !== ""
+              || this.trainingCategoryFilter !== "all"
+              || this.trainingLevelFilter !== "all"
+              || this.trainingFormatFilter !== "all"
+              || this.trainingShelfFilter !== "all";
+          },
           jobOpenings() {
             return this.courses.map(course => ({
               id: course.id,
@@ -1582,6 +1802,80 @@
           },
           isEnrolled(courseId) {
             return this.enrolledCourseIds.includes(courseId);
+          },
+          setTrainingCategory(category) {
+            this.trainingCategoryFilter = category;
+          },
+          setTrainingShelf(shelf) {
+            this.trainingShelfFilter = shelf;
+          },
+          clearTrainingFilters() {
+            this.trainingSearch = "";
+            this.trainingCategoryFilter = "all";
+            this.trainingLevelFilter = "all";
+            this.trainingFormatFilter = "all";
+            this.trainingShelfFilter = "all";
+            this.trainingSort = "title-asc";
+          },
+          shelfKeyForCourse(course) {
+            const source = String((course && course.id) || (course && course.title) || "");
+            let hash = 0;
+            for (let index = 0; index < source.length; index += 1) {
+              hash = ((hash << 5) - hash) + source.charCodeAt(index);
+              hash |= 0;
+            }
+
+            const normalized = Math.abs(hash) % 3;
+            if (normalized === 0) {
+              return "new-arrivals";
+            }
+            if (normalized === 1) {
+              return "special-offers";
+            }
+            return "top-sellers";
+          },
+          shelfBadgeLabel(course) {
+            const shelf = this.shelfKeyForCourse(course);
+            if (shelf === "special-offers") {
+              return "Special Offer";
+            }
+            if (shelf === "top-sellers") {
+              return "Top Seller";
+            }
+            return "New";
+          },
+          courseBasePrice(course) {
+            const level = (course && course.level) || "";
+            const baseByLevel = {
+              Beginner: 1499,
+              Intermediate: 1999,
+              Advanced: 2599,
+              Expert: 3299
+            };
+            return baseByLevel[level] || 1799;
+          },
+          hasCourseDiscount(course) {
+            return this.shelfKeyForCourse(course) === "special-offers";
+          },
+          courseDiscountPercent(course) {
+            if (!this.hasCourseDiscount(course)) {
+              return 0;
+            }
+            return 25;
+          },
+          formatInr(amount) {
+            return `\u20b9${Number(amount || 0).toLocaleString("en-IN")}`;
+          },
+          courseOfferPrice(course) {
+            const base = this.courseBasePrice(course);
+            const discount = this.courseDiscountPercent(course);
+            const discounted = discount ? Math.round(base * (100 - discount) / 100) : base;
+            return this.formatInr(discounted);
+          },
+          courseListPrice(course) {
+            const base = this.courseBasePrice(course);
+            const list = this.hasCourseDiscount(course) ? base : Math.round(base * 1.15);
+            return this.formatInr(list);
           },
           async toggleEnrollment(courseId) {
             if (!this.isAuthenticated) {
@@ -1863,6 +2157,8 @@
 
     <style scoped>
 
+      @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
+
       .shell {
         --royal-900: #111f66;
         --royal-800: #1a2f8a;
@@ -1880,7 +2176,7 @@
         padding: 2rem;
         box-sizing: border-box;
         overflow-x: auto;
-        font-family: "Segoe UI", "Segoe UI Variable", "Helvetica Neue", Arial, sans-serif;
+        font-family: "Lato", "Helvetica Neue", Arial, sans-serif;
         background:
           radial-gradient(circle at 12% 10%, rgba(101, 132, 255, 0.28), transparent 28%),
           radial-gradient(circle at 88% 12%, rgba(72, 108, 255, 0.2), transparent 30%),
@@ -1942,7 +2238,7 @@
         margin: 0;
         font-size: clamp(2rem, 4vw, 3.25rem);
         line-height: 1.05;
-        font-family: "Segoe UI", "Segoe UI Variable", "Helvetica Neue", Arial, sans-serif;
+        font-family: "Lato", "Helvetica Neue", Arial, sans-serif;
         font-weight: 700;
         color: #f6f8ff;
       }
@@ -2388,72 +2684,134 @@
         gap: 0.85rem;
       }
 
-      .quick-links-footer {
-        margin-top: 1.4rem;
-        padding-top: 0.55rem;
-        padding-bottom: 0;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-        position: relative;
-        z-index: 0;
-        clear: both;
+      .store-footer {
+        margin-top: 1.6rem;
+        border-radius: 0;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: #312c61;
       }
 
-      .quick-links-strip {
+      .store-footer-main {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr 1fr;
+        gap: 1.25rem;
+        align-items: center;
+        padding: 2rem 2.2rem;
+      }
+
+      .store-footer-brand {
         display: flex;
         align-items: center;
-        gap: 0.2rem;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding: 0.25rem 0.35rem;
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 0;
-        background: #0b0b0b;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-        width: 100%;
-        box-sizing: border-box;
+        gap: 0.9rem;
       }
 
-      .quick-links-strip::-webkit-scrollbar {
-        display: none;
+      .store-footer-logo {
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        background: #ffffff;
+        padding: 0.25rem;
       }
 
-      .quick-links-strip a {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
+      .store-footer-title,
+      .store-footer-subtitle {
+        margin: 0;
+        color: #ffffff;
+      }
+
+      .store-footer-title {
+        font-size: 1.16rem;
+        font-weight: 900;
+        letter-spacing: 0.02em;
+      }
+
+      .store-footer-subtitle {
+        margin-top: 0.25rem;
+        font-size: 0.9rem;
+        letter-spacing: 0.08em;
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      .store-footer-links {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .store-footer-links a {
+        color: rgba(255, 255, 255, 0.88);
         text-decoration: none;
-        color: rgba(255, 255, 255, 0.85);
-        font-weight: 600;
-        font-size: 0.79rem;
-        padding: 0.35rem 0.58rem;
-        border-radius: 3px;
-        background: transparent;
-        border: 1px solid transparent;
-        white-space: nowrap;
-        letter-spacing: 0.01em;
-        flex: 0 0 auto;
-        text-align: center;
+        text-transform: uppercase;
+        font-size: 0.87rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
       }
 
-      .quick-link-icon {
-        width: 0.85rem;
-        height: 0.85rem;
-        flex: 0 0 auto;
-        opacity: 0.92;
+      .store-footer-links a:hover {
+        color: #ffffff;
+        text-decoration: underline;
       }
 
-      .quick-links-strip a:hover {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.2);
-        color: #fff;
+      .store-footer-help {
+        color: rgba(255, 255, 255, 0.92);
+        text-align: left;
       }
 
-      .quick-links-strip a.active {
-        background: rgba(255, 0, 95, 0.13);
-        border-color: rgba(255, 53, 126, 0.42);
-        color: #fff;
-        box-shadow: none;
+      .store-footer-help-title {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 900;
+      }
+
+      .store-footer-help p {
+        margin: 0.3rem 0 0;
+        font-size: 1.02rem;
+      }
+
+      .store-footer-help a {
+        color: #ffffff;
+        text-decoration: none;
+      }
+
+      .store-footer-help a:hover {
+        text-decoration: underline;
+      }
+
+      .store-footer-legal {
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        background: #2b2857;
+        padding: 1rem 2.2rem;
+      }
+
+      .store-footer-legal-links {
+        display: flex;
+        gap: 0.55rem;
+        align-items: center;
+        flex-wrap: wrap;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 0.78rem;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+
+      .store-footer-legal-logo {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #ffffff;
+        padding: 0.05rem;
+        margin-right: 0.12rem;
+      }
+
+      .store-footer-legal-links a {
+        color: rgba(255, 255, 255, 0.92);
+        text-decoration: none;
+      }
+
+      .store-footer-legal-links a:hover {
+        text-decoration: underline;
       }
 
       .page-media-grid {
@@ -2801,6 +3159,148 @@
         color: #b7c8f1;
       }
 
+      .catalog-layout {
+        margin-top: 0.8rem;
+        display: grid;
+        grid-template-columns: 300px minmax(0, 1fr);
+        gap: 1rem;
+      }
+
+      .catalog-filters {
+        border: 1px solid rgba(143, 169, 255, 0.2);
+        border-radius: 14px;
+        padding: 0.85rem;
+        background: rgba(15, 26, 63, 0.82);
+        display: grid;
+        align-content: start;
+        gap: 0.75rem;
+        height: fit-content;
+      }
+
+      .catalog-filter-group {
+        display: grid;
+        gap: 0.45rem;
+      }
+
+      .catalog-filter-label {
+        margin: 0;
+        font-size: 0.82rem;
+        font-weight: 800;
+        color: #dce7ff;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .catalog-search,
+      .catalog-select {
+        border: 1px solid rgba(143, 169, 255, 0.32);
+        border-radius: 10px;
+        padding: 0.55rem 0.65rem;
+        font: inherit;
+        background: rgba(7, 14, 35, 0.84);
+        color: #e8efff;
+      }
+
+      .catalog-filter-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.6rem;
+        border: 1px solid rgba(143, 169, 255, 0.24);
+        background: rgba(22, 36, 84, 0.72);
+        border-radius: 10px;
+        color: #dce7ff;
+        text-align: left;
+        padding: 0.52rem 0.62rem;
+        cursor: pointer;
+        font: inherit;
+      }
+
+      .catalog-filter-item span {
+        font-size: 0.88rem;
+      }
+
+      .catalog-filter-item strong {
+        font-size: 0.84rem;
+        color: #9ab4ff;
+      }
+
+      .catalog-filter-item.active {
+        border-color: rgba(255, 181, 59, 0.82);
+        background: linear-gradient(180deg, rgba(248, 163, 28, 0.24), rgba(250, 156, 23, 0.14));
+      }
+
+      .catalog-clear {
+        width: 100%;
+      }
+
+      .catalog-results {
+        min-width: 0;
+      }
+
+      .catalog-tabs {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.75rem;
+      }
+
+      .catalog-tab {
+        border: 1px solid rgba(143, 169, 255, 0.24);
+        background: rgba(19, 33, 78, 0.72);
+        color: #dce7ff;
+        border-radius: 999px;
+        padding: 0.42rem 0.7rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        cursor: pointer;
+        font: inherit;
+        font-size: 0.84rem;
+        font-weight: 700;
+      }
+
+      .catalog-tab strong {
+        color: #ffd67a;
+        font-size: 0.8rem;
+      }
+
+      .catalog-tab.active {
+        border-color: rgba(255, 187, 69, 0.9);
+        background: linear-gradient(180deg, rgba(255, 173, 43, 0.28), rgba(255, 154, 22, 0.17));
+        color: #fffaf0;
+      }
+
+      .catalog-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 0.8rem;
+      }
+
+      .catalog-toolbar p {
+        margin: 0;
+        font-weight: 700;
+        color: #dce7ff;
+      }
+
+      .catalog-sort {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+      }
+
+      .catalog-sort span {
+        font-size: 0.86rem;
+        color: #b9cbfb;
+      }
+
+      .catalog-empty {
+        margin-top: 0.95rem;
+      }
+
       .course-list {
         display: grid;
         gap: 1rem;
@@ -2815,6 +3315,35 @@
         border-radius: 16px;
         padding: 1rem;
         background: rgba(17, 30, 73, 0.74);
+      }
+
+      .course-badges {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin-bottom: 0.55rem;
+      }
+
+      .course-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        padding: 0.2rem 0.45rem;
+        font-size: 0.74rem;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+
+      .course-badge.new {
+        background: #f59e0b;
+        color: #1f2937;
+      }
+
+      .course-badge.discount {
+        background: #38bdf8;
+        color: #083344;
       }
 
       .compact-card {
@@ -2852,6 +3381,30 @@
 
       .course-description {
         margin: 0.85rem 0 0;
+      }
+
+      .course-pricing {
+        display: flex;
+        align-items: baseline;
+        gap: 0.65rem;
+        margin-top: 0.8rem;
+      }
+
+      .course-price-current,
+      .course-price-original {
+        margin: 0;
+      }
+
+      .course-price-current {
+        font-size: 1.45rem;
+        font-weight: 900;
+        color: #fff4d5;
+      }
+
+      .course-price-original {
+        font-size: 0.95rem;
+        color: rgba(222, 231, 255, 0.65);
+        text-decoration: line-through;
       }
 
       .course-meta {
@@ -3123,7 +3676,8 @@
         .hero-metrics,
         .spotlight-panel,
         .spotlight-grid,
-        .sector-grid {
+        .sector-grid,
+        .catalog-layout {
           grid-template-columns: 1fr;
         }
 
@@ -3144,12 +3698,33 @@
           grid-template-columns: 1fr;
         }
 
-        .quick-links-strip {
-          padding: 0.22rem 0.28rem;
+        .store-footer-main {
+          grid-template-columns: 1fr;
+          padding: 1.4rem;
+        }
+
+        .store-footer-links {
+          justify-content: flex-start;
+        }
+
+        .store-footer-legal {
+          padding: 0.85rem 1.4rem;
         }
 
         .portfolio-grid {
           grid-template-columns: 1fr;
+        }
+
+        .catalog-filters {
+          order: 2;
+        }
+
+        .catalog-results {
+          order: 1;
+        }
+
+        .catalog-tabs {
+          gap: 0.45rem;
         }
 
         .news-grid {
@@ -3277,24 +3852,82 @@
           display: none;
         }
 
-        .quick-links-strip {
-          overflow-x: visible;
+        .store-footer {
+          margin-top: 1rem;
+        }
+
+        .store-footer-main {
+          padding: 1rem;
+          gap: 0.95rem;
+        }
+
+        .store-footer-title {
+          font-size: 0.98rem;
+        }
+
+        .store-footer-subtitle {
+          font-size: 0.78rem;
+        }
+
+        .store-footer-links {
+          gap: 0.65rem;
+        }
+
+        .store-footer-links a {
+          font-size: 0.76rem;
+        }
+
+        .store-footer-help-title {
+          font-size: 1.2rem;
+        }
+
+        .store-footer-help p {
+          font-size: 0.9rem;
+        }
+
+        .store-footer-legal {
+          padding: 0.75rem 1rem;
+        }
+
+        .store-footer-legal-links {
+          font-size: 0.68rem;
+          gap: 0.38rem;
+        }
+
+        .store-footer-legal-logo {
+          width: 18px;
+          height: 18px;
+        }
+
+        .catalog-toolbar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .catalog-sort {
+          justify-content: space-between;
+        }
+
+        .catalog-sort .catalog-select {
+          width: 100%;
+        }
+
+        .catalog-tab {
+          font-size: 0.78rem;
+          padding: 0.34rem 0.58rem;
+        }
+
+        .course-pricing {
           flex-wrap: wrap;
+          gap: 0.45rem;
         }
 
-        .quick-links-strip a {
-          flex: 1 1 calc(50% - 0.2rem);
-          min-width: 0;
-          justify-content: center;
-          white-space: normal;
-          font-size: 0.77rem;
-          padding: 0.34rem 0.52rem;
-          gap: 0.26rem;
+        .course-price-current {
+          font-size: 1.2rem;
         }
 
-        .quick-link-icon {
-          width: 0.78rem;
-          height: 0.78rem;
+        .course-price-original {
+          font-size: 0.86rem;
         }
 
         .hero-stats {
@@ -3427,24 +4060,25 @@
           padding: 0.42rem 0.52rem;
         }
 
-        .quick-links-footer {
-          margin-top: 0.95rem;
-          padding-top: 0.4rem;
+        .store-footer-main {
+          padding: 0.9rem;
         }
 
-        .quick-links-strip {
-          padding: 0.18rem 0.22rem;
+        .store-footer-brand {
+          gap: 0.65rem;
         }
 
-        .quick-links-strip a {
-          font-size: 0.72rem;
-          padding: 0.28rem 0.4rem;
-          gap: 0.2rem;
+        .store-footer-logo {
+          width: 48px;
+          height: 48px;
         }
 
-        .quick-link-icon {
-          width: 0.7rem;
-          height: 0.7rem;
+        .store-footer-links {
+          justify-content: flex-start;
+        }
+
+        .store-footer-legal {
+          padding: 0.65rem 0.9rem;
         }
 
         .hero-metrics-home {
@@ -3529,30 +4163,18 @@
           gap: 0.5rem;
         }
 
-        .quick-links-footer {
-          margin-top: 0.8rem;
-          padding-top: 0.35rem;
+        .store-footer-main {
+          grid-template-columns: 1fr;
+          padding: 0.85rem;
+          gap: 0.8rem;
         }
 
-        .quick-links-strip {
-          padding: 0.16rem 0.2rem;
-          overflow-x: visible;
-          flex-wrap: wrap;
+        .store-footer-links {
+          justify-content: flex-start;
         }
 
-        .quick-links-strip a {
-          font-size: 0.7rem;
-          padding: 0.26rem 0.42rem;
-          gap: 0.18rem;
-          flex: 1 1 calc(33.33% - 0.2rem);
-          min-width: 0;
-          justify-content: center;
-          white-space: normal;
-        }
-
-        .quick-link-icon {
-          width: 0.65rem;
-          height: 0.65rem;
+        .store-footer-legal {
+          padding: 0.6rem 0.85rem;
         }
       }
 

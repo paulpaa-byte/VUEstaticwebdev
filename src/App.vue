@@ -35,9 +35,9 @@
             <p class="summary">{{ currentSummary }}</p>
 
             <p v-if="loading" class="status">Loading user and training catalog...</p>
-            <p v-if="!loading && error" class="status error">{{ error }}</p>
+            <p v-if="error" class="status error">{{ error }}</p>
 
-            <template v-if="!loading">
+            <template>
               <section v-if="showHome" class="home-experience">
                 <article class="hero-banner panel">
                   <div class="hero-layout">
@@ -1633,11 +1633,15 @@
           },
           async loadUser() {
             try {
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), 2500);
               const response = await fetch("/.auth/me", {
                 headers: {
                   Accept: "application/json"
-                }
+                },
+                signal: controller.signal
               });
+              clearTimeout(timeoutId);
 
               if (!response.ok) {
                 this.user = null;
@@ -1694,14 +1698,28 @@
             return "";
           },
           async apiFetch(url, options = {}) {
-            const response = await fetch(url, {
-              headers: {
-                Accept: "application/json",
-                ...(options.body ? { "Content-Type": "application/json" } : {}),
-                ...(options.headers || {})
-              },
-              ...options
-            });
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 4500);
+            let response;
+
+            try {
+              response = await fetch(url, {
+                headers: {
+                  Accept: "application/json",
+                  ...(options.body ? { "Content-Type": "application/json" } : {}),
+                  ...(options.headers || {})
+                },
+                ...options,
+                signal: controller.signal
+              });
+            } catch (requestError) {
+              if (requestError && requestError.name === "AbortError") {
+                throw new Error("Request timed out.");
+              }
+              throw requestError;
+            } finally {
+              clearTimeout(timeoutId);
+            }
 
             if (!response.ok) {
               let message = "Request failed.";

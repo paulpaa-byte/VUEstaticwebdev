@@ -888,30 +888,24 @@
                   <div class="store-footer-brand">
                     <img class="store-footer-logo" src="/valuearc-logo.svg" alt="Valuearc logo">
                     <div>
-                      <p class="store-footer-title">EVANGELICAL LITERATURE SERVICE</p>
-                      <p class="store-footer-subtitle">CHRISTIAN BOOKS INDIA</p>
+                      <p class="store-footer-title">VALUEARC</p>
+                      <p class="store-footer-subtitle">THE INNOVATION CENTER</p>
                     </div>
                   </div>
 
                   <nav class="store-footer-links" aria-label="Footer links">
+                    <a href="/">Home</a>
                     <a href="/about">About</a>
                     <a href="/contact">Contact</a>
-                    <a href="/vision">Returns</a>
-                    <a href="/services-portfolio">Shipping Policy</a>
-                    <a href="/trainings">Visit Our Stores</a>
+                    <a href="/services-portfolio">Services</a>
+                    <a href="/trainings">Trainings</a>
                   </nav>
-
-                  <div class="store-footer-help">
-                    <p class="store-footer-help-title">Need help?</p>
-                    <p>Call us at <a href="tel:+914425323231">91-44-25323231</a></p>
-                    <p>or email us at <a href="mailto:info@christianbooksindia.com">info@christianbooksindia.com</a></p>
-                  </div>
                 </section>
 
                 <section class="store-footer-legal" aria-label="Footer legal">
                   <div class="store-footer-legal-links">
                     <img class="store-footer-legal-logo" src="/valuearc-logo.svg" alt="Valuearc logo">
-                    <span>EVANGELICAL LITERATURE SERVICE</span>
+                    <span>VALUEARC</span>
                     <span>|</span>
                     <a href="/about">Terms of Use</a>
                     <span>|</span>
@@ -2694,7 +2688,7 @@
 
       .store-footer-main {
         display: grid;
-        grid-template-columns: 1.2fr 1fr 1fr;
+        grid-template-columns: 1.2fr 1fr;
         gap: 1.25rem;
         align-items: center;
         padding: 2rem 2.2rem;
@@ -2737,7 +2731,7 @@
         display: flex;
         gap: 1rem;
         flex-wrap: wrap;
-        justify-content: center;
+        justify-content: flex-end;
       }
 
       .store-footer-links a {
@@ -2751,31 +2745,6 @@
 
       .store-footer-links a:hover {
         color: #ffffff;
-        text-decoration: underline;
-      }
-
-      .store-footer-help {
-        color: rgba(255, 255, 255, 0.92);
-        text-align: left;
-      }
-
-      .store-footer-help-title {
-        margin: 0;
-        font-size: 1.5rem;
-        font-weight: 900;
-      }
-
-      .store-footer-help p {
-        margin: 0.3rem 0 0;
-        font-size: 1.02rem;
-      }
-
-      .store-footer-help a {
-        color: #ffffff;
-        text-decoration: none;
-      }
-
-      .store-footer-help a:hover {
         text-decoration: underline;
       }
 
@@ -3875,14 +3844,6 @@
 
         .store-footer-links a {
           font-size: 0.76rem;
-        }
-
-        .store-footer-help-title {
-          font-size: 1.2rem;
-        }
-
-        .store-footer-help p {
-          font-size: 0.9rem;
         }
 
         .store-footer-legal {

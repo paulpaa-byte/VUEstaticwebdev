@@ -22,17 +22,70 @@
               <div v-else class="nav-auth">
                 <a class="nav-auth-link signin" href="/profile">{{ userTypeLabel }} Login</a>
                 <a v-if="isAdministrator" class="nav-auth-link signup" href="/admin">Admin</a>
+                <button v-if="isAdministrator" type="button" class="nav-auth-link signup inline-edit-toggle" @click="toggleAdminEditMode">
+                  {{ adminEditMode ? 'Exit Edit' : 'Edit Page' }}
+                </button>
               </div>
             </nav>
 
             <header class="head">
               <div>
                 <p class="eyebrow">{{ siteContent.branding.eyebrow }}</p>
-                <h1>{{ pageTitle }}</h1>
+                <h1 v-html="pageTitle"></h1>
               </div>
             </header>
 
-            <p class="summary">{{ currentSummary }}</p>
+            <p class="summary" v-html="currentSummary"></p>
+
+            <section v-if="isAdministrator && adminEditMode" class="inline-editor-panel">
+              <div class="inline-editor-toolbar">
+                <button type="button" class="toolbar-button" @click="applyRichTextCommand('bold')"><strong>B</strong></button>
+                <button type="button" class="toolbar-button" @click="applyRichTextCommand('italic')"><em>I</em></button>
+                <button type="button" class="toolbar-button" @click="applyRichTextCommand('underline')"><u>U</u></button>
+                <label class="toolbar-select">
+                  <span>Font</span>
+                  <select v-model="activeEditorFontFamily" @change="applyRichTextCommand('fontName', activeEditorFontFamily)">
+                    <option value="Segoe UI">Segoe UI</option>
+                    <option value="Arial">Arial</option>
+                    <option value="Georgia">Georgia</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                  </select>
+                </label>
+                <label class="toolbar-select">
+                  <span>Size</span>
+                  <select v-model="activeEditorFontSize" @change="applyRichTextCommand('fontSize', activeEditorFontSize)">
+                    <option value="1">Small</option>
+                    <option value="3">Medium</option>
+                    <option value="5">Large</option>
+                    <option value="7">XL</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="inline-editor-fields">
+                <div v-for="field in currentPageEditorFields" :key="field.pathKey" class="inline-editor-field">
+                  <label>{{ field.label }}</label>
+                  <div
+                    class="rich-text-editor"
+                    :class="field.multiline ? 'multiline' : 'single-line'"
+                    :data-editor-path="field.pathKey"
+                    contenteditable="true"
+                    @focus="setActiveEditor(field.path, field.pathKey)"
+                    @blur="commitEditorContent(field.path, field.pathKey, $event.target)"
+                    v-html="getEditorValue(field.path)"
+                  ></div>
+                </div>
+              </div>
+
+              <div class="admin-actions compact-actions">
+                <button class="button" type="button" :disabled="savingSiteContent" @click="saveSiteContent">
+                  {{ savingSiteContent ? 'Saving...' : 'Save changes' }}
+                </button>
+                <button class="button secondary" type="button" @click="toggleAdminEditMode">
+                  Done editing
+                </button>
+              </div>
+            </section>
 
             <p v-if="loading" class="status">Loading user and training catalog...</p>
             <p v-if="error" class="status error">{{ error }}</p>
@@ -43,8 +96,8 @@
                   <div class="hero-layout">
                     <div class="hero-content-panel">
                       <p class="mini-kicker">{{ siteContent.home.heroKicker }}</p>
-                      <h2>{{ siteContent.home.heroTitle }}</h2>
-                      <p class="hero-copy">{{ siteContent.home.heroCopy }}</p>
+                      <h2 v-html="siteContent.home.heroTitle"></h2>
+                      <p class="hero-copy" v-html="siteContent.home.heroCopy"></p>
                       <div class="hero-proof-line">
                         <span>Strategy Advisory</span>
                         <span>Talent Search</span>
@@ -165,9 +218,9 @@
 
               <section v-if="isAboutRoute" class="panel-grid single-panel-layout">
                 <article class="panel section-panel about-panel">
-                  <h2>{{ siteContent.about.title }}</h2>
+                  <h2 v-html="siteContent.about.title"></h2>
                   <div class="about-scroll-body">
-                    <p v-for="(paragraph, index) in siteContent.about.body" :key="'about-body-' + index">{{ paragraph }}</p>
+                    <p v-for="(paragraph, index) in siteContent.about.body" :key="'about-body-' + index" v-html="paragraph"></p>
                     <div class="page-media-grid" aria-label="About visual highlights">
                       <figure v-for="(item, index) in siteContent.about.media" :key="'about-media-' + index" class="media-card">
                         <img
@@ -186,8 +239,8 @@
 
               <section v-if="isVisionRoute" class="panel-grid single-panel-layout">
                 <article class="panel section-panel">
-                  <h2>{{ siteContent.vision.title }}</h2>
-                  <p v-for="(paragraph, index) in siteContent.vision.body" :key="'vision-body-' + index">{{ paragraph }}</p>
+                  <h2 v-html="siteContent.vision.title"></h2>
+                  <p v-for="(paragraph, index) in siteContent.vision.body" :key="'vision-body-' + index" v-html="paragraph"></p>
                   <div class="page-media-grid" aria-label="Vision visual highlights">
                     <figure v-for="(item, index) in siteContent.vision.media" :key="'vision-media-' + index" class="media-card">
                       <img
@@ -205,8 +258,8 @@
 
               <section v-if="isContactRoute" class="panel-grid single-panel-layout">
                 <article class="panel section-panel">
-                  <h2>{{ siteContent.contact.title }}</h2>
-                  <p v-for="(paragraph, index) in siteContent.contact.body" :key="'contact-body-' + index">{{ paragraph }}</p>
+                  <h2 v-html="siteContent.contact.title"></h2>
+                  <p v-for="(paragraph, index) in siteContent.contact.body" :key="'contact-body-' + index" v-html="paragraph"></p>
                   <div class="profile-links">
                     <a class="link-chip" :href="'mailto:' + siteContent.contact.email">{{ siteContent.contact.email }}</a>
                     <a class="link-chip" :href="'tel:' + siteContent.contact.phone.replace(/[^\d+]/g, '')">{{ siteContent.contact.phone }}</a>
@@ -230,8 +283,8 @@
 
               <section v-if="isNewsRoute" class="panel-grid single-panel-layout">
                 <article class="panel section-panel">
-                  <h2>{{ siteContent.news.title }}</h2>
-                  <p>{{ siteContent.news.intro }}</p>
+                  <h2 v-html="siteContent.news.title"></h2>
+                  <p v-html="siteContent.news.intro"></p>
                   <div class="news-grid" aria-label="Latest updates">
                     <article v-for="(item, index) in siteContent.news.highlights" :key="'news-highlight-' + index" class="news-card">
                       <p class="news-meta">{{ item.meta }}</p>
@@ -268,8 +321,8 @@
 
               <section v-if="isPortfolioRoute" class="panel-grid single-panel-layout">
                 <article class="panel section-panel">
-                  <h2>{{ siteContent.portfolio.title }}</h2>
-                  <p>{{ siteContent.portfolio.intro }}</p>
+                  <h2 v-html="siteContent.portfolio.title"></h2>
+                  <p v-html="siteContent.portfolio.intro"></p>
                   <div class="portfolio-grid">
                     <div v-for="(item, index) in siteContent.portfolio.items" :key="'portfolio-item-' + index" class="portfolio-item">
                       <h3>{{ item.title }}</h3>
@@ -281,8 +334,8 @@
 
               <section v-if="isTrainingsRoute" class="panel-grid single-panel-layout">
                 <article class="panel section-panel">
-                  <h2>{{ siteContent.trainings.title }}</h2>
-                  <p>{{ siteContent.trainings.intro }}</p>
+                  <h2 v-html="siteContent.trainings.title"></h2>
+                  <p v-html="siteContent.trainings.intro"></p>
                   <div class="actions-row" v-if="!isAuthenticated">
                     <a class="button" href="/login">Login to register</a>
                     <a class="button secondary" href="/.auth/login/aad?post_login_redirect_uri=/trainings">Self Sign Up</a>
@@ -1256,6 +1309,11 @@
             siteContentCommitMessage: "",
             savingSiteContent: false,
             siteContentStatus: "",
+            adminEditMode: false,
+            activeEditablePath: null,
+            activeEditablePathKey: "",
+            activeEditorFontFamily: "Segoe UI",
+            activeEditorFontSize: "3",
             error: "",
             offlineMode: false,
             courses: [],
@@ -1503,6 +1561,82 @@
             }
 
             return this.siteContent.home.summary;
+          },
+          currentPageEditorFields() {
+            if (this.isAboutRoute) {
+              return [
+                { label: "Page title", path: ["about", "title"], pathKey: "about.title", multiline: false },
+                { label: "Summary", path: ["about", "summary"], pathKey: "about.summary", multiline: true },
+                ...this.siteContent.about.body.map((paragraph, index) => ({
+                  label: `Body paragraph ${index + 1}`,
+                  path: ["about", "body", index],
+                  pathKey: `about.body.${index}`,
+                  multiline: true
+                }))
+              ];
+            }
+
+            if (this.isVisionRoute) {
+              return [
+                { label: "Page title", path: ["vision", "title"], pathKey: "vision.title", multiline: false },
+                { label: "Summary", path: ["vision", "summary"], pathKey: "vision.summary", multiline: true },
+                ...this.siteContent.vision.body.map((paragraph, index) => ({
+                  label: `Body paragraph ${index + 1}`,
+                  path: ["vision", "body", index],
+                  pathKey: `vision.body.${index}`,
+                  multiline: true
+                }))
+              ];
+            }
+
+            if (this.isContactRoute) {
+              return [
+                { label: "Page title", path: ["contact", "title"], pathKey: "contact.title", multiline: false },
+                { label: "Summary", path: ["contact", "summary"], pathKey: "contact.summary", multiline: true },
+                ...this.siteContent.contact.body.map((paragraph, index) => ({
+                  label: `Body paragraph ${index + 1}`,
+                  path: ["contact", "body", index],
+                  pathKey: `contact.body.${index}`,
+                  multiline: true
+                })),
+                { label: "Email", path: ["contact", "email"], pathKey: "contact.email", multiline: false },
+                { label: "Phone", path: ["contact", "phone"], pathKey: "contact.phone", multiline: false },
+                { label: "Media email", path: ["contact", "mediaEmail"], pathKey: "contact.mediaEmail", multiline: false },
+                { label: "Business hours", path: ["contact", "businessHours"], pathKey: "contact.businessHours", multiline: false }
+              ];
+            }
+
+            if (this.isNewsRoute) {
+              return [
+                { label: "Page title", path: ["news", "title"], pathKey: "news.title", multiline: false },
+                { label: "Summary", path: ["news", "summary"], pathKey: "news.summary", multiline: true },
+                { label: "Intro", path: ["news", "intro"], pathKey: "news.intro", multiline: true },
+                { label: "Media contact", path: ["news", "mediaContact"], pathKey: "news.mediaContact", multiline: false }
+              ];
+            }
+
+            if (this.isPortfolioRoute) {
+              return [
+                { label: "Page title", path: ["portfolio", "title"], pathKey: "portfolio.title", multiline: false },
+                { label: "Summary", path: ["portfolio", "summary"], pathKey: "portfolio.summary", multiline: true },
+                { label: "Intro", path: ["portfolio", "intro"], pathKey: "portfolio.intro", multiline: true }
+              ];
+            }
+
+            if (this.isTrainingsRoute) {
+              return [
+                { label: "Page title", path: ["trainings", "title"], pathKey: "trainings.title", multiline: false },
+                { label: "Summary", path: ["trainings", "summary"], pathKey: "trainings.summary", multiline: true },
+                { label: "Intro", path: ["trainings", "intro"], pathKey: "trainings.intro", multiline: true }
+              ];
+            }
+
+            return [
+              { label: "Hero title", path: ["home", "heroTitle"], pathKey: "home.heroTitle", multiline: false },
+              { label: "Hero copy", path: ["home", "heroCopy"], pathKey: "home.heroCopy", multiline: true },
+              { label: "Sign-in hint", path: ["home", "signInHint"], pathKey: "home.signInHint", multiline: false },
+              { label: "Page summary", path: ["home", "summary"], pathKey: "home.summary", multiline: true }
+            ];
           },
           lastCommittedDescription() {
             const metadata = this.siteContent && this.siteContent.metadata ? this.siteContent.metadata : {};
@@ -1791,6 +1925,61 @@
           },
           refreshSiteContentDraft() {
             this.draftSiteContentJson = JSON.stringify(this.siteContent, null, 2);
+          },
+          toggleAdminEditMode() {
+            this.adminEditMode = !this.adminEditMode;
+            if (!this.adminEditMode) {
+              this.activeEditablePath = null;
+              this.activeEditablePathKey = "";
+            }
+          },
+          getEditorValue(path) {
+            return this.getNestedValue(this.siteContent, path);
+          },
+          setEditorValue(path, value) {
+            this.setNestedValue(this.siteContent, path, value);
+            this.refreshSiteContentDraft();
+          },
+          getNestedValue(source, path) {
+            let current = source;
+            for (let index = 0; index < path.length; index += 1) {
+              if (current === null || current === undefined) {
+                return "";
+              }
+              current = current[path[index]];
+            }
+            return current == null ? "" : current;
+          },
+          setNestedValue(source, path, value) {
+            let current = source;
+            for (let index = 0; index < path.length - 1; index += 1) {
+              if (current[path[index]] === undefined || current[path[index]] === null) {
+                current[path[index]] = {};
+              }
+              current = current[path[index]];
+            }
+            current[path[path.length - 1]] = value;
+          },
+          setActiveEditor(path, pathKey) {
+            this.activeEditablePath = path;
+            this.activeEditablePathKey = pathKey;
+          },
+          commitEditorContent(path, pathKey, target) {
+            if (!path || !pathKey || !target) {
+              return;
+            }
+            this.setEditorValue(path, target.innerHTML || target.textContent || "");
+            this.activeEditablePath = path;
+            this.activeEditablePathKey = pathKey;
+          },
+          applyRichTextCommand(command, value) {
+            const target = this.$el.querySelector(`[data-editor-path="${this.activeEditablePathKey}"]`);
+            if (!target) {
+              return;
+            }
+            target.focus();
+            document.execCommand(command, false, value || null);
+            this.commitEditorContent(this.activeEditablePath, this.activeEditablePathKey, target);
           },
           resetSiteContentDraftToCurrent() {
             this.siteContent = normalizeSiteContent(JSON.parse(this.draftSiteContentJson || "{}"));

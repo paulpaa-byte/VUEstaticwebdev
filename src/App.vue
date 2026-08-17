@@ -1029,22 +1029,23 @@
           signInHint: "Employee or Guest login to track opportunities"
         },
         about: {
-          title: "About Us",
-          summary: "Learn more about Valuearc.net and how we support clients with consulting and talent solutions.",
+          title: "About Gleeds",
+          summary: "Gleeds is a global property and construction consultancy helping clients plan, manage, and deliver projects across the built environment.",
           body: [
-            "Valuearc.net is a consulting and talent advisory firm committed to helping organizations solve business challenges with the right combination of strategy, execution support, and specialist hiring. We work with clients to strengthen delivery capability, improve workforce planning, and place professionals who can contribute from day one.",
-            "Our team combines market knowledge, disciplined search practices, and practical business insight to support both employers and candidates. The result is a more thoughtful, reliable, and outcome-focused consulting experience."
+            "Gleeds is a global property and construction consultancy with roots dating back to 1875. The company provides professional advice and management services across the built environment, supporting clients from planning and cost management through project delivery, sustainability, and long-term asset performance. Rather than acting as a construction contractor, Gleeds works as a built-environment consultancy that helps organizations control cost, manage risk, and deliver successful projects.",
+            "The firm’s expertise spans project management, cost management, quantity surveying, advisory services, building surveying, infrastructure and development management, digital transformation, sustainability, and ESG. With more than 2,800 employees, 29 countries, 78 offices, and 150 years of experience, Gleeds combines global reach with local insight to support a wide range of sectors including commercial real estate, healthcare, education, infrastructure, logistics, energy, and government.",
+            "Gleeds has been operating in India since 2008 and has built a strong regional presence with 500+ employees, more than 360 million square feet of projects managed, and six regional offices across Bangalore, Chennai, Gurgaon, Hyderabad, Mumbai, and Pune. The Bangalore office, located at Prestige Lion Gate in Fraser Town, continues to play an important role in project management and cost management work, including major developments such as Brigade Tech Gardens. The company’s purpose is to shape the future of the built environment in a sustainable and socially conscious way, guided by values of professionalism, excellence, humility, innovation, and agility."
           ],
           media: [
             {
               url: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1000&q=80",
-              alt: "Consulting team collaboration",
-              caption: "Collaborative consulting workshops that align teams quickly."
+              alt: "Construction and project management team collaboration",
+              caption: "Global expertise applied through collaborative project delivery and cost management."
             },
             {
               url: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1000&q=80",
-              alt: "Consulting team in strategy discussion",
-              caption: "Advisory engagements driven by business outcomes."
+              alt: "Built environment planning and consulting discussion",
+              caption: "Advisory support that combines strategic insight with practical execution."
             }
           ]
         },

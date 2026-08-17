@@ -164,20 +164,22 @@
               </section>
 
               <section v-if="isAboutRoute" class="panel-grid single-panel-layout">
-                <article class="panel section-panel">
+                <article class="panel section-panel about-panel">
                   <h2>{{ siteContent.about.title }}</h2>
-                  <p v-for="(paragraph, index) in siteContent.about.body" :key="'about-body-' + index">{{ paragraph }}</p>
-                  <div class="page-media-grid" aria-label="About visual highlights">
-                    <figure v-for="(item, index) in siteContent.about.media" :key="'about-media-' + index" class="media-card">
-                      <img
-                        class="page-gif"
-                        :src="item.url"
-                        :alt="item.alt"
-                        @error="handlePageMediaError($event, 'about', index)"
-                        loading="lazy"
-                      >
-                      <figcaption>{{ item.caption }}</figcaption>
-                    </figure>
+                  <div class="about-scroll-body">
+                    <p v-for="(paragraph, index) in siteContent.about.body" :key="'about-body-' + index">{{ paragraph }}</p>
+                    <div class="page-media-grid" aria-label="About visual highlights">
+                      <figure v-for="(item, index) in siteContent.about.media" :key="'about-media-' + index" class="media-card">
+                        <img
+                          class="page-gif"
+                          :src="item.url"
+                          :alt="item.alt"
+                          @error="handlePageMediaError($event, 'about', index)"
+                          loading="lazy"
+                        >
+                        <figcaption>{{ item.caption }}</figcaption>
+                      </figure>
+                    </div>
                   </div>
                 </article>
               </section>
@@ -2925,8 +2927,47 @@
         text-decoration: underline;
       }
 
+      .about-panel {
+        display: grid;
+        gap: 0.6rem;
+      }
+
+      .about-scroll-body {
+        max-height: min(60vh, 560px);
+        overflow-y: auto;
+        padding: 0.2rem 0.55rem 0.2rem 0.35rem;
+        margin-top: 0.1rem;
+        border-radius: 14px;
+        background: rgba(9, 18, 42, 0.22);
+        border: 1px solid rgba(143, 169, 255, 0.12);
+      }
+
+      .about-scroll-body > p {
+        margin: 0 0 1rem 1.15rem;
+        padding-left: 0.6rem;
+        color: #dde7ff;
+        line-height: 1.85;
+        letter-spacing: 0.01em;
+        text-align: left;
+        text-indent: 0.1rem;
+      }
+
+      .about-scroll-body::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .about-scroll-body::-webkit-scrollbar-track {
+        background: rgba(143, 169, 255, 0.08);
+        border-radius: 999px;
+      }
+
+      .about-scroll-body::-webkit-scrollbar-thumb {
+        background: rgba(143, 169, 255, 0.35);
+        border-radius: 999px;
+      }
+
       .page-media-grid {
-        margin-top: 0.4rem;
+        margin-top: 0.6rem;
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 0.85rem;

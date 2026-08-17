@@ -1156,9 +1156,30 @@
         return JSON.parse(JSON.stringify(DEFAULT_SITE_CONTENT));
       }
 
+      function isLegacySiteContent(payload) {
+        if (!payload || typeof payload !== "object") {
+          return false;
+        }
+
+        const about = payload.about || {};
+        const home = payload.home || {};
+
+        const hasLegacyAbout = about.title === "About Us"
+          || (Array.isArray(about.body) && about.body.some(paragraph => typeof paragraph === "string" && paragraph.includes("Valuearc.net is a consulting and talent advisory firm")));
+
+        const hasLegacyHome = home.heroTitle === "Consulting, talent, and delivery support for ambitious businesses"
+          || (typeof home.heroCopy === "string" && home.heroCopy.includes("Valuearc.net helps organizations solve growth"));
+
+        return hasLegacyAbout && hasLegacyHome;
+      }
+
       function normalizeSiteContent(payload) {
         const fallback = cloneSiteContent();
         if (!payload || typeof payload !== "object") {
+          return fallback;
+        }
+
+        if (isLegacySiteContent(payload)) {
           return fallback;
         }
 

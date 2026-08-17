@@ -13,7 +13,7 @@ module.exports = {
     signInHint: "Employee or Guest login to track opportunities"
   },
   about: {
-    title: "About Gleeds",
+    title: "About Valuearc",
     summary: "Gleeds is a global property and construction consultancy helping clients plan, manage, and deliver projects across the built environment.",
     body: [
       "Gleeds is a global property and construction consultancy with roots dating back to 1875. The company provides professional advice and management services across the built environment, supporting clients from planning and cost management through project delivery, sustainability, and long-term asset performance. Rather than acting as a construction contractor, Gleeds works as a built-environment consultancy that helps organizations control cost, manage risk, and deliver successful projects.",

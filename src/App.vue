@@ -42,6 +42,28 @@
                 <button type="button" class="toolbar-button" @click="applyRichTextCommand('bold')"><strong>B</strong></button>
                 <button type="button" class="toolbar-button" @click="applyRichTextCommand('italic')"><em>I</em></button>
                 <button type="button" class="toolbar-button" @click="applyRichTextCommand('underline')"><u>U</u></button>
+                <button type="button" class="toolbar-button" @click="applyRichTextCommand('strikeThrough')"><s>S</s></button>
+                <button type="button" class="toolbar-button" @click="applyRichTextCommand('insertUnorderedList')">• List</button>
+                <button type="button" class="toolbar-button" @click="applyRichTextCommand('insertOrderedList')">1. List</button>
+                <button type="button" class="toolbar-button" @click="applyRichTextCommand('justifyLeft')">Left</button>
+                <button type="button" class="toolbar-button" @click="applyRichTextCommand('justifyCenter')">Center</button>
+                <button type="button" class="toolbar-button" @click="applyRichTextCommand('justifyRight')">Right</button>
+                <button type="button" class="toolbar-button" @click="applyRichTextCommand('removeFormat')">Clear</button>
+                <button type="button" class="toolbar-button" @click="applyRichTextCommand('undo')">Undo</button>
+                <button type="button" class="toolbar-button" @click="applyRichTextCommand('redo')">Redo</button>
+                <button type="button" class="toolbar-button" @click="applyRichTextCommand('createLink')">Link</button>
+                <button type="button" class="toolbar-button" @click="applyRichTextCommand('unlink')">Unlink</button>
+                <label class="toolbar-select">
+                  <span>Block</span>
+                  <select v-model="activeEditorBlockFormat" @change="applyRichTextCommand('formatBlock', activeEditorBlockFormat)">
+                    <option value="p">Paragraph</option>
+                    <option value="h1">Heading 1</option>
+                    <option value="h2">Heading 2</option>
+                    <option value="h3">Heading 3</option>
+                    <option value="blockquote">Quote</option>
+                    <option value="pre">Code</option>
+                  </select>
+                </label>
                 <label class="toolbar-select">
                   <span>Font</span>
                   <select v-model="activeEditorFontFamily" @change="applyRichTextCommand('fontName', activeEditorFontFamily)">
@@ -60,6 +82,10 @@
                     <option value="7">XL</option>
                   </select>
                 </label>
+                <label class="toolbar-select color-picker">
+                  <span>Color</span>
+                  <input type="color" v-model="activeEditorTextColor" @input="applyRichTextCommand('foreColor', activeEditorTextColor)">
+                </label>
               </div>
 
               <div class="inline-editor-fields">
@@ -71,6 +97,7 @@
                     :data-editor-path="field.pathKey"
                     contenteditable="true"
                     @focus="setActiveEditor(field.path, field.pathKey)"
+                    @input="commitEditorContent(field.path, field.pathKey, $event.target)"
                     @blur="commitEditorContent(field.path, field.pathKey, $event.target)"
                     v-html="getEditorValue(field.path)"
                   ></div>
@@ -1312,8 +1339,10 @@
             adminEditMode: false,
             activeEditablePath: null,
             activeEditablePathKey: "",
+            activeEditorBlockFormat: "p",
             activeEditorFontFamily: "Segoe UI",
             activeEditorFontSize: "3",
+            activeEditorTextColor: "#ffffff",
             error: "",
             offlineMode: false,
             courses: [],
@@ -1978,7 +2007,19 @@
               return;
             }
             target.focus();
-            document.execCommand(command, false, value || null);
+            if (command === "createLink") {
+              const href = window.prompt("Enter link URL", "https://");
+              if (!href) {
+                return;
+              }
+              document.execCommand(command, false, href);
+            } else if (command === "formatBlock") {
+              document.execCommand(command, false, value || "p");
+            } else if (command === "foreColor") {
+              document.execCommand(command, false, value || this.activeEditorTextColor);
+            } else {
+              document.execCommand(command, false, value || null);
+            }
             this.commitEditorContent(this.activeEditablePath, this.activeEditablePathKey, target);
           },
           resetSiteContentDraftToCurrent() {
